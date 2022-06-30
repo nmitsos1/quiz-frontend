@@ -5,6 +5,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import StyledFirebaseAuth from './StyledFirebaseAuth';
 import axios from 'axios'
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBd-0G7MbAm5kFMgfSCu91OdMqwxcoGTX4",

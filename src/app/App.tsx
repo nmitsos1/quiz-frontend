@@ -1,11 +1,15 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.css';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
-import StyledFirebaseAuth from './StyledFirebaseAuth';
+import StyledFirebaseAuth from './../StyledFirebaseAuth';
 import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import TopBar from './TopBar';
+import Announcements from './Announcements';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBd-0G7MbAm5kFMgfSCu91OdMqwxcoGTX4",
@@ -20,11 +24,11 @@ firebase.initializeApp(firebaseConfig);
 
 // Configure FirebaseUI.
 const uiConfig = {
-  // Popup signin flow rather than redirect flow.
+  // Popup or redirect.
   signInFlow: 'popup',
   // Redirect to / after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
   signInSuccessUrl: '/',
-  // We will display Google and Facebook as auth providers.
+  // Email and Password with registration disabled
   signInOptions: [
     {
       provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
@@ -41,24 +45,23 @@ firebase.auth().onAuthStateChanged((user) => {
   }
 });
 
+const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: (error, query) => {
+      // You can handle errors globally here if it suits the project
+    }
+  })
+});
+
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-      <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
+    <div className='app-main'>
+      <QueryClientProvider client={queryClient} >
+        <TopBar />
+        <Announcements />
+        <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
     </div>
   );
 }

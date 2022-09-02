@@ -6,13 +6,12 @@ import 'firebase/compat/auth';
 import StyledFirebaseAuth from './../StyledFirebaseAuth';
 import axios, { AxiosError } from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import TopBar from './TopBar';
-import Announcements from './Announcements';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import _ from 'lodash';
 import MessageBar from './MessageBar';
 import Moment from 'moment';
+import Main from './main/Main';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBd-0G7MbAm5kFMgfSCu91OdMqwxcoGTX4",
@@ -67,10 +66,9 @@ function App() {
 
   const [alertColor, setAlertColor] = useState('info');
   const [alertMessage, setAlertMessage] = useState('');
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState<Date>();
 
-  const topBar = useMemo(() => { return <TopBar />}, []);
-  const announcements = useMemo(() => { return <Announcements />}, []);
+  const main = useMemo(() => { return <Main />}, []);
 
   /** Actual App rendering based on login state */
   if (!isLoggedIn) {
@@ -81,7 +79,7 @@ function App() {
   const queryClient = new QueryClient({
     queryCache: new QueryCache({
       onSuccess: () => {
-        if (currentDate.getTime() + 8000 < new Date().getTime()) {
+        if (currentDate && currentDate.getTime() + 8000 < new Date().getTime()) {
           setAlertMessage('');
         }
       }
@@ -108,9 +106,8 @@ function App() {
   return (
     <div className='app-main'>
       <QueryClientProvider client={queryClient} >
-        {topBar}
         <MessageBar color={alertColor} message={alertMessage} setMessage={setAlertMessage}/>
-        {announcements}
+        {main}
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </div>

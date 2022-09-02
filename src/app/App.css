@@ -2,3 +2,7 @@
   background-color: #e6d7e4;
   min-height: 100vh;
 }
+
+.alert-bar .alert {
+  margin: 0px
+}

@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import StyledFirebaseAuth from './../StyledFirebaseAuth';
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import TopBar from './TopBar';
 import Announcements from './Announcements';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import _ from 'lodash';
+import MessageBar from './MessageBar';
+import Moment from 'moment';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBd-0G7MbAm5kFMgfSCu91OdMqwxcoGTX4",
@@ -37,29 +40,77 @@ const uiConfig = {
   ]
 };
 
-firebase.auth().onAuthStateChanged((user) => {
-  if (user) {
-    user.getIdToken().then(async (token) => {
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
-    })
-  }
-});
-
-const queryClient = new QueryClient({
-  queryCache: new QueryCache({
-    onError: (error, query) => {
-      // You can handle errors globally here if it suits the project
-    }
-  })
-});
-
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  /** On login, set authorization token and UI login state */
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      user.getIdToken().then(async (token) => {
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+        setIsLoggedIn(true)
+
+      })
+    }
+  });
+
+  /** Refresh token logic with debounce */
+  const refreshToken = () => {
+    firebase.auth().currentUser?.getIdToken(true);
+  }
+  const debouncedRefreshToken = useMemo(() => _.debounce(refreshToken, 500), []);
+
+  axios.interceptors.request.use((config) => {
+    debouncedRefreshToken();
+    return config;
+  });
+
+  const [alertColor, setAlertColor] = useState('info');
+  const [alertMessage, setAlertMessage] = useState('');
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  const topBar = useMemo(() => { return <TopBar />}, []);
+  const announcements = useMemo(() => { return <Announcements />}, []);
+
+  /** Actual App rendering based on login state */
+  if (!isLoggedIn) {
+    return <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
+  }
+
+  /** Global queryClient callbacks for queries and mutations. Used for message handling here */
+  const queryClient = new QueryClient({
+    queryCache: new QueryCache({
+      onSuccess: () => {
+        if (currentDate.getTime() + 8000 < new Date().getTime()) {
+          setAlertMessage('');
+        }
+      }
+    }),
+    mutationCache: new MutationCache({
+      onError: (error) => {
+        let err = error as AxiosError;
+        setAlertColor('danger');
+        setAlertMessage(err.message);
+        setCurrentDate(new Date())
+      },
+      onSuccess: (data, variables, context, mutation) => {
+        const key = mutation.options.mutationKey
+        const action = `${key?.toString().split('-')[0]}ed`
+        const record = `${key?.toString().split('-')[1]}`
+        setAlertColor('success');
+        setAlertMessage(`You have successfully ${action} a${['a', 'e', 'i', 'o', 'u'].indexOf(record[0]) !== -1 ? 'n' : ''} ${record}
+         AT ${Moment(new Date()).format('MMMM D, YYYY hh:mm:ss A')}`);
+        setCurrentDate(new Date())
+      }
+    })
+  });
+  
   return (
     <div className='app-main'>
       <QueryClientProvider client={queryClient} >
-        <TopBar />
-        <Announcements />
-        <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
+        {topBar}
+        <MessageBar color={alertColor} message={alertMessage} setMessage={setAlertMessage}/>
+        {announcements}
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </div>

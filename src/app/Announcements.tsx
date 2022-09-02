@@ -1,33 +1,40 @@
 import axios, { AxiosError } from 'axios';
 import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Card, CardBody, CardTitle, Collapse } from 'reactstrap';
+import { Button, Card, CardBody, CardTitle, Collapse } from 'reactstrap';
 import { addAnnouncement, deleteAnnouncement, getAnnouncements, updateAnnouncement } from './AnnouncementModel';
+import { getMySchool, ROLE } from './SchoolModel';
 
 function Announcements() {
 
+  const { isLoading, isError, data: announcements, error } = useQuery(['announcements'], getAnnouncements);
+  const {data: school} = useQuery(['my-school'], getMySchool)
+
   const queryClient = useQueryClient();
 
-  const { isLoading, isError, data: announcements, error } = useQuery(['announcements'], getAnnouncements);
+  const addAnnouncementMutation = useMutation(addAnnouncement, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['announcements'])
+    },
+    mutationKey: ['add-announcement']
+  });
 
-  const added = useMutation(addAnnouncement, {
+  const updateAnnouncementMutation = useMutation(updateAnnouncement, {
     onSuccess: () => {
       queryClient.invalidateQueries(['announcements'])
-    }
+    },
+    mutationKey: ['update-announcement']
   });
-  const updated = useMutation(updateAnnouncement, {
+
+  const deleteAnnouncementMutation = useMutation(deleteAnnouncement, {
     onSuccess: () => {
       queryClient.invalidateQueries(['announcements'])
-    }
-  });
-  const deleted = useMutation(deleteAnnouncement, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['announcements'])
-    }
+    },
+    mutationKey: ['delete-announcement']
   });
 
   const handleSubmit = () => {
-    added.mutate({ title: 'test', content: 'test text'})
+    addAnnouncementMutation.mutate({ title: 'test', content: 'test text'})
   }
 
   if (isLoading) {
@@ -46,10 +53,11 @@ function Announcements() {
   return (
     <div>
       <h4>Announcements</h4>
+      {school?.role===ROLE.ADMIN ? <Button color='primary' onClick={handleSubmit}>Add Announcement</Button> : <React.Fragment/>}
       <div>
         {announcements?.map(announcement => {
           return (
-            <Card color='dark'>
+            <Card outline color='info'>
               <CardTitle>{announcement.title}</CardTitle>
               <CardBody>{announcement.content}</CardBody>
             </Card>

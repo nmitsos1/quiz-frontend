@@ -64,17 +64,6 @@ function App() {
     return config;
   });
 
-  const [alertColor, setAlertColor] = useState('info');
-  const [alertMessage, setAlertMessage] = useState('');
-  const [currentDate, setCurrentDate] = useState<Date>();
-
-  const main = useMemo(() => { return <Main />}, []);
-
-  /** Actual App rendering based on login state */
-  if (!isLoggedIn) {
-    return <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
-  }
-
   /** Global queryClient callbacks for queries and mutations. Used for message handling here */
   const queryClient = new QueryClient({
     queryCache: new QueryCache({
@@ -97,15 +86,27 @@ function App() {
         const record = `${key?.toString().split('-')[1]}`
         setAlertColor('success');
         setAlertMessage(`You have successfully ${action} a${['a', 'e', 'i', 'o', 'u'].indexOf(record[0]) !== -1 ? 'n' : ''} ${record}
-         AT ${Moment(new Date()).format('MMMM D, YYYY hh:mm:ss A')}`);
+          AT ${Moment(new Date()).format('MMMM D, YYYY hh:mm:ss A')}`);
         setCurrentDate(new Date())
       }
     })
   });
+
+  const [alertColor, setAlertColor] = useState('info');
+  const [alertMessage, setAlertMessage] = useState('');
+  const [currentDate, setCurrentDate] = useState<Date>();
+
+  const main = useMemo(() => { return <Main />}, []);
+  const queryClientMemo = useMemo(() => queryClient, []);  
+
+  /** Actual App rendering based on login state */
+  if (!isLoggedIn) {
+    return <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
+  }
   
   return (
     <div className='app-main'>
-      <QueryClientProvider client={queryClient} >
+      <QueryClientProvider client={queryClientMemo} >
         <MessageBar color={alertColor} message={alertMessage} setMessage={setAlertMessage}/>
         {main}
         <ReactQueryDevtools initialIsOpen={false} />

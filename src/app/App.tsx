@@ -5,7 +5,6 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import StyledFirebaseAuth from './../StyledFirebaseAuth';
 import axios, { AxiosError } from 'axios'
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import _ from 'lodash';

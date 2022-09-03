@@ -1,9 +1,9 @@
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Card, CardBody, CardTitle } from 'reactstrap';
 import { addAnnouncement, deleteAnnouncement, getAnnouncements, updateAnnouncement } from './AnnouncementModel';
-import { getMySchool, ROLE } from './../SchoolModel';
+import { getMySchool, ROLE } from '../../SchoolModel';
 
 function Announcements() {
 

@@ -12,6 +12,7 @@ import _ from 'lodash';
 import MessageBar from './MessageBar';
 import Moment from 'moment';
 import Main from './main/Main';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBd-0G7MbAm5kFMgfSCu91OdMqwxcoGTX4",
@@ -108,7 +109,9 @@ function App() {
     <div className='app-main'>
       <QueryClientProvider client={queryClientMemo} >
         <MessageBar color={alertColor} message={alertMessage} setMessage={setAlertMessage}/>
-        {main}
+        <Router>
+          {main}
+        </Router>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </div>

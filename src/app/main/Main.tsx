@@ -1,12 +1,19 @@
 import React from "react";
-import Announcements from "./announcements/Announcements";
+import { BrowserRouter as Router, Route, Routes, useRoutes } from 'react-router-dom';
+import Announcements from "./home/announcements/Announcements";
+import Home from "./home/Home";
 import TopBar from "./TopBar";
 
 function Main() {
+
+    const routes = useRoutes([
+        { path: "/", element: <Home /> }
+    ])
+
     return (
-        <div className="main-page">
+        <div className="main-view">
             <TopBar />
-            <Announcements />
+            {routes}
         </div>
     )
 }

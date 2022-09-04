@@ -1,6 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes, useRoutes } from 'react-router-dom';
-import Announcements from "./home/announcements/Announcements";
+import { useRoutes } from 'react-router-dom';
 import Home from "./home/Home";
 import TopBar from "./TopBar";
 

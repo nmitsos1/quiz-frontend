@@ -3,6 +3,10 @@
   min-height: 100vh;
 }
 
+.asterisk {
+  color: red;
+}
+
 .alert-bar .alert {
   margin: 0px
 }

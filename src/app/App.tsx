@@ -82,7 +82,7 @@ function App() {
       },
       onSuccess: (data, variables, context, mutation) => {
         const key = mutation.options.mutationKey
-        const action = `${key?.toString().split('-')[0]}ed`
+        const action = `${key?.toString().split('-')[0]}${key?.toString().split('-')[0] === 'add' ? 'ed' : 'd'}`
         const record = `${key?.toString().split('-')[1]}`
         setAlertColor('success');
         setAlertMessage(`You have successfully ${action} a${['a', 'e', 'i', 'o', 'u'].indexOf(record[0]) !== -1 ? 'n' : ''} ${record}

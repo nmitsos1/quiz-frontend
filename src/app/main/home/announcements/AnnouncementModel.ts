@@ -1,9 +1,9 @@
 import axios from "axios";
 
 export interface Announcement {
-  id?: number,
-  title: String,
-  content: String,
+  announcementId?: number,
+  title: string,
+  content: string,
   createdAt?: Date,
   updatedAt?: Date
 }
@@ -19,11 +19,11 @@ export const addAnnouncement = async (announcement: Announcement) => {
 }
 
 export const updateAnnouncement = async (announcement: Announcement) => {
-  return await axios.put<Announcement>(`api/admin/announcements/${announcement.id}`)
+  return await axios.put<Announcement>(`api/admin/announcements/${announcement.announcementId}`, announcement)
   .then(response => response.data);
 }
 
-export const deleteAnnouncement = async ({ id }: Announcement) => {
+export const deleteAnnouncement = async (id: number | undefined) => {
   return await axios.delete(`api/admin/announcements/${id}`);
 }
 

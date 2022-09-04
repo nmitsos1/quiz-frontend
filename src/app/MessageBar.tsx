@@ -12,7 +12,7 @@ function MessageBar({message, color, setMessage}: MessageBarProps) {
 
   return (
     <div className='alert-bar'>
-      <Alert hidden={message==''} color={color} isOpen={message!==''} onClick={(_.debounce(() => setMessage(''), 0))}>
+      <Alert hidden={message===''} color={color} isOpen={message!==''} onClick={(_.debounce(() => setMessage(''), 0))}>
         {message.split(' AT ')[0]}
       </Alert>
     </div>

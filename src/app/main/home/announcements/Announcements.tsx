@@ -1,42 +1,18 @@
 import { AxiosError } from 'axios';
 import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Card, CardBody, CardColumns, CardFooter, CardHeader, CardText, CardTitle, Col, Row } from 'reactstrap';
-import { addAnnouncement, Announcement, deleteAnnouncement, getAnnouncements, updateAnnouncement } from './AnnouncementModel';
+import { Button, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import { addAnnouncement, getAnnouncements } from './AnnouncementModel';
 import { getMySchool, ROLE } from '../../SchoolModel';
-import Moment from 'moment';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBan, faScroll, faBullhorn } from '@fortawesome/free-solid-svg-icons';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import AnnouncementCard from './AnnouncementCard';
 
 function Announcements() {
 
   const { isLoading, isError, data: announcements, error } = useQuery(['announcements'], getAnnouncements);
   const {data: school} = useQuery(['my-school'], getMySchool)
-
-  const queryClient = useQueryClient();
-
-  const addAnnouncementMutation = useMutation(addAnnouncement, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['announcements'])
-    },
-    mutationKey: ['add-announcement']
-  });
-
-  const updateAnnouncementMutation = useMutation(updateAnnouncement, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['announcements'])
-    },
-    mutationKey: ['update-announcement']
-  });
-
-  const deleteAnnouncementMutation = useMutation(deleteAnnouncement, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['announcements'])
-    },
-    mutationKey: ['delete-announcement']
-  });
-
-  const handleSubmit = () => {
-    addAnnouncementMutation.mutate({ title: 'test', content: 'test text'})
-  }
 
   if (isLoading) {
     return <h4>Loading Announcements...</h4>
@@ -54,11 +30,11 @@ function Announcements() {
   return (
     <div className='announcements'>
       <h4>Announcements</h4>
-      {school?.role===ROLE.ADMIN ? <Button color='primary' onClick={handleSubmit}>Add Announcement</Button> : <React.Fragment/>}
+      {school?.role===ROLE.ADMIN ? <AddAnnouncementModal /> : <React.Fragment/>}
       <div>
         {announcements?.map(announcement => {
           return (
-            <AnnouncementCard id={announcement.id} title={announcement.title} content={announcement.content}
+            <AnnouncementCard announcementId={announcement.announcementId} title={announcement.title} content={announcement.content}
              createdAt={announcement.createdAt} updatedAt={announcement.updatedAt}/>
           );
         })}
@@ -67,31 +43,47 @@ function Announcements() {
   );
 }
 
-function AnnouncementCard({id, title, content, createdAt, updatedAt}: Announcement) {
-  const {data: school} = useQuery(['my-school'], getMySchool)
-  
+function AddAnnouncementModal() {
+  const queryClient = useQueryClient();
+
+  const [modal, setModal] = useState<boolean>(false);
+  const toggle = () => setModal(!modal);
+
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+
+  const addAnnouncementMutation = useMutation(addAnnouncement, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['announcements'])
+    },
+    mutationKey: ['add-announcement']
+  });
+
+  const handleSubmit = () => {
+    addAnnouncementMutation.mutate({ title: title, content: content});
+    toggle();
+  }
+
   return (
-    <Card outline color='dark' className='announcement-card'>
-      <CardHeader>
-        <CardColumns></CardColumns>
-        <CardTitle><b>{title}</b></CardTitle>
-      </CardHeader>
-      <CardBody>
-        <CardText>{content}</CardText>
-        <Row>
-          <Col>
-            <Button color='info' block>Edit</Button>
-          </Col>
-          <Col></Col>
-          <Col></Col>
-          <Col>
-            <Button color='danger' block>Delete</Button>
-          </Col>
-        </Row>
-      </CardBody>
-      <CardFooter><small><i>Posted on {Moment(createdAt).format('MMMM D, YYYY hh:mm A')}{createdAt === updatedAt ? '' :
-       `, last edited ${Moment(updatedAt).format('MMMM D, YYYY hh:mm A')}`}</i></small></CardFooter>
-    </Card>
+    <React.Fragment>
+      <Button color='primary' onClick={toggle}>
+        Add Announcement <FontAwesomeIcon icon={faScroll as IconProp} />
+      </Button>
+      <Modal isOpen={modal} toggle={toggle}>
+        <ModalHeader toggle={toggle}>Add Announcement</ModalHeader>
+        <ModalBody>
+          <label><span className="asterisk">*</span> = Required Field</label><br/>
+          <label htmlFor="title"><b>Announcement Title</b><span className="asterisk">*</span></label>
+          <Input type="text" name="title" required onChange={(event) => setTitle(event.target.value)}/>
+          <label htmlFor="content"><b>Announcement Content</b><span className="asterisk">*</span></label>
+          <Input type="text" name="content" required onChange={(event) => setContent(event.target.value)}/>
+        </ModalBody>
+        <ModalFooter>
+          <Button disabled={title==='' || content===''} color="primary" onClick={handleSubmit}>Add <FontAwesomeIcon icon={faBullhorn as IconProp}/></Button>
+          <Button outline color="secondary" onClick={toggle}>Cancel <FontAwesomeIcon icon={faBan as IconProp}/></Button>
+        </ModalFooter>
+      </Modal>
+    </React.Fragment>
   );
 }
 

@@ -62,7 +62,7 @@ function UpdateAnnouncementModal({announcementId: id, title, content}: Announcem
 
   return (
     <React.Fragment>
-      <Button onClick={toggle} color="info" block>
+      <Button onClick={toggle} color="secondary" block>
         Edit <FontAwesomeIcon icon={faEdit} />
       </Button>
       <Modal isOpen={modal} toggle={toggle}>
@@ -72,7 +72,7 @@ function UpdateAnnouncementModal({announcementId: id, title, content}: Announcem
           <label htmlFor="title"><b>Announcement Title</b><span className="asterisk">*</span></label>
           <Input type="text" name="title" required defaultValue={title} onChange={(event) => setUpdatedTitle(event.target.value)}/>
           <label htmlFor="content"><b>Announcement Content</b><span className="asterisk">*</span></label>
-          <Input type="text" name="content" required defaultValue={content} onChange={(event) => setUpdatedContent(event.target.value)}/>
+          <Input type="textarea" rows="5" name="content" required defaultValue={content} onChange={(event) => setUpdatedContent(event.target.value)}/>
         </ModalBody>
         <ModalFooter>
           <Button disabled={updatedTitle==='' || updatedContent===''} color="primary" onClick={handleSubmit}>Update <FontAwesomeIcon icon={faEdit}/></Button>

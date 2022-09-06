@@ -76,7 +76,7 @@ function AddAnnouncementModal() {
           <label htmlFor="title"><b>Announcement Title</b><span className="asterisk">*</span></label>
           <Input type="text" name="title" required onChange={(event) => setTitle(event.target.value)}/>
           <label htmlFor="content"><b>Announcement Content</b><span className="asterisk">*</span></label>
-          <Input type="text" name="content" required onChange={(event) => setContent(event.target.value)}/>
+          <Input type="textarea" rows="5" name="content" required onChange={(event) => setContent(event.target.value)}/>
         </ModalBody>
         <ModalFooter>
           <Button disabled={title==='' || content===''} color="primary" onClick={handleSubmit}>Add <FontAwesomeIcon icon={faBullhorn as IconProp}/></Button>

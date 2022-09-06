@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Collapse, Nav, Navbar, NavbarBrand, NavbarToggler, NavItem } from 'reactstrap';
+import { Collapse, Nav, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
 
 
 function TopBar() {
@@ -7,21 +7,21 @@ function TopBar() {
   const toggle = () => setIsOpen(!isOpen);
 
   return (
-    <Navbar color='dark' dark expand="md">
+    <Navbar color='dark' dark expand="md" container="fluid">
       <NavbarBrand>
         Quiz App
       </NavbarBrand>
       <NavbarToggler onClick={toggle}/>
       <Collapse isOpen={isOpen} navbar>
-        <Nav navbar>
+        <Nav className="me-auto" navbar>
           <NavItem>
-            Practice
+            <NavLink>Practice</NavLink>
           </NavItem>
           <NavItem>
-            Settings
+            <NavLink>Settings</NavLink>
           </NavItem>
           <NavItem>
-            Events
+            <NavLink>Events</NavLink>
           </NavItem>
         </Nav>
       </Collapse>

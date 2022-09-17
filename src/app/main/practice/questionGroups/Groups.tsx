@@ -1,15 +1,20 @@
 import { AxiosError } from 'axios';
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getGroups } from './GroupModel';
+import { getGroups, Group } from './GroupModel';
 import GroupCard from './GroupCard';
 
-function Groups() {
+interface GroupsProps {
+  groups?: Array<Group>
+  selectedIds: Array<number>,
+  setSelectedIds: Function
+}
+function Groups({selectedIds, setSelectedIds}: GroupsProps) {
 
   const { isLoading, isError, data: groups, error } = useQuery(['groups'], getGroups);
 
   if (isLoading) {
-    return <h4>Loading Announcements...</h4>
+    return <h4>Loading Question Groups...</h4>
   }
 
   if (isError) {
@@ -27,7 +32,7 @@ function Groups() {
       <div>
         {groups?.map(group => {
           return (
-            <GroupCard questionGroupId={group.questionGroupId} questionGroupName={group.questionGroupName} questionGroupDescription={group.questionGroupDescription} />
+            <GroupCard group={group} selectedIds={selectedIds} setSelectedIds={setSelectedIds} />
           );
         })}
       </div>

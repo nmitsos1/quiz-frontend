@@ -1,9 +1,10 @@
 import axios from "axios";
 
 export interface Group {
-  questionGroupId?: number,
+  questionGroupId: number,
   questionGroupName: string,
-  questionGroupDescription: string
+  questionGroupDescription: string,
+  groupType: string
 }
 
 export const getGroups = async () => {

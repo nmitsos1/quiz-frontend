@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
-import { Card, CardBody, CardColumns, CardHeader, CardText, CardTitle, Col, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row, Spinner } from "reactstrap";
+import { Button, Card, CardBody, CardColumns, CardHeader, CardText, CardTitle, Col, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Input, Row, Spinner } from "reactstrap";
 import Groups from "./questionGroups/Groups";
-import { getAvailableQuestionCount, getCategories } from './questionGroups/categories/CategoryModel'
+import { getAvailableQuestionCount, getCategories } from './categories/CategoryModel'
 import { AxiosError } from "axios";
 import { getGroups } from "./questionGroups/GroupModel";
 import GroupCard from "./questionGroups/GroupCard";
@@ -66,8 +66,6 @@ function SamplingForm({groupIds}: SamplingFormProps) {
   const toggle = () => setIsOpen(!isOpen);
 
   const [selectedCategory, setSelectedCategory] = useState<string>();
-  const [availableQuestions, setAvailableQuestions] = useState<number>();
-  const [categoryCount, setCategoryCount] = useState<number>();
 
   if (isLoading) {
     return <h4>Loading Filter Data...</h4>
@@ -88,19 +86,15 @@ function SamplingForm({groupIds}: SamplingFormProps) {
       <Dropdown isOpen={isOpen} toggle={toggle}>
         <DropdownToggle color="primary" caret>{selectedCategory || 'Select a category'}</DropdownToggle>
         <DropdownMenu>
+          <DropdownItem onClick={() => categorySelection('Any')} key={0}>{'Any'}</DropdownItem>
         {categories.map((category, index) => {
-          return (<DropdownItem onClick={() => categorySelection(category)} key={index}>{category}</DropdownItem>)
+          return (<DropdownItem onClick={() => categorySelection(category)} key={index+1}>{category}</DropdownItem>)
         })}
         </DropdownMenu>
       </Dropdown>
-      {(selectedCategory && availableQuestions) ?
-      <React.Fragment>
-        <label>How many questions? There are {availableQuestions} {selectedCategory} questions available</label>
-      </React.Fragment>
+      {selectedCategory ?
+      <CategoryCountForm category={selectedCategory} setCategory={setSelectedCategory} groupIds={groupIds}/>
       : 
-      selectedCategory ?
-      <Spinner />
-      :
       <React.Fragment />
       }
     </div>
@@ -114,14 +108,29 @@ interface CategoryCountFormProps {
 }
 function CategoryCountForm({category, setCategory, groupIds}: CategoryCountFormProps) {
 
-  const { data: groups } = useQuery(['groups'], getGroups);
   const { isLoading, isError, data: availableCount, error } = 
-    useQuery(['category-count'], () => getAvailableQuestionCount(category, groupIds));
+    useQuery(['category-count', category, groupIds], () => getAvailableQuestionCount(category, groupIds));
+    const [count, setCount] = useState<number>()
 
+    if (isLoading) {
+      return <h4>Loading Count Data...</h4>
+    }
+  
+    if (isError) {
+      let err = error as AxiosError
+      return <h4>There was a problem loading count data. {err.message} - {err.response?.statusText}</h4>
+    }
+  
+    if (availableCount === 0) {
+      return <h4>You do not own any questions from this category</h4>
+    }
+  
   return (
     <React.Fragment>
     <label>How many questions? There are {availableCount} {category} questions available</label>
+    <Input type="number" value={count} onChange={(event) => setCount(parseInt(event.target.value))}/>
+    <Button disabled={!count || (count <= 0 || count > availableCount)} color='info'>Add Filter</Button>
     </React.Fragment>
-)
+  )
 }
 export default Practice

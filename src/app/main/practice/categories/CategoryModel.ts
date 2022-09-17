@@ -6,6 +6,6 @@ export const getCategories = async () => {
 }
 
 export const getAvailableQuestionCount = async (category: string, groupIds: Array<number>) => {
-  return await axios.get<number>(`/api/user/questions/count?category=${category}&groupids=${groupIds.map((id,index)=>`${index!==0 ? ',' : ''}${id}`)}`)
+  return await axios.get<number>(`/api/user/questions/count?category=${category.toUpperCase()}&groupIds=${groupIds}`)
   .then(response => response.data);
 }

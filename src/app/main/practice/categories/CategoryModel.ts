@@ -1,5 +1,10 @@
 import axios from "axios";
 
+export interface CategoryCount {
+  questionCategory: string,
+  count: number
+}
+
 export const getCategories = async () => {
   return await axios.get<Array<string>>('/api/user/categories')
   .then(response => response.data);

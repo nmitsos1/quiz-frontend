@@ -1,4 +1,5 @@
 import axios from "axios";
+import { CategoryCount } from "../categories/CategoryModel";
 
 export interface Group {
   questionGroupId: number,
@@ -7,13 +8,18 @@ export interface Group {
   groupType: string
 }
 
+export interface SetRequest {
+  categoryCounts: Array<CategoryCount>,
+  groupIds: Array<number>
+}
+
 export const getGroups = async () => {
   return await axios.get<Array<Group>>('/api/user/groups')
   .then(response => response.data);
 }
 
-export const addSet = async (group: Group) => {
-  return await axios.post<Group>('api/admin/groups', group)
+export const addSet = async (set: SetRequest) => {
+  return await axios.post<Group>('api/user/groups', set)
   .then(response => response.data);
 }
 

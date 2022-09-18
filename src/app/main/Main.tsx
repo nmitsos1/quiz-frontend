@@ -1,7 +1,7 @@
 import React from "react";
 import { useRoutes } from 'react-router-dom';
 import Home from "./home/Home";
-import Practice from "./practice/practice";
+import Practice from "./practice/Practice";
 import TopBar from "./TopBar";
 
 function Main() {

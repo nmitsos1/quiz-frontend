@@ -8,6 +8,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import CategoryCountForm from "./CategoryCountForm";
+import { beginAttempt } from "../../attempt/AttemptModel";
+import { useNavigate } from "react-router-dom";
 
 interface SamplingFormProps {
   groupIds: Array<number>
@@ -25,11 +27,22 @@ function SamplingForm({groupIds}: SamplingFormProps) {
   const queryClient = useQueryClient();
 
   const addSetMutation = useMutation(addSet, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['groups'])
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(['groups']);
+      beginAttemptMutation.mutate(data.questionGroupId);
     },
     mutationKey: ['add-set']
   });
+
+  const beginAttemptMutation = useMutation(beginAttempt, {
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(['attempts']);
+      navigate(`/quiz`);
+    },
+    mutationKey: ['start-attempt']
+  });
+
+  const navigate = useNavigate();
 
   if (isLoading) {
     return <h4>Loading Filter Data...</h4>
@@ -49,11 +62,6 @@ function SamplingForm({groupIds}: SamplingFormProps) {
     list.splice(index, 1);
     setCategoryCounts(list);
   }
-
-  const handleSubmit = () => {
-    addSetMutation.mutate({ categoryCounts: categoryCounts, groupIds: groupIds});
-  }
-
 
   return (
     <div className="sampling-form">
@@ -84,7 +92,9 @@ function SamplingForm({groupIds}: SamplingFormProps) {
         </Button>)
       })}
       {categoryCounts.length > 0 ?
-      <Button color="primary" onClick={handleSubmit}>Begin Quiz</Button> : <React.Fragment/>}
+      <Button color="primary" onClick={() => addSetMutation.mutate({ categoryCounts: categoryCounts, groupIds: groupIds})}>
+        Begin Quiz
+      </Button> : <React.Fragment/>}
     </div>
   )
 }

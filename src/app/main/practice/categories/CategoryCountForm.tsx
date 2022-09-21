@@ -62,4 +62,5 @@ function CategoryCountForm({category, setCategory, groupIds, categoryCounts, set
     </React.Fragment>
   )
 }
+
 export default CategoryCountForm

@@ -1,3 +1,4 @@
+import { QuestionInstance } from './../../quiz/QuestionModel';
 import axios from "axios";
 import { CategoryCount } from "../categories/CategoryModel";
 
@@ -5,7 +6,8 @@ export interface Group {
   questionGroupId: number,
   questionGroupName: string,
   questionGroupDescription: string,
-  groupType: string
+  groupType: string,
+  questionInstances: Array<QuestionInstance>
 }
 
 export interface SetRequest {

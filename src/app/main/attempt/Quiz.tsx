@@ -22,19 +22,19 @@ function Quiz() {
     const navigate = useNavigate();
 
     const startNextQuestionMutation = useMutation(startNextQuestion, {
-        onSuccess: (data) => {
+        onSuccess: () => {
             queryClient.invalidateQueries(['question-attempt']);
         },
         onError: (error) => {
             let err = error as AxiosError;
             if (err.request.response.includes('No attempt is currently in progress')) {
-                navigate(`/summary`);
+                navigate(`/attempt/${questionAttempt?.attempt}`);
             }
         }
       });
     
     const answerCurrentQuestionMutation = useMutation(answerCurrentQuestion, {
-        onSuccess: (data) => {
+        onSuccess: () => {
             queryClient.invalidateQueries(['question-attempt']);
         }
     });
@@ -57,7 +57,10 @@ function Quiz() {
 
     return (
         <div className="quiz-page">
-            <h3>Question #{isUndefined(questionNumber) ? '?' : (questionNumber + 1)}</h3>
+            <h3>
+                Question #{isUndefined(questionNumber) ? '?' : (questionNumber + 1)}
+                {(score && score > 0) || (score === 0 && answerTwo) ? ` - You scored ${score} point${score === 1 ? '' : 's'}`: ''}
+            </h3>
             <h4>{question?.questionText}</h4>
             {question?.answers.map(answer => {
                 const isWrong = (answer.answerText === answerOne && (score===0 || answerTwo)) || (answer.answerText === answerTwo && score===0);

@@ -2,6 +2,7 @@ import axios from "axios";
 
 export interface QuestionInstanceAttempt {
     questionInstanceAttemptId: number,
+    attempt: number,
     questionInstance: QuestionInstance,
     questionStartTime: Date,
     questionEndTime: Date,

@@ -1,6 +1,6 @@
 import React from "react";
 import { useRoutes } from 'react-router-dom';
-import Quiz from "./attempt/Quiz";
+import Quiz from "./quiz/Quiz";
 import Home from "./home/Home";
 import Practice from "./practice/Practice";
 import TopBar from "./TopBar";

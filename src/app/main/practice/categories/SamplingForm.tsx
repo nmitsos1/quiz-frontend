@@ -8,9 +8,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import CategoryCountForm from "./CategoryCountForm";
-import { beginAttempt } from "../../attempt/AttemptModel";
+import { beginAttempt } from "../../quiz/attempt/AttemptModel";
 import { useNavigate } from "react-router-dom";
-import { startNextQuestion } from "../../attempt/Question/QuestionModel";
+import { startNextQuestion } from "../../quiz/QuestionModel";
 
 interface SamplingFormProps {
   groupIds: Array<number>

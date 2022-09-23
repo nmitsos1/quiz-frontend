@@ -3,9 +3,8 @@ import { AxiosError } from "axios";
 import { isUndefined } from "lodash";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Card, CardBody, CardHeader, CardText, CardTitle } from "reactstrap";
-import { getCurrentAttempt } from "./AttemptModel";
-import { Answer, answerCurrentQuestion, getCurrentQuestion, startNextQuestion } from "./Question/QuestionModel";
+import { Button, Card, CardBody, CardText } from "reactstrap";
+import { Answer, answerCurrentQuestion, getCurrentQuestion, startNextQuestion } from "./QuestionModel";
 
 function Quiz() {
 

@@ -10,6 +10,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import CategoryCountForm from "./CategoryCountForm";
 import { beginAttempt } from "../../attempt/AttemptModel";
 import { useNavigate } from "react-router-dom";
+import { startNextQuestion } from "../../attempt/Question/QuestionModel";
 
 interface SamplingFormProps {
   groupIds: Array<number>
@@ -30,17 +31,22 @@ function SamplingForm({groupIds}: SamplingFormProps) {
     onSuccess: (data) => {
       queryClient.invalidateQueries(['groups']);
       beginAttemptMutation.mutate(data.questionGroupId);
-    },
-    mutationKey: ['add-set']
+    }
   });
 
   const beginAttemptMutation = useMutation(beginAttempt, {
     onSuccess: (data) => {
       queryClient.invalidateQueries(['attempts']);
-      navigate(`/quiz`);
-    },
-    mutationKey: ['start-attempt']
+      startNextQuestionMutation.mutate();
+    }
   });
+
+  const startNextQuestionMutation = useMutation(startNextQuestion, {
+    onSuccess: (data) => {
+      navigate(`/quiz`);
+    }
+  });
+
 
   const navigate = useNavigate();
 

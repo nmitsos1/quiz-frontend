@@ -1,5 +1,21 @@
 import axios from "axios";
 
+export interface QuestionInstanceAttempt {
+    questionInstanceAttemptId: number,
+    questionInstance: QuestionInstance,
+    questionStartTime: Date,
+    questionEndTime: Date,
+    questionScore: number,
+    answer: string,
+    secondAnswer: string
+}
+
+export interface QuestionInstance {
+    questionInstanceId: number,
+    questionIndex: number,
+    question: Question
+}
+
 export interface Question {
     questionId: number,
     originalIdentifier: number,
@@ -14,12 +30,17 @@ export interface Answer {
 }
 
 export const getCurrentQuestion = async () => {
-    return await axios.post<Question>(`/api/user/attempts/question`)
+    return await axios.get<QuestionInstanceAttempt>(`/api/user/attempts/question`)
     .then(response => response.data);
 }
 
-export const answerCurrentQuestion = async (answer: string) => {
-    return await axios.post<Boolean>(`/api/user/attempts/question/answer`, {answer: answer})
+export const startNextQuestion = async () => {
+    return await axios.post<QuestionInstanceAttempt>(`/api/user/attempts/question`)
+    .then(response => response.data);
+}
+
+export const answerCurrentQuestion = async (answer: Answer) => {
+    return await axios.post<Boolean>(`/api/user/attempts/question/answer`, answer)
     .then(response => response.data);
 }
   

@@ -1,44 +1,103 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { isUndefined } from "lodash";
-import React from "react";
-import { Card, CardBody, CardHeader, CardText, CardTitle } from "reactstrap";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button, Card, CardBody, CardHeader, CardText, CardTitle } from "reactstrap";
 import { getCurrentAttempt } from "./AttemptModel";
-import { getCurrentQuestion } from "./Question/QuestionModel";
+import { Answer, answerCurrentQuestion, getCurrentQuestion, startNextQuestion } from "./Question/QuestionModel";
 
 function Quiz() {
 
-    const { isLoading: isAttemptLoaded, isError: isAttemptError, data: attempt, error: attemptError } = useQuery(['attempt'], getCurrentAttempt);
-    const { isLoading: isQuestionLoaded, isError: isQuestionError, data: question, error: questionError } = useQuery(['question'], getCurrentQuestion);
-    const isLoading = isAttemptLoaded || isQuestionLoaded;
+    const { isLoading, isError, data: questionAttempt, error } = useQuery(['question-attempt'], getCurrentQuestion);
+    const questionNumber = questionAttempt?.questionInstance.questionIndex;
+    const question = questionAttempt?.questionInstance.question;
+    const answerOne = questionAttempt?.answer;
+    const answerTwo = questionAttempt?.secondAnswer;
+    const score = questionAttempt?.questionScore;
+    
+    const [selectedAnswer, setSelectedAnswer] = useState<Answer>();
+
+    const queryClient = useQueryClient();
+    const navigate = useNavigate();
+
+    const startNextQuestionMutation = useMutation(startNextQuestion, {
+        onSuccess: (data) => {
+            queryClient.invalidateQueries(['question-attempt']);
+        },
+        onError: (error) => {
+            let err = error as AxiosError;
+            if (err.request.response.includes('No attempt is currently in progress')) {
+                navigate(`/summary`);
+            }
+        }
+      });
+    
+    const answerCurrentQuestionMutation = useMutation(answerCurrentQuestion, {
+        onSuccess: (data) => {
+            queryClient.invalidateQueries(['question-attempt']);
+        }
+    });
+
+    const handleSubmit = () => {
+        if (selectedAnswer) {
+            answerCurrentQuestionMutation.mutate(selectedAnswer)
+            setSelectedAnswer(undefined);
+        }
+    }
 
     if (isLoading) {
         return <h4>Loading Next Question...</h4>
     }
 
-    if (isAttemptError) {
-        let err = attemptError as AxiosError
-        return <h4>There was a problem loading your current question. {err.message} - {err.response?.statusText}</h4>
-    }
-
-    if (isQuestionError) {
-        let err = questionError as AxiosError
+    if (isError) {
+        let err = error as AxiosError
         return <h4>There was a problem loading your current question. {err.message} - {err.response?.statusText}</h4>
     }
 
     return (
         <div className="quiz-page">
-            <h4>Question #{isUndefined(attempt) ? '?' : (attempt.currentQuestionIndex + 1)}</h4>
-            <Card>{question?.questionText}</Card>
+            <h3>Question #{isUndefined(questionNumber) ? '?' : (questionNumber + 1)}</h3>
+            <h4>{question?.questionText}</h4>
             {question?.answers.map(answer => {
+                const isWrong = (answer.answerText === answerOne && (score===0 || answerTwo)) || (answer.answerText === answerTwo && score===0);
+                const isRight = (answer.answerText === answerOne || answer.answerText === answerTwo) && score && score > 0;
                 return (
-                    <Card>
+                    (isWrong || isRight) ?
+                    <Card className="answer-card" color={isWrong ? 'danger' : 'success'} inverse>
+                        <CardBody>
+                            <CardText>{answer.answerText}</CardText>
+                        </CardBody>
+                    </Card>
+                    :
+                    ((score && score > 0) || (score === 0 && answerTwo)) ?
+                    <Card className="answer-card">
+                        <CardBody>
+                            <CardText>{answer.answerText}</CardText>
+                        </CardBody>
+                    </Card>
+                    :
+                    <Card className="answer-card" onClick={() => setSelectedAnswer(answer)} 
+                    color={answer.answerId===selectedAnswer?.answerId ? 'primary' : 'secondary'} 
+                    outline={answer.answerId!==selectedAnswer?.answerId} 
+                    inverse={answer.answerId===selectedAnswer?.answerId}>
                         <CardBody>
                             <CardText>{answer.answerText}</CardText>
                         </CardBody>
                     </Card>
                 );
             })}
+            {(score && score > 0) || (score === 0 && answerTwo) ?
+            <Button block outline size="lg" color='primary'
+            onClick={() => startNextQuestionMutation.mutate()}>
+                Continue
+            </Button>
+            :
+            <Button block size="lg" disabled={!selectedAnswer} color='primary'
+            onClick={handleSubmit}>
+                Submit Answer
+            </Button>
+            }
         </div>
     )
 }

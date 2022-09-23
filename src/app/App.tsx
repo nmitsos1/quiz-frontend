@@ -74,20 +74,25 @@ function App() {
       }
     }),
     mutationCache: new MutationCache({
-      onError: (error) => {
-        let err = error as AxiosError;
-        setAlertColor('danger');
-        setAlertMessage(err.message);
-        setCurrentDate(new Date())
+      onError: (error, variables, context, mutation) => {
+        const key = mutation.options.mutationKey
+        if (key) {
+          let err = error as AxiosError;
+          setAlertColor('danger');
+          setAlertMessage(err.message);
+          setCurrentDate(new Date())
+        }
       },
       onSuccess: (data, variables, context, mutation) => {
         const key = mutation.options.mutationKey
-        const action = `${key?.toString().split('-')[0]}${key?.toString().split('-')[0] === 'add' ? 'ed' : 'd'}`
-        const record = `${key?.toString().split('-')[1]}`
-        setAlertColor('success');
-        setAlertMessage(`You have successfully ${action} a${['a', 'e', 'i', 'o', 'u'].indexOf(record[0]) !== -1 ? 'n' : ''} ${record}
-          AT ${Moment(new Date()).format('MMMM D, YYYY hh:mm:ss A')}`);
-        setCurrentDate(new Date())
+        if (key) {
+          const action = `${key?.toString().split('-')[0]}${key?.toString().split('-')[0] === 'add' ? 'ed' : 'd'}`
+          const record = `${key?.toString().split('-')[1]}`
+          setAlertColor('success');
+          setAlertMessage(`You have successfully ${action} a${['a', 'e', 'i', 'o', 'u'].indexOf(record[0]) !== -1 ? 'n' : ''} ${record}
+            AT ${Moment(new Date()).format('MMMM D, YYYY hh:mm:ss A')}`);
+          setCurrentDate(new Date())
+        }
       }
     })
   });

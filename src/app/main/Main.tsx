@@ -5,15 +5,29 @@ import Home from "./home/Home";
 import Practice from "./practice/Practice";
 import TopBar from "./TopBar";
 import Attempt from "./quiz/attempt/Attempt";
+import Schools from "./schools/Schools";
+import { useQuery } from "@tanstack/react-query";
+import { getMySchool, ROLE } from "./schools/SchoolModel";
 
 function Main() {
 
-    const routes = useRoutes([
+    const {data: school} = useQuery(['my-school'], getMySchool)
+
+    const routeArray = school?.role === ROLE.ADMIN ? [
         { path: "/", element: <Home /> },
         { path: "/practice", element: <Practice /> },
         { path: "/quiz", element: <Quiz /> },
-        { path: "/attempt/:attemptId", element: <Attempt /> }
-    ])
+        { path: "/attempt/:attemptId", element: <Attempt /> },
+        { path: "/schools", element: <Schools /> }
+    ]
+    : [
+        { path: "/", element: <Home /> },
+        { path: "/practice", element: <Practice /> },
+        { path: "/quiz", element: <Quiz /> },
+        { path: "/attempt/:attemptId", element: <Attempt /> },
+    ];
+
+    const routes = useRoutes(routeArray);
 
     return (
         <div className="main-view">

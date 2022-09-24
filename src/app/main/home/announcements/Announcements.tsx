@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { addAnnouncement, getAnnouncements } from './AnnouncementModel';
-import { getMySchool, ROLE } from '../../SchoolModel';
+import { getMySchool, ROLE } from '../../schools/SchoolModel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBan, faScroll, faBullhorn } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';

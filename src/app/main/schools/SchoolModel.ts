@@ -1,9 +1,12 @@
 import axios from "axios";
 
 export interface School {
+    schoolId?: number,
     schoolName: string,
     email: string,
-    role: ROLE
+    role?: ROLE,
+    createdAt?: Date,
+    updatedAt?: Date
 }
 
 export enum ROLE {
@@ -20,3 +23,18 @@ export const getSchools = async (name: String) => {
     return await axios.get<Array<School>>('/api/admin/schools')
     .then(response => response.data);
 }
+
+export const addSchool = async (school: School) => {
+    return await axios.post<School>('api/admin/schools', school)
+    .then(response => response.data);
+}
+
+export const updateSchool = async (school: School) => {
+    return await axios.put<School>(`api/admin/schools/${school.schoolId}`, school)
+    .then(response => response.data);
+}
+  
+export const deleteSchool = async (id: number | undefined) => {
+    return await axios.delete(`api/admin/schools/${id}`);
+}
+  

@@ -5,7 +5,7 @@ import Home from "./home/Home";
 import Practice from "./practice/Practice";
 import TopBar from "./TopBar";
 import Attempt from "./quiz/attempt/Attempt";
-import Schools from "./schools/Schools";
+import SchoolPage from "./schools/SchoolPage";
 import { useQuery } from "@tanstack/react-query";
 import { getMySchool, ROLE } from "./schools/SchoolModel";
 
@@ -18,7 +18,7 @@ function Main() {
         { path: "/practice", element: <Practice /> },
         { path: "/quiz", element: <Quiz /> },
         { path: "/attempt/:attemptId", element: <Attempt /> },
-        { path: "/schools", element: <Schools /> }
+        { path: "/schools", element: <SchoolPage /> }
     ]
     : [
         { path: "/", element: <Home /> },

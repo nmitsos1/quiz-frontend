@@ -136,9 +136,9 @@ function AddSchoolModal() {
             <ModalBody>
                 {isSuccessful ? 'This school has been registered with the given email address and a random password. ' + 
                 ' Next, the user must go to the login screen, enter this email address, and select the Reset Password link in order to set a new password.'
-                : 'An error has occurred while adding the school, please refresh the page and try again. If this occurs again, please contact the developer'
-                + ' at nmitsos13@gmail.com.'
-                }
+                : 'An error has occurred while adding the school, please refresh the page and try again. Make sure this email is not already in use. '
+                + 'If this occurs again, please contact the developer at nmitsos13@gmail.com.'
+                  }
             </ModalBody>
             <ModalFooter>
                 <Button outline color="secondary" onClick={secondToggle}>Exit <FontAwesomeIcon icon={faBan as IconProp}/></Button>

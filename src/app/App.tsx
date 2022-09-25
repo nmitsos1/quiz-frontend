@@ -57,7 +57,7 @@ function App() {
   const refreshToken = () => {
     firebase.auth().currentUser?.getIdToken(true);
   }
-  const debouncedRefreshToken = useMemo(() => _.debounce(refreshToken, 500), []);
+  const debouncedRefreshToken = useMemo(() => _.debounce(refreshToken, 250), []);
 
   axios.interceptors.request.use((config) => {
     debouncedRefreshToken();
@@ -67,9 +67,10 @@ function App() {
   /** Global queryClient callbacks for queries and mutations. Used for message handling here */
   const queryClient = new QueryClient({
     queryCache: new QueryCache({
-      onSuccess: () => {
-        if (currentDate && currentDate.getTime() + 8000 < new Date().getTime()) {
-          setAlertMessage('');
+      onError: (error) => {
+        let err = error as AxiosError
+        if (err.response?.status===401) {
+          refreshToken();
         }
       }
     }),
@@ -78,8 +79,10 @@ function App() {
         const key = mutation.options.mutationKey
         if (key) {
           let err = error as AxiosError;
+          console.log(err);
+          const errMessage = err.request.response.split(': ')[1].split(';')[0];
           setAlertColor('danger');
-          setAlertMessage(err.message);
+          setAlertMessage(`${err.message} - ${errMessage}`);
           setCurrentDate(new Date())
         }
       },

@@ -160,7 +160,9 @@ function DeleteSchoolModal({schoolId: id}: School) {
       <Modal isOpen={modal} toggle={cancelDelete}>
         <ModalHeader toggle={cancelDelete}>Delete School</ModalHeader>
         <ModalBody>
-          <label htmlFor="delete"><b>Are you sure you want to delete this school? You can not undo this action.</b></label>
+          <label htmlFor="delete"><b>
+            Are you sure you want to delete this school? All records associated with this group will also be deleted. You can not undo this action.
+          </b></label>
           <Input name="delete" placeholder="Type DELETE to continue" onChange={(event) => setDeleteText(event.target.value)} />
         </ModalBody>
         <ModalFooter>

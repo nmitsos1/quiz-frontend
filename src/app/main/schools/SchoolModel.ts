@@ -19,8 +19,13 @@ export const getMySchool = async () => {
     .then(response => response.data);
 }
 
+export const getSchoolById = async (id: number) => {
+    return await axios.get<School>(`/api/admin/schools/${id}`)
+    .then(response => response.data);
+}
+
 export const getSchools = async (name: String) => {
-    return await axios.get<Array<School>>('/api/admin/schools')
+    return await axios.get<Array<School>>(`/api/admin/schools?name=${name}`)
     .then(response => response.data);
 }
 

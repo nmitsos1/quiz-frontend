@@ -57,7 +57,7 @@ function App() {
   const refreshToken = () => {
     firebase.auth().currentUser?.getIdToken(true);
   }
-  const debouncedRefreshToken = useMemo(() => _.debounce(refreshToken, 250), []);
+  const debouncedRefreshToken = useMemo(() => _.debounce(refreshToken, 500), []);
 
   axios.interceptors.request.use((config) => {
     debouncedRefreshToken();
@@ -70,7 +70,7 @@ function App() {
       onError: (error) => {
         let err = error as AxiosError
         if (err.response?.status===401) {
-          refreshToken();
+          debouncedRefreshToken();
         }
       }
     }),

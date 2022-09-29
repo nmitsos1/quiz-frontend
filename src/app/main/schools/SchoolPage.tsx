@@ -4,11 +4,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React, { useState } from "react";
-import { Button, Input, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
+import { Button, Col, Input, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import SchoolCard from "./SchoolCard";
 import { addSchool, getSchools } from "./SchoolModel";
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
+import EditGroups from "./EditGroups";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBd-0G7MbAm5kFMgfSCu91OdMqwxcoGTX4",
@@ -23,24 +24,32 @@ const admin = firebase.initializeApp(firebaseConfig, 'Admin');
   
 function SchoolPage() {
     const [name, setName] = useState('');
+    const [selectedIds, setSelectedIds] = useState<Array<number>>([]);
 
     return (
         <div className="schools-page">
             <h4>Schools</h4>
             <Row>
-                <Input onChange={event => setName(event.target.value)}/>
-                <AddSchoolModal />
+                <Col>
+                    <Input onChange={event => setName(event.target.value)}/>
+                    <AddSchoolModal />
+                    <Schools name={name} selectedIds={selectedIds} setSelectedIds={setSelectedIds}/>
+                </Col>
+                <Col>
+                    <EditGroups selectedIds={selectedIds} />
+                </Col>
             </Row>
-            <Schools name={name}/>
         </div>
     )
 
 }
 
 interface SchoolsProps {
-    name: string
+    name: string,
+    selectedIds: Array<number>,
+    setSelectedIds: Function
 }
-function Schools({ name } : SchoolsProps) {
+function Schools({ name, selectedIds, setSelectedIds } : SchoolsProps) {
 
     const { isLoading, isError, data: schools, error } = useQuery(['schools', name], () => getSchools(name));
 
@@ -61,8 +70,7 @@ function Schools({ name } : SchoolsProps) {
             {
             schools.map(school => {
                 return (
-                    <SchoolCard schoolId={school.schoolId} schoolName={school.schoolName} email={school.email}
-                    createdAt={school.createdAt} updatedAt={school.updatedAt}/>
+                    <SchoolCard school={school} selectedIds={selectedIds} setSelectedIds={setSelectedIds}/>
                 );
             })}
         </React.Fragment>

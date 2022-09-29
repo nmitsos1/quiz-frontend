@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button, Card, CardBody, CardColumns, CardFooter, CardHeader, CardText, CardTitle, Col, Input, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
+import { Button, Card, CardBody, CardFooter, CardHeader, CardText, CardTitle, Col, Input, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
 import Moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-regular-svg-icons';
@@ -21,29 +21,49 @@ const firebaseConfig = {
 };
 const admin = firebase.initializeApp(firebaseConfig, 'Admin');
 
-function SchoolCard({schoolId: id, schoolName, email, createdAt, updatedAt}: School) {
+interface SchoolCardProps {
+  school: School,
+  selectedIds: Array<number>,
+  setSelectedIds: Function
+}
+function SchoolCard({school, selectedIds, setSelectedIds}: SchoolCardProps) {
   
+  if (!school.schoolId) {
+    return <React.Fragment />
+  }
+
   return (
-    <Card outline color='dark' className='announcement-card'>
+    <Card key={school.schoolId} className='announcement-card'
+    inverse={selectedIds.includes(school.schoolId) ? true : false} 
+    color={`${selectedIds.includes(school.schoolId) ? 'primary' : 'light'}`} 
+      onClick={() => {
+        if (school.schoolId) {
+          let list = [...selectedIds];
+          if (selectedIds.includes(school.schoolId))
+            list.splice(list.indexOf(school.schoolId),1);
+          else
+            list.push(school.schoolId);
+          setSelectedIds(list);
+        }
+      }}>
       <CardHeader>
-        <CardColumns></CardColumns>
-        <CardTitle><b>{schoolName}</b></CardTitle>
+        <CardTitle><b>{school.schoolName}</b></CardTitle>
       </CardHeader>
       <CardBody>
-        <CardText>{email}</CardText>
+        <CardText><b>Email:</b> {school.email}</CardText>
         <Row>
           <Col>
-            <UpdateSchoolModal schoolId={id} schoolName={schoolName} email={email}/>
+            <UpdateSchoolModal schoolId={school.schoolId} schoolName={school.schoolName} email={school.email}/>
           </Col>
           <Col></Col>
           <Col></Col>
           <Col>
-            <DeleteSchoolModal schoolId={id} schoolName={schoolName} email={email} />
+            <DeleteSchoolModal schoolId={school.schoolId} schoolName={school.schoolName} email={school.email} />
           </Col>
         </Row>
       </CardBody>
-      <CardFooter><small><i>Added on {Moment(createdAt).format('MMMM D, YYYY hh:mm A')}{createdAt === updatedAt ? '' :
-       `, last edited ${Moment(updatedAt).format('MMMM D, YYYY hh:mm A')}`}</i></small></CardFooter>
+      <CardFooter><small><i>Added on {Moment(school.createdAt).format('MMMM D, YYYY hh:mm A')}{school.createdAt === school.updatedAt ? '' :
+       `, last edited ${Moment(school.updatedAt).format('MMMM D, YYYY hh:mm A')}`}</i></small></CardFooter>
     </Card>
   );
 }
@@ -161,7 +181,7 @@ function DeleteSchoolModal({schoolId: id}: School) {
         <ModalHeader toggle={cancelDelete}>Delete School</ModalHeader>
         <ModalBody>
           <label htmlFor="delete"><b>
-            Are you sure you want to delete this school? All records associated with this group will also be deleted. You can not undo this action.
+            Are you sure you want to delete this school? All records associated with this school will also be deleted. You can not undo this action.
           </b></label>
           <Input name="delete" placeholder="Type DELETE to continue" onChange={(event) => setDeleteText(event.target.value)} />
         </ModalBody>

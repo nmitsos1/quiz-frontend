@@ -20,6 +20,17 @@ export const getGroups = async () => {
   .then(response => response.data);
 }
 
+export const getGroupsBySchoolId = async (schoolId: number) => {
+  return await axios.get<Array<Group>>(`/api/admin/groups/schools/${schoolId}`)
+  .then(response => response.data);
+}
+
+export const getAllGroups = async () => {
+  return await axios.get<Array<Group>>(`/api/admin/groups`)
+  .then(response => response.data);
+}
+
+
 export const addSet = async (set: SetRequest) => {
   return await axios.post<Group>('api/user/groups', set)
   .then(response => response.data);

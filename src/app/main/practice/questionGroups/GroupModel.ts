@@ -15,6 +15,11 @@ export interface SetRequest {
   groupIds: Array<number>
 }
 
+interface UpdateSchoolGroupsParams {
+  schoolId: number,
+  ids: Array<number>
+}
+
 export const getGroups = async () => {
   return await axios.get<Array<Group>>('/api/user/groups')
   .then(response => response.data);
@@ -38,6 +43,11 @@ export const addSet = async (set: SetRequest) => {
 
 export const updateSet = async (group: Group) => {
   return await axios.put<Group>(`api/admin/groups/${group.questionGroupId}`, group)
+  .then(response => response.data);
+}
+
+export const updateGroupsForSchool = async ({schoolId, ids}: UpdateSchoolGroupsParams) => {
+  return await axios.put(`/api/admin/groups/schools/${schoolId}`, {ids: ids})
   .then(response => response.data);
 }
 

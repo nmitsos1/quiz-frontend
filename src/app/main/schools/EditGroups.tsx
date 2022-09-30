@@ -1,11 +1,11 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Button, Badge, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row, Col } from 'reactstrap';
-import { getAllGroups, getGroupsBySchoolId, Group } from '../practice/questionGroups/GroupModel';
+import { getAllGroups, getGroupsBySchoolId, Group, updateGroupsForSchool } from '../practice/questionGroups/GroupModel';
 import { getSchoolById } from './SchoolModel';
 import _ from 'lodash';
 
@@ -69,16 +69,17 @@ function EditSchoolGroups({id, groups}: EditSchoolGroupsProps) {
     }
     
     return (
-        <EditSchoolGroupsForm name={school?.schoolName || ''} groups={groups} schoolGroups={schoolGroups}/>
+        <EditSchoolGroupsForm id={id} name={school?.schoolName || ''} groups={groups} schoolGroups={schoolGroups}/>
     );
 }
 
 interface EditSchoolGroupsFormProps {
+    id: number,
     name: string,
     groups: Array<Group>,
     schoolGroups: Array<Group>
 }
-function EditSchoolGroupsForm({groups, schoolGroups, name}: EditSchoolGroupsFormProps) {
+function EditSchoolGroupsForm({id, groups, schoolGroups, name}: EditSchoolGroupsFormProps) {
 
     const queryClient = useQueryClient();
 
@@ -88,6 +89,17 @@ function EditSchoolGroupsForm({groups, schoolGroups, name}: EditSchoolGroupsForm
     const [isOpen, setIsOpen] = useState(false);
     const toggle = () => setIsOpen(!isOpen);
 
+    const updateGroupsForSchoolMutation = useMutation(updateGroupsForSchool, {
+        onSuccess: () => {
+          queryClient.invalidateQueries(['school-groups'])
+        },
+        mutationKey: ['update-school']
+    });
+
+    const handleSubmit = () => {
+        updateGroupsForSchoolMutation.mutate({schoolId: id, ids: updatedGroups.map(g => g.questionGroupId)})
+    }
+    
     const removeGroup = (index: number) => {
         let updatedList = [...updatedGroups];
         let itemToRemove = updatedGroups[index];
@@ -144,6 +156,7 @@ function EditSchoolGroupsForm({groups, schoolGroups, name}: EditSchoolGroupsForm
                     </Button>
                 );
             })}
+            <Button onClick={handleSubmit} color='primary'>Update Groups</Button>
         </div>
     );
 }

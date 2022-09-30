@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Button, Badge, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row, Col } from 'reactstrap';
-import { getAllGroups, getGroupsBySchoolId, Group, updateGroupsForSchool } from '../practice/questionGroups/GroupModel';
+import { bulkAddGroups, getAllGroups, getGroupsBySchoolId, Group, updateGroupsForSchool } from '../practice/questionGroups/GroupModel';
 import { getSchoolById } from './SchoolModel';
 import _ from 'lodash';
 
@@ -42,7 +42,7 @@ function EditGroups({selectedIds}: EditGroups) {
     }
 
     return (
-        <div></div>
+        <BulkAddGroups selectedIds={selectedIds} groups={groups}/>
     );
 }
 
@@ -157,6 +157,70 @@ function EditSchoolGroupsForm({id, groups, schoolGroups, name}: EditSchoolGroups
                 );
             })}
             <Button onClick={handleSubmit} color='primary'>Update Groups</Button>
+        </div>
+    );
+}
+
+interface BulkAddGroupsProps {
+    selectedIds: Array<number>,
+    groups: Array<Group>
+}
+function BulkAddGroups({selectedIds, groups}: BulkAddGroupsProps) {
+
+    const queryClient = useQueryClient();
+
+    const [groupsToAdd, setGroupsToAdd] = useState<Array<Group>>([]);
+
+    const [isOpen, setIsOpen] = useState(false);
+    const toggle = () => setIsOpen(!isOpen);
+
+    const bulkAddGroupsMutation = useMutation(bulkAddGroups, {
+        onSuccess: () => {
+          queryClient.invalidateQueries(['school-groups'])
+        },
+        mutationKey: ['update-school']
+    });
+
+    const handleSubmit = () => {
+        bulkAddGroupsMutation.mutate({schoolIds: selectedIds, groupIds: groupsToAdd.map(g => g.questionGroupId)})
+    }
+
+    const addGroup = (group: Group) => {
+        let list = [...groupsToAdd];
+        list.push(group);
+        setGroupsToAdd(list);
+    }
+
+    const removeGroup = (index: number) => {
+        let updatedList = [...groupsToAdd];
+        updatedList.splice(index, 1);
+        setGroupsToAdd(updatedList);
+    }
+
+    return (
+        <div>
+            <h4>Bulk Add Question Groups To Selected Schools</h4>
+            {groups.length===0 ? <div>There are no other groups to add</div> :
+                <Dropdown isOpen={isOpen} toggle={toggle}>
+                    <DropdownToggle color="primary" caret>Select a group to add</DropdownToggle>
+                    <DropdownMenu>
+                    {groups.filter(group => group.groupType!=='QuestionSet')
+                    .filter(group => !groupsToAdd.map(g => g.questionGroupId).includes(group.questionGroupId))
+                    .map(group => {
+                        return (<DropdownItem key={group.questionGroupId} onClick={() => addGroup(group)}>{group.questionGroupName}</DropdownItem>)
+                    })}
+                    </DropdownMenu>
+                </Dropdown>
+            }
+            {groupsToAdd.length===0 ? <div>No groups are selected to be added</div> :
+            groupsToAdd.filter(group => group.groupType!=='QuestionSet').map((group, index) => {
+                return (
+                    <Button key={group.questionGroupId} outline color="primary">{group.questionGroupName}{' '}
+                        <FontAwesomeIcon onClick={() => removeGroup(index)} icon={faX as IconProp}></FontAwesomeIcon>
+                    </Button>
+                );
+            })}
+            <Button onClick={handleSubmit} color='primary'>Add Groups</Button>
         </div>
     );
 }

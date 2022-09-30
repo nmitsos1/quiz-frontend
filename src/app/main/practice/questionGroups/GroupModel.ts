@@ -20,6 +20,11 @@ interface UpdateSchoolGroupsParams {
   ids: Array<number>
 }
 
+interface BulkAddGroupsParams {
+  schoolIds: Array<number>,
+  groupIds: Array<number>
+}
+
 export const getGroups = async () => {
   return await axios.get<Array<Group>>('/api/user/groups')
   .then(response => response.data);
@@ -48,6 +53,11 @@ export const updateSet = async (group: Group) => {
 
 export const updateGroupsForSchool = async ({schoolId, ids}: UpdateSchoolGroupsParams) => {
   return await axios.put(`/api/admin/groups/schools/${schoolId}`, {ids: ids})
+  .then(response => response.data);
+}
+
+export const bulkAddGroups = async ({schoolIds, groupIds}: BulkAddGroupsParams) => {
+  return await axios.put(`/api/admin/groups/schools`, {schoolIds: schoolIds, groupIds: groupIds})
   .then(response => response.data);
 }
 

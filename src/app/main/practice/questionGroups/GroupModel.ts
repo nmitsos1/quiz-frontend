@@ -6,8 +6,8 @@ export interface Group {
   questionGroupId: number,
   questionGroupName: string,
   questionGroupDescription: string,
-  groupType: string,
-  questionInstances: Array<QuestionInstance>
+  groupType?: string,
+  questionInstances?: Array<QuestionInstance>
 }
 
 export interface SetRequest {
@@ -30,6 +30,11 @@ export const getGroups = async () => {
   .then(response => response.data);
 }
 
+export const getMyGroupById = async (id: number) => {
+  return await axios.get<Group>(`/api/user/groups/${id}`)
+  .then(response => response.data);
+}
+
 export const getGroupsBySchoolId = async (schoolId: number) => {
   return await axios.get<Array<Group>>(`/api/admin/groups/schools/${schoolId}`)
   .then(response => response.data);
@@ -43,6 +48,11 @@ export const getAllGroups = async () => {
 
 export const addSet = async (set: SetRequest) => {
   return await axios.post<Group>('api/user/groups', set)
+  .then(response => response.data);
+}
+
+export const updateMySet = async (group: Group) => {
+  return await axios.put<Group>(`api/user/groups/${group.questionGroupId}`, group)
   .then(response => response.data);
 }
 

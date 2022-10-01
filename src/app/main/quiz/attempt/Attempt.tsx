@@ -26,7 +26,7 @@ function Attempt() {
             <h5>Start Time: {Moment(attempt.groupStartTime).format('MMMM D, YYYY hh:mm:ss A')}</h5>
             <h5>End Time: {Moment(attempt.endTime).format('MMMM D, YYYY hh:mm:ss A')}</h5>
             <h5>Score: {attempt.currentScore}</h5>
-            <h5>{attempt.questionInstanceAttempts.length} out of {attempt.questionGroup.questionInstances.length} questions answered</h5>
+            <h5>{attempt.questionInstanceAttempts.length} out of {attempt.questionGroup.questionInstances?.length} questions answered</h5>
             {attempt.questionInstanceAttempts.map(q => {
                 const score = q.questionScore;
                 const startTime = Moment(q.questionStartTime);

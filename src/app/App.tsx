@@ -48,7 +48,6 @@ function App() {
       user.getIdToken().then(async (token) => {
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
         setIsLoggedIn(true)
-
       })
     }
   });
@@ -56,11 +55,13 @@ function App() {
   /** Refresh token logic with debounce */
   const refreshToken = () => {
     firebase.auth().currentUser?.getIdToken(true);
+    queryClient.clear();
+    queryClient.resetQueries();
   }
   const debouncedRefreshToken = useMemo(() => _.debounce(refreshToken, 500), []);
 
   axios.interceptors.request.use((config) => {
-    debouncedRefreshToken();
+    //debouncedRefreshToken();
     return config;
   });
 
@@ -69,6 +70,7 @@ function App() {
     queryCache: new QueryCache({
       onError: (error) => {
         let err = error as AxiosError
+        console.log('err!')
         if (err.response?.status===401) {
           debouncedRefreshToken();
         }

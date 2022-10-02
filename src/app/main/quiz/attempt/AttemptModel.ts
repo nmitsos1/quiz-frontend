@@ -32,4 +32,8 @@ export const beginAttempt = async (groupId: number) => {
     return await axios.post<Attempt>(`/api/user/attempts/groups/${groupId}`)
     .then(response => response.data);
 }
-  
+
+export const killAttempt = async () => {
+    return await axios.post<Attempt>(`/api/user/attempts/stop`)
+    .then(response => response.data);
+}

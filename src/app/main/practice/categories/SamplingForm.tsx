@@ -11,6 +11,7 @@ import CategoryCountForm from "./CategoryCountForm";
 import { beginAttempt } from "../../quiz/attempt/AttemptModel";
 import { useNavigate } from "react-router-dom";
 import { startNextQuestion } from "../../quiz/QuestionModel";
+import CreateAndBeginQuizButton from "../CreateAndBeginQuizButton";
 
 interface SamplingFormProps {
   groupIds: Array<number>
@@ -25,34 +26,9 @@ function SamplingForm({groupIds}: SamplingFormProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>();
   const [categoryCounts, setCategoryCounts] = useState<Array<CategoryCount>>([]);
 
-  const queryClient = useQueryClient();
-
   useEffect(() => {
     setCategoryCounts([]);
-  }, [groupIds])
-
-  const addSetMutation = useMutation(addSet, {
-    onSuccess: (data) => {
-      queryClient.invalidateQueries(['groups']);
-      beginAttemptMutation.mutate(data.questionGroupId);
-    }
-  });
-
-  const beginAttemptMutation = useMutation(beginAttempt, {
-    onSuccess: (data) => {
-      queryClient.invalidateQueries(['attempts']);
-      startNextQuestionMutation.mutate();
-    }
-  });
-
-  const startNextQuestionMutation = useMutation(startNextQuestion, {
-    onSuccess: (data) => {
-      navigate(`/quiz`);
-    }
-  });
-
-
-  const navigate = useNavigate();
+  }, [groupIds]);
 
   if (isLoading) {
     return <h4>Loading Filter Data...</h4>
@@ -102,9 +78,9 @@ function SamplingForm({groupIds}: SamplingFormProps) {
         </Button>)
       })}
       {categoryCounts.length > 0 ?
-      <Button color="primary" onClick={() => addSetMutation.mutate({ categoryCounts: categoryCounts, groupIds: groupIds})}>
-        Begin Quiz
-      </Button> : <React.Fragment/>}
+      <CreateAndBeginQuizButton categoryCounts={categoryCounts} groupIds={groupIds}/>
+      :
+      <React.Fragment />}
     </div>
   )
 }

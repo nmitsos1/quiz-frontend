@@ -9,6 +9,7 @@ import { getCategories } from "./categories/CategoryModel";
 import { beginAttempt } from "../quiz/attempt/AttemptModel";
 import { useNavigate } from "react-router-dom";
 import { startNextQuestion } from "../quiz/QuestionModel";
+import CreateAndBeginQuizButton from "./CreateAndBeginQuizButton";
 
 function Practice() {
 
@@ -135,23 +136,7 @@ interface CustomQuizInformationProps {
 }
 function CustomQuizInformation({id, categories}: CustomQuizInformationProps) {
 
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
-
   const { isLoading, isError, data: group, error } = useQuery(['group', id], () => getMyGroupById(id));
-
-  const beginAttemptMutation = useMutation(beginAttempt, {
-    onSuccess: (data) => {
-      queryClient.invalidateQueries(['attempts']);
-      startNextQuestionMutation.mutate();
-    }
-  });
-
-  const startNextQuestionMutation = useMutation(startNextQuestion, {
-    onSuccess: (data) => {
-      navigate(`/quiz`);
-    }
-  });
 
   if (isLoading) {
     return <h4>Loading Selected Group...</h4>
@@ -181,7 +166,7 @@ function CustomQuizInformation({id, categories}: CustomQuizInformationProps) {
         }
       })}
       <div><b>{group.questionInstances?.length} Total Question{group.questionInstances && group.questionInstances?.length>1 ? 's' : ''}</b></div>
-      <Button color="primary" onClick={() => beginAttemptMutation.mutate(id)}>Start New Attempt</Button>
+      <CreateAndBeginQuizButton groupId={id}/>
     </div>
   );
 }

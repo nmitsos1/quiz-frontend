@@ -1,9 +1,13 @@
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { faBan, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { isUndefined } from "lodash";
+import { attempt, isUndefined } from "lodash";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button, Card, CardBody, CardText } from "reactstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { Button, Card, CardBody, CardText, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import { killAttempt } from "./attempt/AttemptModel";
 import { Answer, answerCurrentQuestion, getCurrentQuestion, startNextQuestion } from "./QuestionModel";
 
 function Quiz() {
@@ -16,6 +20,9 @@ function Quiz() {
     const score = questionAttempt?.questionScore;
     
     const [selectedAnswer, setSelectedAnswer] = useState<Answer>();
+
+    const [modal, setModal] = useState<boolean>(false);
+    const toggle = () => setModal(!modal);
 
     const queryClient = useQueryClient();
     const navigate = useNavigate();
@@ -37,6 +44,14 @@ function Quiz() {
             queryClient.invalidateQueries(['question-attempt']);
         }
     });
+
+    const killAttemptInProgressMutation = useMutation(killAttempt, {
+        onSuccess: () => {
+            toggle();
+            navigate(`/attempt/${questionAttempt?.attempt}`);
+        },
+        mutationKey: ['terminate-attempt']
+    })
 
     const handleSubmit = () => {
         if (selectedAnswer) {
@@ -100,6 +115,19 @@ function Quiz() {
                 Submit Answer
             </Button>
             }
+            <Button color="primary" onClick={toggle}>Terminate Quiz</Button>
+            <Modal isOpen={modal} toggle={toggle}>
+                <ModalHeader toggle={toggle}>Terminate Quiz</ModalHeader>
+                <ModalBody>
+                    <label htmlFor="delete"><b>Are you sure you want to end this quiz session? You can not undo this action</b></label>
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="secondary" onClick={toggle}>Cancel <FontAwesomeIcon icon={faBan as IconProp}/></Button>{' '}
+                    <Button color="danger" outline onClick={() => killAttemptInProgressMutation.mutate()} >
+                        Terminate Attempt <FontAwesomeIcon icon={faTrashAlt as IconProp}/>
+                    </Button>
+                </ModalFooter>
+            </Modal>
         </div>
     )
 }

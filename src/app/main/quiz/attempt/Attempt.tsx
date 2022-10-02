@@ -47,11 +47,19 @@ function Attempt() {
             <h5>Start Time: {Moment(attempt.groupStartTime).format('MMMM D, YYYY hh:mm:ss A')}</h5>
             <h5>End Time: {Moment(attempt.endTime).format('MMMM D, YYYY hh:mm:ss A')}</h5>
             <h5>Score: {attempt.currentScore}</h5>
-            <h5>{attempt.questionInstanceAttempts.length} out of {attempt.questionGroup.questionInstances?.length} questions answered</h5>
+            <h5>
+                {(attempt.questionInstanceAttempts.length - (attempt.questionInstanceAttempts[attempt.questionInstanceAttempts.length-1].questionEndTime ? 0 : 1))}
+                {' '}out of {attempt.questionGroup.questionInstances?.length} questions answered
+            </h5>
             {attempt.questionInstanceAttempts.map(q => {
                 const score = q.questionScore;
                 const startTime = Moment(q.questionStartTime);
                 const endTime = Moment(q.questionEndTime);
+                if (!q.questionEndTime) {
+                    return (
+                        <React.Fragment />
+                    );
+                }
 
                 return (
                     <Card outline color={score === 10 ? 'success' : score > 4 ? undefined : score > 1 ? 'warning' : 'danger'}>

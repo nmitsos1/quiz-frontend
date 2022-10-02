@@ -82,7 +82,7 @@ function App() {
         if (key) {
           let err = error as AxiosError;
           console.log(err);
-          const errMessage = err.request.response.split(': ')[1].split(';')[0];
+          const errMessage = err.request.response.split(': ')[1].split('\\r\\n')[0];
           setAlertColor('danger');
           setAlertMessage(`${err.message} - ${errMessage}`);
           setCurrentDate(new Date())

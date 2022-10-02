@@ -23,6 +23,11 @@ export const getAttemptById = async (id: string | undefined) => {
     .then(response => response.data);
 }
 
+export const shouldSaveSetPromptAppear = async (id: string | undefined) => {
+    return await axios.get<boolean>(`/api/user/attempts/${id}/savesetprompt`)
+    .then(response => response.data);
+}
+
 export const beginAttempt = async (groupId: number) => {
     return await axios.post<Attempt>(`/api/user/attempts/groups/${groupId}`)
     .then(response => response.data);

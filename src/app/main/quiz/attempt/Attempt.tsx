@@ -1,16 +1,37 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getAttemptById } from "./AttemptModel";
+import { getAttemptById, shouldSaveSetPromptAppear } from "./AttemptModel";
 import Moment from 'moment';
-import { Card, CardBody, CardFooter, CardHeader, CardText, CardTitle } from "reactstrap";
+import { Button, Card, CardBody, CardFooter, CardHeader, CardText, CardTitle, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { faBan, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { UpdateSetModal } from "../../practice/questionGroups/GroupCard";
 
 function Attempt() {
 
     const { attemptId } = useParams();
     const { isLoading, isError, data: attempt, error } = useQuery(['attempt', attemptId], () => getAttemptById(attemptId));
+    const { data: shouldSaveSetModalAppear } = useQuery(['save-set-modal', attemptId], () => shouldSaveSetPromptAppear(attemptId));
 
+    const [modal, setModal] = useState<boolean>(false);
+    const toggle = () => setModal(!modal);
+
+    const [saveSet, setSaveSet] = useState(false);
+
+    const handleSave = () => {
+        toggle();
+        setSaveSet(true);
+    }
+
+    useEffect(() => {
+        if (shouldSaveSetModalAppear) {
+            toggle();
+        }
+    }, [shouldSaveSetModalAppear])
+  
     if (isLoading) {
         return <h4>Loading Your Attempt...</h4>
     }
@@ -22,7 +43,7 @@ function Attempt() {
 
     return (
         <div className="attempt-page">
-            <h3>Quiz attempt for {attempt.questionGroupName}</h3>
+            <h3>Quiz attempt for {attempt.questionGroup.questionGroupName}</h3>
             <h5>Start Time: {Moment(attempt.groupStartTime).format('MMMM D, YYYY hh:mm:ss A')}</h5>
             <h5>End Time: {Moment(attempt.endTime).format('MMMM D, YYYY hh:mm:ss A')}</h5>
             <h5>Score: {attempt.currentScore}</h5>
@@ -48,6 +69,20 @@ function Attempt() {
                     </Card>
                 );
             })}
+            <Modal isOpen={modal} toggle={toggle}>
+                <ModalHeader toggle={toggle}>Save this Quiz Set?</ModalHeader>
+                <ModalBody>
+                    Would you like to save this question set so that you can reuse it in the future? Unsaved sets will be deleted at 4:00 AM EST everyday, along with attempt records.
+                </ModalBody>
+                <ModalFooter>
+                <Button color="primary" onClick={handleSave}>Yes <FontAwesomeIcon icon={faFloppyDisk as IconProp}/></Button>
+                <Button outline color="secondary" onClick={toggle}>No <FontAwesomeIcon icon={faBan as IconProp}/></Button>
+                </ModalFooter>
+            </Modal>
+            {saveSet ?
+            <UpdateSetModal group={attempt.questionGroup} isButtonHidden={true}/>
+            : <React.Fragment />
+            }
         </div>
     )
 }

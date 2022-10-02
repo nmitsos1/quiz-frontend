@@ -60,16 +60,17 @@ function GroupCard({group, selectedIds, setSelectedIds, isSingleSelect}: GroupCa
 }
 
 interface GroupModalProps {
-  group: Group
+  group: Group,
+  isButtonHidden?: boolean
 }
-function UpdateSetModal({group}: GroupModalProps) {
+export function UpdateSetModal({group, isButtonHidden}: GroupModalProps) {
   const queryClient = useQueryClient();
 
-  const [modal, setModal] = useState<boolean>(false);
+  const [modal, setModal] = useState<boolean>(!!isButtonHidden);
   const toggle = () => setModal(!modal);
 
-  const [updatedName, setUpdatedName] = useState(group.questionGroupName);
-  const [updatedDescription, setUpdatedDescription] = useState(group.questionGroupDescription);
+  const [updatedName, setUpdatedName] = useState(isButtonHidden ? '' : group.questionGroupName);
+  const [updatedDescription, setUpdatedDescription] = useState(isButtonHidden ? '' : group.questionGroupDescription);
 
   const updateSetMutation = useMutation(updateMySet, {
     onSuccess: () => {
@@ -85,17 +86,21 @@ function UpdateSetModal({group}: GroupModalProps) {
 
   return (
     <React.Fragment>
+      {isButtonHidden ?
+      <React.Fragment />
+      :
       <Button onClick={(e) => {e.stopPropagation(); toggle();}} color="secondary" block>
         Edit <FontAwesomeIcon icon={faEdit as IconProp} />
       </Button>
+      }
       <Modal isOpen={modal} toggle={toggle}>
-        <ModalHeader toggle={toggle}>Update Announcement</ModalHeader>
+        <ModalHeader toggle={toggle}>Update Group</ModalHeader>
         <ModalBody>
           <label><span className="asterisk">*</span> = Required Field</label><br/>
-          <label htmlFor="title"><b>Announcement Title</b><span className="asterisk">*</span></label>
-          <Input type="text" name="title" required defaultValue={group.questionGroupName} onChange={(event) => setUpdatedName(event.target.value)}/>
-          <label htmlFor="content"><b>Announcement Content</b><span className="asterisk">*</span></label>
-          <Input type="textarea" rows="5" name="content" required defaultValue={group.questionGroupDescription} onChange={(event) => setUpdatedDescription(event.target.value)}/>
+          <label htmlFor="name"><b>Group Name</b><span className="asterisk">*</span></label>
+          <Input type="text" name="name" required defaultValue={isButtonHidden ? '' : group.questionGroupName} onChange={(event) => setUpdatedName(event.target.value)}/>
+          <label htmlFor="description"><b>Group Description</b><span className="asterisk">*</span></label>
+          <Input type="textarea" rows="5" name="description" required defaultValue={isButtonHidden ? '' : group.questionGroupDescription} onChange={(event) => setUpdatedDescription(event.target.value)}/>
         </ModalBody>
         <ModalFooter>
           <Button disabled={updatedName==='' || updatedDescription===''} color="primary" onClick={handleSubmit}>Update <FontAwesomeIcon icon={faEdit as IconProp}/></Button>

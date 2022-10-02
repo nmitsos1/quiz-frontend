@@ -52,7 +52,7 @@ export const addSet = async (set: SetRequest) => {
 }
 
 export const updateMySet = async (group: Group) => {
-  return await axios.put<Group>(`api/user/groups/${group.questionGroupId}`, group)
+  return await axios.put<Group>(`api/user/groups/${group.questionGroupId}`, group,)
   .then(response => response.data);
 }
 

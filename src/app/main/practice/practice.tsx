@@ -51,10 +51,10 @@ function Practice() {
 }
 
 
-interface CreateCustomQuizProps {
+interface QuizGroupProps {
   groups: Array<Group>
 }
-function CreateCustomQuiz({groups}: CreateCustomQuizProps) {
+function CreateCustomQuiz({groups}: QuizGroupProps) {
 
   const [selectedIds, setSelectedIds] = useState<Array<number>>([-1]);
 
@@ -87,10 +87,7 @@ function CreateCustomQuiz({groups}: CreateCustomQuizProps) {
   );
 }
 
-interface YourCustomQuizzesProps {
-  groups: Array<Group>
-}
-function YourCustomQuizzes({groups}: CreateCustomQuizProps) {
+function YourCustomQuizzes({groups}: QuizGroupProps) {
 
   const { isLoading, isError, data: categories, error } = useQuery(['categories'], getCategories);
 

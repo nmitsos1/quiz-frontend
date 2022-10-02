@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getAttemptById, shouldSaveSetPromptAppear } from "./AttemptModel";
+import { getAttemptById, isLastAttemptInProgress, shouldSaveSetPromptAppear } from "./AttemptModel";
 import Moment from 'moment';
 import { Button, Card, CardBody, CardFooter, CardHeader, CardText, CardTitle, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -15,6 +15,7 @@ function Attempt() {
     const { attemptId } = useParams();
     const { isLoading, isError, data: attempt, error } = useQuery(['attempt', attemptId], () => getAttemptById(attemptId));
     const { data: shouldSaveSetModalAppear } = useQuery(['save-set-modal', attemptId], () => shouldSaveSetPromptAppear(attemptId));
+    useQuery(['attempt-in-progress'], isLastAttemptInProgress);
 
     const [modal, setModal] = useState<boolean>(false);
     const toggle = () => setModal(!modal);

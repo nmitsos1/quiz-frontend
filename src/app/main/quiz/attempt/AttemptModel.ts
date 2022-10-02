@@ -28,6 +28,11 @@ export const shouldSaveSetPromptAppear = async (id: string | undefined) => {
     .then(response => response.data);
 }
 
+export const isLastAttemptInProgress = async () => {
+    return await axios.get<boolean>(`/api/user/attempts/inProgress`)
+    .then(response => response.data);
+}
+
 export const beginAttempt = async (groupId: number) => {
     return await axios.post<Attempt>(`/api/user/attempts/groups/${groupId}`)
     .then(response => response.data);

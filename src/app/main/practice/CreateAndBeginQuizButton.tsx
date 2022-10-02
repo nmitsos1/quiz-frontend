@@ -32,8 +32,9 @@ function CreateAndBeginQuizButton({categoryCounts, groupIds, groupId}: CreateAnd
       });
     
       const beginAttemptMutation = useMutation(beginAttempt, {
-        onSuccess: (data) => {
-          queryClient.invalidateQueries(['attempts']);
+        onSuccess: () => {
+          queryClient.invalidateQueries(['attempts', 'attempt-in-progress']);
+          queryClient.invalidateQueries(['attempt-in-progress']);
           startNextQuestionMutation.mutate();
         },
         onError: (error) => {
@@ -56,6 +57,7 @@ function CreateAndBeginQuizButton({categoryCounts, groupIds, groupId}: CreateAnd
       const killAttemptInProgressMutation = useMutation(killAttempt, {
         onSuccess: () => {
             toggle();
+            queryClient.invalidateQueries(['attempt-in-progress']);
         },
         mutationKey: ['terminate-attempt']
       })

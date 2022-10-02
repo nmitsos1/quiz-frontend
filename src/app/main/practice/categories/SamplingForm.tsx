@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Badge, Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from "reactstrap";
 import { CategoryCount, getCategories } from './CategoryModel'
 import { AxiosError } from "axios";
@@ -26,6 +26,10 @@ function SamplingForm({groupIds}: SamplingFormProps) {
   const [categoryCounts, setCategoryCounts] = useState<Array<CategoryCount>>([]);
 
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    setCategoryCounts([]);
+  }, [groupIds])
 
   const addSetMutation = useMutation(addSet, {
     onSuccess: (data) => {

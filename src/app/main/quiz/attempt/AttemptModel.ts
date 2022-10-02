@@ -23,6 +23,11 @@ export const getAttemptById = async (id: string | undefined) => {
     .then(response => response.data);
 }
 
+export const getMyAttempts = async () => {
+    return await axios.get<Array<Attempt>>(`/api/user/attempts`)
+    .then(response => response.data);
+}
+
 export const shouldSaveSetPromptAppear = async (id: string | undefined) => {
     return await axios.get<boolean>(`/api/user/attempts/${id}/savesetprompt`)
     .then(response => response.data);

@@ -31,7 +31,7 @@ function TopBar() {
             <NavLink tag={Link} to="/events">Events</NavLink>
           </NavItem>
           <NavItem>
-            <NavLink tag={Link} to="/settings">Settings</NavLink>
+            <NavLink tag={Link} to="/attempts">History</NavLink>
           </NavItem>
           {school?.role === ROLE.ADMIN ?
           <NavItem>

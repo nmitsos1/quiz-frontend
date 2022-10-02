@@ -75,6 +75,7 @@ export function UpdateSetModal({group, isButtonHidden}: GroupModalProps) {
   const updateSetMutation = useMutation(updateMySet, {
     onSuccess: () => {
       queryClient.invalidateQueries(['groups'])
+      queryClient.invalidateQueries(['attempt'])
     },
     mutationKey: ['update-group']
   });

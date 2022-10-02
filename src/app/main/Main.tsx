@@ -8,6 +8,7 @@ import Attempt from "./quiz/attempt/Attempt";
 import SchoolPage from "./schools/SchoolPage";
 import { useQuery } from "@tanstack/react-query";
 import { getMySchool, ROLE } from "./schools/SchoolModel";
+import Attempts from "./quiz/attempt/Attempts";
 
 function Main() {
 
@@ -18,6 +19,7 @@ function Main() {
         { path: "/practice", element: <Practice /> },
         { path: "/quiz", element: <Quiz /> },
         { path: "/attempt/:attemptId", element: <Attempt /> },
+        { path: "/attempts", element: <Attempts /> },
         { path: "/schools", element: <SchoolPage /> }
     ]
     : [

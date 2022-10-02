@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getAttemptById, isLastAttemptInProgress, shouldSaveSetPromptAppear } from "./AttemptModel";
 import Moment from 'moment';
 import { Button, Card, CardBody, CardFooter, CardHeader, CardText, CardTitle, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
@@ -11,6 +11,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { UpdateSetModal } from "../../practice/questionGroups/GroupCard";
 
 function Attempt() {
+
+    const navigate = useNavigate();
 
     const { attemptId } = useParams();
     const { isLoading, isError, data: attempt, error } = useQuery(['attempt', attemptId], () => getAttemptById(attemptId));
@@ -44,6 +46,7 @@ function Attempt() {
 
     return (
         <div className="attempt-page">
+            <Button outline onClick={() => navigate('/attempts')}>Back to History</Button>
             <h3>Quiz attempt for {attempt.questionGroup.questionGroupName}</h3>
             <h5>Start Time: {Moment(attempt.groupStartTime).format('MMMM D, YYYY hh:mm:ss A')}</h5>
             <h5>End Time: {Moment(attempt.endTime).format('MMMM D, YYYY hh:mm:ss A')}</h5>

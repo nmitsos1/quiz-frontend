@@ -28,7 +28,7 @@ function SchoolPage() {
 
     return (
         <div className="schools-page">
-            <h4>Schools</h4>
+            <h3>Schools</h3>
             <Row>
                 <Col>
                     <Row>

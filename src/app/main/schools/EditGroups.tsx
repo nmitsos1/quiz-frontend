@@ -130,7 +130,7 @@ function EditSchoolGroupsForm({id, groups, schoolGroups, name}: EditSchoolGroups
     
     return (
         <div>
-            <h5>Add Or Remove Question Groups For {name}</h5>
+            <h4>Add Or Remove Question Groups For {name}</h4>
             <Row>
                 <Col>
                     {addGroups.length===0 ? <div>There are no other groups to add to this school</div> :

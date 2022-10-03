@@ -60,6 +60,8 @@ function Quiz() {
         }
     }
 
+    const letters = ['A. ', 'B. ', 'C. ', 'D. ', 'E. ', 'F. '];
+
     if (isLoading) {
         return <h4>Loading Next Question...</h4>
     }
@@ -74,23 +76,26 @@ function Quiz() {
             <h3>
                 Question #{isUndefined(questionNumber) ? '?' : (questionNumber + 1)}
                 {(score && score > 0) || (score === 0 && answerTwo) ? ` - You scored ${score} point${score === 1 ? '' : 's'}`: ''}
+                <Button className="terminate-button" color="danger" outline onClick={toggle}>Terminate Quiz</Button>
             </h3>
+            <br /><br />
             <h4>{question?.questionText}</h4>
-            {question?.answers.map(answer => {
+            <hr />
+            {question?.answers.map((answer, index) => {
                 const isWrong = (answer.answerText === answerOne && (score===0 || answerTwo)) || (answer.answerText === answerTwo && score===0);
                 const isRight = (answer.answerText === answerOne || answer.answerText === answerTwo) && score && score > 0;
                 return (
                     (isWrong || isRight) ?
                     <Card className="answer-card" color={isWrong ? 'danger' : 'success'} inverse>
                         <CardBody>
-                            <CardText>{answer.answerText}</CardText>
+                            <CardText>{letters[index]}{answer.answerText}</CardText>
                         </CardBody>
                     </Card>
                     :
                     ((score && score > 0) || (score === 0 && answerTwo)) ?
                     <Card className="answer-card">
                         <CardBody>
-                            <CardText>{answer.answerText}</CardText>
+                            <CardText>{letters[index]}{answer.answerText}</CardText>
                         </CardBody>
                     </Card>
                     :
@@ -99,11 +104,12 @@ function Quiz() {
                     outline={answer.answerId!==selectedAnswer?.answerId} 
                     inverse={answer.answerId===selectedAnswer?.answerId}>
                         <CardBody>
-                            <CardText>{answer.answerText}</CardText>
+                            <CardText><h5>{letters[index]}{answer.answerText}</h5></CardText>
                         </CardBody>
                     </Card>
                 );
             })}
+            <hr />
             {(score && score > 0) || (score === 0 && answerTwo) ?
             <Button block outline size="lg" color='primary'
             onClick={() => startNextQuestionMutation.mutate()}>
@@ -115,7 +121,6 @@ function Quiz() {
                 Submit Answer
             </Button>
             }
-            <Button color="primary" onClick={toggle}>Terminate Quiz</Button>
             <Modal isOpen={modal} toggle={toggle}>
                 <ModalHeader toggle={toggle}>Terminate Quiz</ModalHeader>
                 <ModalBody>

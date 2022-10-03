@@ -166,6 +166,7 @@ function CustomQuizInformation({id, categories}: CustomQuizInformationProps) {
         }
       })}
       <div><b>{group.questionInstances?.length} Total Question{group.questionInstances && group.questionInstances?.length>1 ? 's' : ''}</b></div>
+      <hr />
       <CreateAndBeginQuizButton groupId={id}/>
     </div>
   );

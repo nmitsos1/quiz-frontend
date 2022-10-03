@@ -30,9 +30,10 @@ function Attempts() {
     return(
         <div className='attempts-page'>
             <h4>Quiz Attempt History for {school?.schoolName}</h4>
+            <label>Select a record to view more information.</label>
             {attempts.map(attempt => {
                 return (<Card onClick={() => navigate(`/attempt/${attempt.attemptId}`)}>
-                    <CardHeader>{attempt.questionGroup.questionGroupName}</CardHeader>
+                    <CardHeader>Quiz attempt on {attempt.questionGroup.questionGroupName}</CardHeader>
                     <CardBody>
                         <CardText>Started on {Moment(attempt.groupStartTime).format('MMMM D, YYYY hh:mm A')}</CardText>
                     </CardBody>

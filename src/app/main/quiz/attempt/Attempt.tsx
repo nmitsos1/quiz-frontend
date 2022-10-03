@@ -47,6 +47,7 @@ function Attempt() {
     return (
         <div className="attempt-page">
             <Button outline onClick={() => navigate('/attempts')}>Back to History</Button>
+            <br /><br />
             <h3>Quiz attempt for {attempt.questionGroup.questionGroupName}</h3>
             <h5>Start Time: {Moment(attempt.groupStartTime).format('MMMM D, YYYY hh:mm:ss A')}</h5>
             <h5>End Time: {Moment(attempt.endTime).format('MMMM D, YYYY hh:mm:ss A')}</h5>
@@ -55,6 +56,7 @@ function Attempt() {
                 {(attempt.questionInstanceAttempts.length - (attempt.questionInstanceAttempts[attempt.questionInstanceAttempts.length-1].questionEndTime ? 0 : 1))}
                 {' '}out of {attempt.questionGroup.questionInstances?.length} questions answered
             </h5>
+            <hr />
             {attempt.questionInstanceAttempts.map(q => {
                 const score = q.questionScore;
                 const startTime = Moment(q.questionStartTime);

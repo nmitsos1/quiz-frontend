@@ -50,15 +50,13 @@ function CategoryCountForm({category, setCategory, groupIds, categoryCounts, set
   
   return (
     <React.Fragment>
-
       <label>How many questions? There are {category==='Any' ? (availableCount - categoryCounts.reduce((a, b) => {return a+b.count}, 0)) : availableCount}
-      {' '}{category==='Any' ? '' : category} questions available</label>
+      {' '}{category==='Any' ? '' : category} questions available in this category</label>
 
       <Input type="number" value={count} onChange={(event) => setCount(parseInt(event.target.value))}/>
-
+      <br />
       <Button disabled={!count || (count <= 0 || count > (category==='Any' ? (availableCount - categoryCounts.reduce((a, b) => {return a+b.count}, 0)) : availableCount))}
-      onClick={addCategoryCount} color='info'>Add Filter</Button>
-
+      onClick={addCategoryCount} color='dark'>Add Filter</Button>
     </React.Fragment>
   )
 }

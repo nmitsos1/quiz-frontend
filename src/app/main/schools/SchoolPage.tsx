@@ -31,8 +31,12 @@ function SchoolPage() {
             <h4>Schools</h4>
             <Row>
                 <Col>
-                    <Input onChange={event => setName(event.target.value)}/>
-                    <AddSchoolModal />
+                    <Row>
+                    <Col><AddSchoolModal /></Col>
+                        <Col>
+                            <Input placeholder="Search by name..." onChange={event => setName(event.target.value)}/>
+                        </Col>
+                    </Row>
                     <Schools name={name} selectedIds={selectedIds} setSelectedIds={setSelectedIds}/>
                 </Col>
                 <Col>

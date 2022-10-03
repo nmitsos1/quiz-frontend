@@ -6,7 +6,7 @@ import { title } from 'process';
 import React, { useState } from 'react';
 import { Button, Card, CardBody, CardColumns, CardFooter, CardHeader, CardText, CardTitle, Col, Input, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
 import { Announcement, deleteAnnouncement } from '../../home/announcements/AnnouncementModel';
-import { deleteSet, Group, updateMySet } from './GroupModel';
+import { deleteMySet, Group, updateMySet } from './GroupModel';
 
 interface GroupCardProps {
   group: Group,
@@ -34,23 +34,20 @@ function GroupCard({group, selectedIds, setSelectedIds, isSingleSelect}: GroupCa
       }}>
       <CardHeader>
         <CardColumns></CardColumns>
-        <CardTitle><b>{group.questionGroupName}</b></CardTitle>
+        <CardTitle>
+          <b>{group.questionGroupName}</b>
+          {isSingleSelect
+          ?
+          <div className='card-buttons'>
+            <UpdateSetModal group={group}/>{' '}
+            <DeleteSetModal group={group}/>
+          </div>
+          : <React.Fragment /> }
+
+        </CardTitle>
       </CardHeader>
       <CardBody>
         <CardText>{group.questionGroupDescription || 'No description given.'}</CardText>
-        {isSingleSelect
-        ?
-        <Row>
-          <Col>
-            <UpdateSetModal group={group}/>
-          </Col>
-          <Col></Col>
-          <Col></Col>
-          <Col>
-            <DeleteSetModal group={group}/>
-          </Col>
-        </Row>
-        : <React.Fragment /> }
       </CardBody>
       <CardFooter>
         <i>{group.groupType}</i>
@@ -90,8 +87,8 @@ export function UpdateSetModal({group, isButtonHidden}: GroupModalProps) {
       {isButtonHidden ?
       <React.Fragment />
       :
-      <Button onClick={(e) => {e.stopPropagation(); toggle();}} color="secondary" block>
-        Edit <FontAwesomeIcon icon={faEdit as IconProp} />
+      <Button onClick={(e) => {e.stopPropagation(); toggle();}} color="secondary" outline size='sm'>
+        <FontAwesomeIcon icon={faEdit as IconProp} size='sm'/>
       </Button>
       }
       <Modal isOpen={modal} toggle={toggle}>
@@ -120,7 +117,7 @@ function DeleteSetModal({group}: GroupModalProps) {
 
   const [deleteText, setDeleteText] = useState<string>();
 
-  const deleteSetMutation = useMutation(deleteSet, {
+  const deleteSetMutation = useMutation(deleteMySet, {
     onSuccess: () => {
       queryClient.invalidateQueries(['groups'])
     },
@@ -140,8 +137,8 @@ function DeleteSetModal({group}: GroupModalProps) {
 
   return (
     <React.Fragment>
-      <Button onClick={(e) => {e.stopPropagation(); toggle();}} color="danger" block>
-        Delete <FontAwesomeIcon icon={faTrash as IconProp} />
+      <Button onClick={(e) => {e.stopPropagation(); toggle();}} color="danger" outline size='sm'>
+        <FontAwesomeIcon icon={faTrash as IconProp} size='sm'/>
       </Button>
       <Modal isOpen={modal} toggle={cancelDelete}>
         <ModalHeader toggle={cancelDelete}>Delete Group</ModalHeader>

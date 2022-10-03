@@ -47,20 +47,16 @@ function SchoolCard({school, selectedIds, setSelectedIds}: SchoolCardProps) {
         }
       }}>
       <CardHeader>
-        <CardTitle><b>{school.schoolName}</b></CardTitle>
+        <CardTitle>
+          <b>{school.schoolName}</b>
+          <div className='card-buttons'>
+            <UpdateSchoolModal schoolId={school.schoolId} schoolName={school.schoolName} email={school.email}/>{' '}
+            <DeleteSchoolModal schoolId={school.schoolId} schoolName={school.schoolName} email={school.email}/>
+          </div>
+        </CardTitle>
       </CardHeader>
       <CardBody>
         <CardText><b>Email:</b> {school.email}</CardText>
-        <Row>
-          <Col>
-            <UpdateSchoolModal schoolId={school.schoolId} schoolName={school.schoolName} email={school.email}/>
-          </Col>
-          <Col></Col>
-          <Col></Col>
-          <Col>
-            <DeleteSchoolModal schoolId={school.schoolId} schoolName={school.schoolName} email={school.email} />
-          </Col>
-        </Row>
       </CardBody>
       <CardFooter><small><i>Added on {Moment(school.createdAt).format('MMMM D, YYYY hh:mm A')}{school.createdAt === school.updatedAt ? '' :
        `, last edited ${Moment(school.updatedAt).format('MMMM D, YYYY hh:mm A')}`}</i></small></CardFooter>
@@ -112,8 +108,8 @@ function UpdateSchoolModal({schoolId: id, schoolName, email}: School) {
 
   return (
     <React.Fragment>
-      <Button onClick={toggle} color="secondary" block>
-        Edit <FontAwesomeIcon icon={faEdit} />
+      <Button onClick={toggle} color="secondary" outline size='sm'>
+        <FontAwesomeIcon icon={faEdit} size='sm'/>
       </Button>
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>Update School</ModalHeader>
@@ -174,8 +170,8 @@ function DeleteSchoolModal({schoolId: id}: School) {
 
   return (
     <React.Fragment>
-      <Button onClick={toggle} color="danger" block>
-        Delete <FontAwesomeIcon icon={faTrash as IconProp} />
+      <Button onClick={toggle} color="danger" outline size='sm'>
+        <FontAwesomeIcon icon={faTrash as IconProp} size='sm'/>
       </Button>
       <Modal isOpen={modal} toggle={cancelDelete}>
         <ModalHeader toggle={cancelDelete}>Delete School</ModalHeader>

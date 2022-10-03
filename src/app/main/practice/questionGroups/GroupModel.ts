@@ -71,7 +71,7 @@ export const bulkAddGroups = async ({schoolIds, groupIds}: BulkAddGroupsParams) 
   .then(response => response.data);
 }
 
-export const deleteSet = async (id: number | undefined) => {
-  return await axios.delete(`api/admin/groups/${id}`);
+export const deleteMySet = async (id: number | undefined) => {
+  return await axios.delete(`api/user/groups/${id}`);
 }
 

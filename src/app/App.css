@@ -1,5 +1,4 @@
 .app-main {
-  background-color: #e6d7e4;
   min-height: 100vh;
 }
 
@@ -9,4 +8,26 @@
 
 .alert-bar .alert {
   margin: 0px
+}
+
+.modal-open {
+  overflow: scroll;
+}
+
+.page-view {
+  margin: 30px;
+  margin-top: 10px
+}
+
+.card {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.card-buttons {
+  float: right;
+}
+
+.terminate-button {
+  float: right;
 }

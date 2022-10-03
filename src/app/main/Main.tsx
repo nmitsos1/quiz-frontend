@@ -34,7 +34,9 @@ function Main() {
     return (
         <div className="main-view">
             <TopBar />
-            {routes}
+            <div className="page-view">
+                {routes}
+            </div>
         </div>
     )
 }

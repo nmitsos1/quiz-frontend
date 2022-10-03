@@ -15,22 +15,18 @@ function AnnouncementCard({announcementId: id, title, content, createdAt, update
   return (
     <Card outline color='dark' className='announcement-card'>
       <CardHeader>
-        <CardColumns></CardColumns>
-        <CardTitle><b>{title}</b></CardTitle>
+        <CardTitle>
+          <b>{title}</b>
+          {school?.role === ROLE.ADMIN ?
+            <div className='card-buttons'>
+              <UpdateAnnouncementModal announcementId={id} title={title} content={content}/>{' '}
+              <DeleteAnnouncementModal announcementId={id} title={title} content={content} />
+            </div>
+          : <React.Fragment />}
+        </CardTitle>
       </CardHeader>
       <CardBody>
         <CardText>{content}</CardText>
-        {school?.role === ROLE.ADMIN ?
-        <Row>
-          <Col>
-            <UpdateAnnouncementModal announcementId={id} title={title} content={content}/>
-          </Col>
-          <Col></Col>
-          <Col></Col>
-          <Col>
-            <DeleteAnnouncementModal announcementId={id} title={title} content={content} />
-          </Col>
-        </Row> : <React.Fragment />}
       </CardBody>
       <CardFooter><small><i>Posted on {Moment(createdAt).format('MMMM D, YYYY hh:mm A')}{createdAt === updatedAt ? '' :
        `, last edited ${Moment(updatedAt).format('MMMM D, YYYY hh:mm A')}`}</i></small></CardFooter>
@@ -62,8 +58,8 @@ function UpdateAnnouncementModal({announcementId: id, title, content}: Announcem
 
   return (
     <React.Fragment>
-      <Button onClick={toggle} color="secondary" block>
-        Edit <FontAwesomeIcon icon={faEdit} />
+      <Button onClick={toggle} color="secondary" outline className='delete-button' size='sm'>
+        <FontAwesomeIcon icon={faEdit} size='sm'/>
       </Button>
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>Update Announcement</ModalHeader>
@@ -111,8 +107,8 @@ function DeleteAnnouncementModal({announcementId: id}: Announcement) {
 
   return (
     <React.Fragment>
-      <Button onClick={toggle} color="danger" block>
-        Delete <FontAwesomeIcon icon={faTrash as IconProp} />
+      <Button size='sm' onClick={toggle} color="danger" outline>
+        <FontAwesomeIcon icon={faTrash as IconProp} size='sm'/>
       </Button>
       <Modal isOpen={modal} toggle={cancelDelete}>
         <ModalHeader toggle={cancelDelete}>Delete Announcement</ModalHeader>

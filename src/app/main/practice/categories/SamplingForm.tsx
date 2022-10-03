@@ -58,7 +58,7 @@ function SamplingForm({groupIds}: SamplingFormProps) {
         after setting other desired category filters.
       </label>
       <Dropdown isOpen={isOpen} toggle={toggle}>
-        <DropdownToggle color="primary" caret>{selectedCategory || 'Select a category'}</DropdownToggle>
+        <DropdownToggle color="primary" outline caret>{selectedCategory || 'Select a category'}</DropdownToggle>
         <DropdownMenu>
           {!categoryCounts.map(cc => cc.questionCategory).includes('Any') ?
           <DropdownItem onClick={() => categorySelection('Any')} key={0}>{'Any'}</DropdownItem> : <React.Fragment/>}
@@ -70,17 +70,18 @@ function SamplingForm({groupIds}: SamplingFormProps) {
       {selectedCategory ?
       <CategoryCountForm category={selectedCategory} setCategory={setSelectedCategory} groupIds={groupIds} categoryCounts={categoryCounts} setCategoryCounts={setCategoryCounts}/>
       : 
-      <React.Fragment />
+      <br />
       }
+      <hr />
       {categoryCounts.map((cc, index) => {
         return (<Button outline color="success">{cc.questionCategory}{' '}<Badge>{cc.count}</Badge>{' '}
           <FontAwesomeIcon onClick={() => removeCategoryCount(index)} icon={faX as IconProp}></FontAwesomeIcon>
         </Button>)
       })}
       {categoryCounts.length > 0 ?
-      <CreateAndBeginQuizButton categoryCounts={categoryCounts} groupIds={groupIds}/>
+      <React.Fragment><br/><br/><CreateAndBeginQuizButton categoryCounts={categoryCounts} groupIds={groupIds}/></React.Fragment>
       :
-      <React.Fragment />}
+      <div>No filters added.</div>}
     </div>
   )
 }

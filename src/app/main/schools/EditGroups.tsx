@@ -148,6 +148,7 @@ function EditSchoolGroupsForm({id, groups, schoolGroups, name}: EditSchoolGroups
                     <Button outline onClick={resetGroups}>Undo School Group Edits</Button>
                 </Col>
             </Row>
+            <hr />
             {updatedGroups.length===0 ? <div>There are no other groups to remove from this school</div> :
             updatedGroups.filter(group => group.groupType!=='QuestionSet').map((group, index) => {
                 return (
@@ -156,6 +157,7 @@ function EditSchoolGroupsForm({id, groups, schoolGroups, name}: EditSchoolGroups
                     </Button>
                 );
             })}
+            <br /><br />
             <Button onClick={handleSubmit} color='primary'>Update Groups</Button>
         </div>
     );
@@ -212,6 +214,7 @@ function BulkAddGroups({selectedIds, groups}: BulkAddGroupsProps) {
                     </DropdownMenu>
                 </Dropdown>
             }
+            <hr />
             {groupsToAdd.length===0 ? <div>No groups are selected to be added</div> :
             groupsToAdd.filter(group => group.groupType!=='QuestionSet').map((group, index) => {
                 return (
@@ -220,6 +223,7 @@ function BulkAddGroups({selectedIds, groups}: BulkAddGroupsProps) {
                     </Button>
                 );
             })}
+            <br /><br />
             <Button onClick={handleSubmit} color='primary'>Add Groups</Button>
         </div>
     );

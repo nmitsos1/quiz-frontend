@@ -17,9 +17,9 @@ interface GroupCardProps {
 function GroupCard({group, selectedIds, setSelectedIds, isSingleSelect}: GroupCardProps) {
   
   return (
-    <Card key={group.questionGroupId} className='group-card'
-    inverse={selectedIds.includes(group.questionGroupId) ? true : false} 
-    color={`${selectedIds.includes(group.questionGroupId) ? 'primary' : 'light'}`} 
+    <Card key={group.questionGroupId} className={`group-card ${selectedIds.includes(group.questionGroupId) ? 'selected-card': ''}`}
+    //inverse={selectedIds.includes(group.questionGroupId) ? true : false} 
+    color={`${selectedIds.includes(group.questionGroupId) ? 'info' : 'dark'}`} outline
       onClick={() => {
         if (isSingleSelect) {
           setSelectedIds(group.questionGroupId);
@@ -40,7 +40,7 @@ function GroupCard({group, selectedIds, setSelectedIds, isSingleSelect}: GroupCa
           ?
           <div className='card-buttons'>
             <UpdateSetModal group={group}/>{' '}
-            <DeleteSetModal group={group}/>
+            <DeleteSetModal group={group} setSelectedIds={setSelectedIds}/>
           </div>
           : <React.Fragment /> }
 
@@ -58,7 +58,8 @@ function GroupCard({group, selectedIds, setSelectedIds, isSingleSelect}: GroupCa
 
 interface GroupModalProps {
   group: Group,
-  isButtonHidden?: boolean
+  isButtonHidden?: boolean,
+  setSelectedIds?: Function
 }
 export function UpdateSetModal({group, isButtonHidden}: GroupModalProps) {
   const queryClient = useQueryClient();
@@ -109,7 +110,7 @@ export function UpdateSetModal({group, isButtonHidden}: GroupModalProps) {
   );
 }
 
-function DeleteSetModal({group}: GroupModalProps) {
+function DeleteSetModal({group, setSelectedIds}: GroupModalProps) {
   const queryClient = useQueryClient();
 
   const [modal, setModal] = useState<boolean>(false);
@@ -126,6 +127,9 @@ function DeleteSetModal({group}: GroupModalProps) {
 
   const handleSubmit = () => {
     deleteSetMutation.mutate(group.questionGroupId);
+    if (setSelectedIds) {
+      setSelectedIds(undefined);
+    }
     setDeleteText('');
     toggle();
   };

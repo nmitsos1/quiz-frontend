@@ -33,9 +33,9 @@ function SchoolCard({school, selectedIds, setSelectedIds}: SchoolCardProps) {
   }
 
   return (
-    <Card key={school.schoolId} className='announcement-card'
-    inverse={selectedIds.includes(school.schoolId) ? true : false} 
-    color={`${selectedIds.includes(school.schoolId) ? 'primary' : 'light'}`} 
+    <Card key={school.schoolId} className={`school-card ${selectedIds.includes(school.schoolId) ? 'selected-card': ''}`}
+    //inverse={selectedIds.includes(school.schoolId) ? true : false}
+    color={`${selectedIds.includes(school.schoolId) ? 'info' : 'dark'}`} outline
       onClick={() => {
         if (school.schoolId) {
           let list = [...selectedIds];
@@ -50,8 +50,8 @@ function SchoolCard({school, selectedIds, setSelectedIds}: SchoolCardProps) {
         <CardTitle>
           <b>{school.schoolName}</b>
           <div className='card-buttons'>
-            <UpdateSchoolModal schoolId={school.schoolId} schoolName={school.schoolName} email={school.email}/>{' '}
-            <DeleteSchoolModal schoolId={school.schoolId} schoolName={school.schoolName} email={school.email}/>
+            <UpdateSchoolModal school={school}/>{' '}
+            <DeleteSchoolModal school={school} setSelectedIds={setSelectedIds}/>
           </div>
         </CardTitle>
       </CardHeader>
@@ -64,7 +64,11 @@ function SchoolCard({school, selectedIds, setSelectedIds}: SchoolCardProps) {
   );
 }
 
-function UpdateSchoolModal({schoolId: id, schoolName, email}: School) {
+interface SchoolModalProps {
+  school: School,
+  setSelectedIds?: Function
+}
+function UpdateSchoolModal({school}: SchoolModalProps) {
   const queryClient = useQueryClient();
 
   const [modal, setModal] = useState<boolean>(false);
@@ -75,8 +79,8 @@ function UpdateSchoolModal({schoolId: id, schoolName, email}: School) {
 
   const [isSuccessful, setIsSuccessful] = useState<boolean>(false);
 
-  const [updatedSchoolName, setUpdatedSchoolName] = useState(schoolName);
-  const [updatedEmail, setUpdatedEmail] = useState(email);
+  const [updatedSchoolName, setUpdatedSchoolName] = useState(school.schoolName);
+  const [updatedEmail, setUpdatedEmail] = useState(school.email);
 
   const updateSchoolMutation = useMutation(updateSchool, {
     onSuccess: () => {
@@ -90,14 +94,14 @@ function UpdateSchoolModal({schoolId: id, schoolName, email}: School) {
   });
 
   const handleSubmit = () => {
-    admin.auth().createUserWithEmailAndPassword(email, window.crypto.randomUUID())
+    admin.auth().createUserWithEmailAndPassword(school.email, window.crypto.randomUUID())
     .then(() => {
         admin.auth().signOut();
-        updateSchoolMutation.mutate({ schoolId: id, schoolName: updatedSchoolName, email: updatedEmail});
+        updateSchoolMutation.mutate({ schoolId: school.schoolId, schoolName: updatedSchoolName, email: updatedEmail});
       }).catch(error => {
         console.log(error.code);
         if (error.code === 'auth/email-already-in-use') {
-            updateSchoolMutation.mutate({ schoolId: id, schoolName: updatedSchoolName, email: updatedEmail});
+            updateSchoolMutation.mutate({ schoolId: school.schoolId, schoolName: updatedSchoolName, email: updatedEmail});
         } else {
             setIsSuccessful(false);
         }
@@ -108,7 +112,7 @@ function UpdateSchoolModal({schoolId: id, schoolName, email}: School) {
 
   return (
     <React.Fragment>
-      <Button onClick={toggle} color="secondary" outline size='sm'>
+      <Button onClick={(e) => {e.stopPropagation(); toggle();}} color="secondary" outline size='sm'>
         <FontAwesomeIcon icon={faEdit} size='sm'/>
       </Button>
       <Modal isOpen={modal} toggle={toggle}>
@@ -116,9 +120,9 @@ function UpdateSchoolModal({schoolId: id, schoolName, email}: School) {
         <ModalBody>
           <label><span className="asterisk">*</span> = Required Field</label><br/>
           <label htmlFor="name"><b>School Name</b><span className="asterisk">*</span></label>
-          <Input type="text" name="name" required defaultValue={schoolName} onChange={(event) => setUpdatedSchoolName(event.target.value)}/>
+          <Input type="text" name="name" required defaultValue={school.schoolName} onChange={(event) => setUpdatedSchoolName(event.target.value)}/>
           <label htmlFor="email"><b>School Email</b><span className="asterisk">*</span></label>
-          <Input type="text" name="email" required defaultValue={email} onChange={(event) => setUpdatedEmail(event.target.value)}/>
+          <Input type="text" name="email" required defaultValue={school.email} onChange={(event) => setUpdatedEmail(event.target.value)}/>
         </ModalBody>
         <ModalFooter>
           <Button disabled={updatedSchoolName==='' || updatedEmail===''} color="primary" onClick={handleSubmit}>Update <FontAwesomeIcon icon={faEdit}/></Button>
@@ -142,7 +146,7 @@ function UpdateSchoolModal({schoolId: id, schoolName, email}: School) {
   );
 }
 
-function DeleteSchoolModal({schoolId: id}: School) {
+function DeleteSchoolModal({school, setSelectedIds}: SchoolModalProps) {
   const queryClient = useQueryClient();
 
   const [modal, setModal] = useState<boolean>(false);
@@ -158,7 +162,10 @@ function DeleteSchoolModal({schoolId: id}: School) {
   });
 
   const handleSubmit = () => {
-    deleteSchoolMutation.mutate(id);
+    deleteSchoolMutation.mutate(school.schoolId);
+    if (setSelectedIds) {
+      setSelectedIds([]);
+    }
     setDeleteText('');
     toggle();
   };
@@ -170,7 +177,7 @@ function DeleteSchoolModal({schoolId: id}: School) {
 
   return (
     <React.Fragment>
-      <Button onClick={toggle} color="danger" outline size='sm'>
+      <Button onClick={(e) => {e.stopPropagation(); toggle();}} color="danger" outline size='sm'>
         <FontAwesomeIcon icon={faTrash as IconProp} size='sm'/>
       </Button>
       <Modal isOpen={modal} toggle={cancelDelete}>

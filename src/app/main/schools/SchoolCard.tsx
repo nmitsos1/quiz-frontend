@@ -99,7 +99,6 @@ function UpdateSchoolModal({school}: SchoolModalProps) {
         admin.auth().signOut();
         updateSchoolMutation.mutate({ schoolId: school.schoolId, schoolName: updatedSchoolName, email: updatedEmail});
       }).catch(error => {
-        console.log(error.code);
         if (error.code === 'auth/email-already-in-use') {
             updateSchoolMutation.mutate({ schoolId: school.schoolId, schoolName: updatedSchoolName, email: updatedEmail});
         } else {

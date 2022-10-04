@@ -70,7 +70,6 @@ function App() {
     queryCache: new QueryCache({
       onError: (error) => {
         let err = error as AxiosError
-        console.log('err!')
         if (err.response?.status===401) {
           debouncedRefreshToken();
         }
@@ -81,7 +80,6 @@ function App() {
         const key = mutation.options.mutationKey
         if (key) {
           let err = error as AxiosError;
-          console.log(err);
           const errMessage = err.request.response.split(': ')[1].split('\\r\\n')[0];
           setAlertColor('danger');
           setAlertMessage(`${err.message} - ${errMessage}`);

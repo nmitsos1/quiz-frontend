@@ -74,7 +74,7 @@ function SamplingForm({groupIds}: SamplingFormProps) {
       }
       <hr />
       {categoryCounts.map((cc, index) => {
-        return (<Button outline color="success">{cc.questionCategory}{' '}<Badge>{cc.count}</Badge>{' '}
+        return (<Button key={index} outline color="success">{cc.questionCategory}{' '}<Badge>{cc.count}</Badge>{' '}
           <FontAwesomeIcon onClick={() => removeCategoryCount(index)} icon={faX as IconProp}></FontAwesomeIcon>
         </Button>)
       })}

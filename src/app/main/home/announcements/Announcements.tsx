@@ -34,7 +34,7 @@ function Announcements() {
       <div>
         {announcements?.map(announcement => {
           return (
-            <AnnouncementCard announcementId={announcement.announcementId} title={announcement.title} content={announcement.content}
+            <AnnouncementCard key={announcement.announcementId} announcementId={announcement.announcementId} title={announcement.title} content={announcement.content}
              createdAt={announcement.createdAt} updatedAt={announcement.updatedAt}/>
           );
         })}

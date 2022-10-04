@@ -86,20 +86,20 @@ function Quiz() {
                 const isRight = (answer.answerText === answerOne || answer.answerText === answerTwo) && score && score > 0;
                 return (
                     (isWrong || isRight) ?
-                    <Card className="answer-card" color={isWrong ? 'danger' : 'success'} inverse>
+                    <Card key={index} className="answer-card" color={isWrong ? 'danger' : 'success'} inverse>
                         <CardBody>
                             <CardText><h5>{letters[index]}{answer.answerText}</h5></CardText>
                         </CardBody>
                     </Card>
                     :
                     ((score && score > 0) || (score === 0 && answerTwo)) ?
-                    <Card className="answer-card">
+                    <Card key={index} className="answer-card">
                         <CardBody>
                             <CardText><h5>{letters[index]}{answer.answerText}</h5></CardText>
                         </CardBody>
                     </Card>
                     :
-                    <Card className="answer-card" onClick={() => setSelectedAnswer(answer)} 
+                    <Card key={index} className="answer-card" onClick={() => setSelectedAnswer(answer)} 
                     color={answer.answerId===selectedAnswer?.answerId ? 'primary' : 'secondary'} 
                     outline={answer.answerId!==selectedAnswer?.answerId} 
                     inverse={answer.answerId===selectedAnswer?.answerId}>

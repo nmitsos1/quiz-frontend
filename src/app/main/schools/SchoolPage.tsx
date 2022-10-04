@@ -74,7 +74,7 @@ function Schools({ name, selectedIds, setSelectedIds } : SchoolsProps) {
             {
             schools.map(school => {
                 return (
-                    <SchoolCard school={school} selectedIds={selectedIds} setSelectedIds={setSelectedIds}/>
+                    <SchoolCard key={school.schoolId} school={school} selectedIds={selectedIds} setSelectedIds={setSelectedIds}/>
                 );
             })}
         </React.Fragment>
@@ -112,7 +112,6 @@ function AddSchoolModal() {
             admin.auth().signOut();
             addSchoolMutation.mutate({schoolName: schoolName, email: email});
         }).catch(error => {
-            console.log(error.code);
             if (error.code === 'auth/email-already-in-use') {
                 addSchoolMutation.mutate({schoolName: schoolName, email: email});
             } else {

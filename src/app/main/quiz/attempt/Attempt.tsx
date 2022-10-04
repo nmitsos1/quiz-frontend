@@ -120,7 +120,7 @@ function QuestionAttempts({attemptId, groupId, score}: QuestionAttemptsProps) {
                 const endTime = Moment(q.questionEndTime);
 
                 return (
-                    <Card outline color={score === 10 ? 'success' : score > 4 ? undefined : score > 1 ? 'warning' : 'danger'}>
+                    <Card key={q.questionInstanceAttemptId} outline color={score === 10 ? 'success' : score > 4 ? undefined : score > 1 ? 'warning' : 'danger'}>
                         <CardHeader>
                             <CardTitle><b>
                                 Question #{q.questionInstance.questionIndex + 1} - {score > 0 ? `Correct for ${score} points` : !q.questionEndTime ? 'Incomplete' :'Incorrect'}

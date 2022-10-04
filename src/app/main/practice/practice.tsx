@@ -74,7 +74,7 @@ function CreateCustomQuiz({groups}: QuizGroupProps) {
         <div>
           {groups.map(group => {
             return (
-              <GroupCard group={group} selectedIds={selectedIds} setSelectedIds={setSelectedIds} isSingleSelect={false}/>
+              <GroupCard key={group.questionGroupId} group={group} selectedIds={selectedIds} setSelectedIds={setSelectedIds} isSingleSelect={false}/>
             );
           })}
         </div>
@@ -112,7 +112,7 @@ function YourCustomQuizzes({groups}: QuizGroupProps) {
         <div>
           {groups.map(group => {
             return (
-              <GroupCard group={group} selectedIds={Array(1).fill(selectedId)} setSelectedIds={setSelectedId} isSingleSelect={true}/>
+              <GroupCard key={group.questionGroupId} group={group} selectedIds={Array(1).fill(selectedId)} setSelectedIds={setSelectedId} isSingleSelect={true}/>
             );
           })}
         </div>
@@ -156,9 +156,9 @@ function CustomQuizInformation({id}: CustomQuizInformationProps) {
   return (
     <div>
       <h5>{group.questionGroupName}</h5>
-      {categoryCounts.map(categoryCount => {
+      {categoryCounts.map((categoryCount, index) => {
         if (categoryCount.questionCategory!=='Any')
-          return (<div>{`${categoryCount.count} ${categoryCount.questionCategory} Question${categoryCount.count>1?'s':''}`}</div>)
+          return (<div key={index}>{`${categoryCount.count} ${categoryCount.questionCategory} Question${categoryCount.count>1?'s':''}`}</div>)
       })}
       <div><b>{totalCount} Total Question{totalCount>1 ? 's' : ''}</b></div>
       <hr />

@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Badge, Button, Collapse, Nav, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
+import { Badge, Collapse, Nav, Navbar, NavbarBrand, NavbarText, NavbarToggler, NavItem, NavLink } from 'reactstrap';
 import { isLastAttemptInProgress } from './quiz/attempt/AttemptModel';
 import { getMySchool, ROLE } from './schools/SchoolModel';
-
+import firebase from 'firebase/compat/app';
 
 function TopBar() {
 
@@ -45,6 +45,7 @@ function TopBar() {
           </NavItem>
         : <React.Fragment />}
         </Nav>
+        <NavbarText tag={Link} to="/" onClick={() => {firebase.auth().signOut(); window.location.reload(); }}>Sign Out</NavbarText>
       </Collapse>
     </Navbar>
   );

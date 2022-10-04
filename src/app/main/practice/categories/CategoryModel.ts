@@ -14,3 +14,8 @@ export const getAvailableQuestionCount = async (category: string, groupIds: Arra
   return await axios.get<number>(`/api/user/questions/count?category=${category.toUpperCase()}&groupIds=${groupIds}`)
   .then(response => response.data);
 }
+
+export const getCategoryCountsByGroupId = async (groupId: number) => {
+  return await axios.get<Array<CategoryCount>>(`/api/user/questions/count/group/${groupId}`)
+  .then(response => response.data);
+}

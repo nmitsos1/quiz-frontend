@@ -31,3 +31,15 @@
 .terminate-button {
   float: right;
 }
+
+.selected-card {
+  background-color: #e8f6fc !important;
+}
+
+.pagination-bar {
+  text-align: center;
+}
+
+.pagination-bar .dropdown-menu {
+  min-width: 5rem !important;
+}

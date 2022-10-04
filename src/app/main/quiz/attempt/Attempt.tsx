@@ -4,11 +4,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getAttemptById, isLastAttemptInProgress, shouldSaveSetPromptAppear } from "./AttemptModel";
 import Moment from 'moment';
-import { Button, Card, CardBody, CardFooter, CardHeader, CardText, CardTitle, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import { Button, Card, CardBody, CardFooter, CardHeader, CardText, CardTitle, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faBan, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
+import { faAngleLeft, faAngleRight, faAnglesLeft, faAnglesRight, faBan, faChevronCircleLeft, faChevronLeft, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { UpdateSetModal } from "../../practice/questionGroups/GroupCard";
+import { getMyQuestionsByAttemptId, getMyQuestionsCountByGroupId, QuestionInstanceAttempt } from "../QuestionModel";
+import Pagination, { Page } from "../../Pagination";
 
 function Attempt() {
 
@@ -51,38 +53,7 @@ function Attempt() {
             <h3>Quiz attempt for {attempt.questionGroup.questionGroupName}</h3>
             <h5>Start Time: {Moment(attempt.groupStartTime).format('MMMM D, YYYY hh:mm:ss A')}</h5>
             <h5>End Time: {Moment(attempt.endTime).format('MMMM D, YYYY hh:mm:ss A')}</h5>
-            <h5>Score: {attempt.currentScore}</h5>
-            <h5>
-                {(attempt.questionInstanceAttempts.length - (attempt.questionInstanceAttempts[attempt.questionInstanceAttempts.length-1].questionEndTime ? 0 : 1))}
-                {' '}out of {attempt.questionGroup.questionInstances?.length} questions answered
-            </h5>
-            <hr />
-            {attempt.questionInstanceAttempts.map(q => {
-                const score = q.questionScore;
-                const startTime = Moment(q.questionStartTime);
-                const endTime = Moment(q.questionEndTime);
-                if (!q.questionEndTime) {
-                    return (
-                        <React.Fragment />
-                    );
-                }
-
-                return (
-                    <Card outline color={score === 10 ? 'success' : score > 4 ? undefined : score > 1 ? 'warning' : 'danger'}>
-                        <CardHeader>
-                            <CardTitle><b>Question #{q.questionInstance.questionIndex + 1} - {score > 0 ? `Correct for ${score} points` : 'Incorrect'}</b></CardTitle>
-                        </CardHeader>
-                        <CardBody>
-                            <CardText>{q.questionInstance.question.questionText}</CardText>
-                            <CardText><b>Your Answer:</b> {q.answer}</CardText>
-                            {q.secondAnswer ? <CardText>Second Try: {q.secondAnswer}</CardText> : <React.Fragment />}
-                        </CardBody>
-                        <CardFooter>
-                            <CardText><small><i>Time to answer: {Moment.duration(endTime.diff(startTime)).asSeconds()} seconds</i></small></CardText>
-                        </CardFooter>
-                    </Card>
-                );
-            })}
+            <QuestionAttempts attemptId={attemptId ? parseInt(attemptId) : 0} groupId={attempt.questionGroup.questionGroupId} score={attempt.currentScore}/>
             <Modal isOpen={modal} toggle={toggle}>
                 <ModalHeader toggle={toggle}>Save this Quiz Set?</ModalHeader>
                 <ModalBody>
@@ -99,6 +70,77 @@ function Attempt() {
             }
         </div>
     )
+}
+
+interface QuestionAttemptsProps {
+    attemptId: number,
+    groupId: number,
+    score: number
+}
+function QuestionAttempts({attemptId, groupId, score}: QuestionAttemptsProps) {
+
+    const { data: totalQuestionCount } = useQuery(['question-instance-count', groupId], () => getMyQuestionsCountByGroupId(groupId));
+    
+    const [page, setPage] = useState(1);
+    const [count, setCount] = useState(5);
+    const { data: questionAttemptsPage, isError, error } = 
+        useQuery(['question-attempts', attemptId, page, count], () => getMyQuestionsByAttemptId(attemptId, page, count));
+    const [pageData, setPageData] = useState<Page<QuestionInstanceAttempt>>();
+
+    useEffect(() => {
+        if (questionAttemptsPage)
+            setPageData(questionAttemptsPage);
+    },[questionAttemptsPage])
+    
+    if (!pageData) {
+        return <div>Loading your questions...</div>
+    }
+
+    if (isError) {
+        let err = error as AxiosError
+        return <h4>There was a problem loading the question list. {err.message} - {err.response?.statusText}</h4>
+    }
+
+
+    const questionAttempts = pageData.content;
+
+    return (
+        <React.Fragment>
+            <h5>Score: {score} out of {(pageData.totalElements * 10)} possible points</h5>
+            {totalQuestionCount ? 
+            <h5>
+                {pageData.totalElements} out of {totalQuestionCount} questions attempted
+            </h5>
+            : <React.Fragment />}
+            <hr />
+            <Pagination page={pageData} setPage={setPage} setCount={setCount}/>
+            {questionAttempts.map(q => {
+                const score = q.questionScore;
+                const startTime = Moment(q.questionStartTime);
+                const endTime = Moment(q.questionEndTime);
+
+                return (
+                    <Card outline color={score === 10 ? 'success' : score > 4 ? undefined : score > 1 ? 'warning' : 'danger'}>
+                        <CardHeader>
+                            <CardTitle><b>
+                                Question #{q.questionInstance.questionIndex + 1} - {score > 0 ? `Correct for ${score} points` : !q.questionEndTime ? 'Incomplete' :'Incorrect'}
+                            </b></CardTitle>
+                        </CardHeader>
+                        <CardBody>
+                            <CardText>{q.questionInstance.question.questionText}</CardText>
+                            <CardText><b>Your Answer:</b> {q.answer}</CardText>
+                            {q.secondAnswer ? <CardText>Second Try: {q.secondAnswer}</CardText> : <React.Fragment />}
+                        </CardBody>
+                        <CardFooter>
+                            {q.questionEndTime ? 
+                            <CardText><small><i>Time to answer: {Moment.duration(endTime.diff(startTime)).asSeconds()} seconds</i></small></CardText>
+                            : <CardText><small><i>Incomplete</i></small></CardText>}
+                        </CardFooter>
+                    </Card>
+                );
+            })}
+        </React.Fragment>
+    );
 }
 
 export default Attempt

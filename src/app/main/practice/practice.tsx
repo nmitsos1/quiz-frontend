@@ -5,7 +5,7 @@ import { AxiosError } from "axios";
 import { getGroups, getMyGroupById, Group } from "./questionGroups/GroupModel";
 import GroupCard from "./questionGroups/GroupCard";
 import SamplingForm from "./categories/SamplingForm";
-import { getCategories } from "./categories/CategoryModel";
+import { getCategories, getCategoryCountsByGroupId } from "./categories/CategoryModel";
 import { beginAttempt } from "../quiz/attempt/AttemptModel";
 import { useNavigate } from "react-router-dom";
 import { startNextQuestion } from "../quiz/QuestionModel";
@@ -120,7 +120,7 @@ function YourCustomQuizzes({groups}: QuizGroupProps) {
       </Col>
       <Col>
           {selectedId ?
-          <CustomQuizInformation id={selectedId} categories={categories}/>
+          <CustomQuizInformation id={selectedId}/>
           :
           <div>Select a question set on the left to view group information and begin an attempt.</div>
           }
@@ -131,41 +131,36 @@ function YourCustomQuizzes({groups}: QuizGroupProps) {
 }
 
 interface CustomQuizInformationProps {
-  id: number,
-  categories: Array<string>
+  id: number
 }
-function CustomQuizInformation({id, categories}: CustomQuizInformationProps) {
+function CustomQuizInformation({id}: CustomQuizInformationProps) {
 
-  const { isLoading, isError, data: group, error } = useQuery(['group', id], () => getMyGroupById(id));
+  const { data: group } = useQuery(['group', id], () => getMyGroupById(id));
+  const { isLoading, isError, data: categoryCounts, error } = useQuery(['group-category-counts', id], () => getCategoryCountsByGroupId(id));
+
+  if (!group) {
+    return <h4>Loading Selected Group...</h4>
+  }
 
   if (isLoading) {
-    return <h4>Loading Selected Group...</h4>
+    return <h4>Loading Group Category Data...</h4>
   }
 
   if (isError) {
     let err = error as AxiosError
-    return <h4>There was a problem loading your selected group. {err.message} - {err.response?.statusText}</h4>
+    return <h4>There was a problem loading your group category data. {err.message} - {err.response?.statusText}</h4>
   }
+
+  const totalCount = categoryCounts.filter(cc => cc.questionCategory==='Any')[0].count;
 
   return (
     <div>
       <h5>{group.questionGroupName}</h5>
-      {categories.map(category => {
-        let categoryCount = 0;
-        group.questionInstances?.map(instance => {
-          if (instance.question.questionCategory===category) {
-            categoryCount++;
-          }
-        })
-        if (categoryCount===0) {
-          return <React.Fragment />
-        } else {
-          return (
-            <div>{categoryCount} {category} Question{categoryCount>1?'s':''}</div>
-          );
-        }
+      {categoryCounts.map(categoryCount => {
+        if (categoryCount.questionCategory!=='Any')
+          return (<div>{`${categoryCount.count} ${categoryCount.questionCategory} Question${categoryCount.count>1?'s':''}`}</div>)
       })}
-      <div><b>{group.questionInstances?.length} Total Question{group.questionInstances && group.questionInstances?.length>1 ? 's' : ''}</b></div>
+      <div><b>{totalCount} Total Question{totalCount>1 ? 's' : ''}</b></div>
       <hr />
       <CreateAndBeginQuizButton groupId={id}/>
     </div>

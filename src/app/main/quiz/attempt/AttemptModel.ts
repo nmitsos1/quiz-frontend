@@ -13,11 +13,6 @@ export interface Attempt {
     questionGroup: Group
 }
 
-export const getCurrentAttempt = async () => {
-    return await axios.get<Attempt>(`/api/user/attempts/current`)
-    .then(response => response.data);
-}
-
 export const getAttemptById = async (id: string | undefined) => {
     return await axios.get<Attempt>(`/api/user/attempts/${id}`)
     .then(response => response.data);

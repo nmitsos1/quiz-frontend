@@ -88,14 +88,14 @@ function Quiz() {
                     (isWrong || isRight) ?
                     <Card className="answer-card" color={isWrong ? 'danger' : 'success'} inverse>
                         <CardBody>
-                            <CardText>{letters[index]}{answer.answerText}</CardText>
+                            <CardText><h5>{letters[index]}{answer.answerText}</h5></CardText>
                         </CardBody>
                     </Card>
                     :
                     ((score && score > 0) || (score === 0 && answerTwo)) ?
                     <Card className="answer-card">
                         <CardBody>
-                            <CardText>{letters[index]}{answer.answerText}</CardText>
+                            <CardText><h5>{letters[index]}{answer.answerText}</h5></CardText>
                         </CardBody>
                     </Card>
                     :

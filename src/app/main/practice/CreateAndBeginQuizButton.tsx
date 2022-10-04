@@ -10,6 +10,7 @@ import { beginAttempt, killAttempt } from '../quiz/attempt/AttemptModel';
 import { startNextQuestion } from '../quiz/QuestionModel';
 import { CategoryCount } from './categories/CategoryModel';
 import { addSet } from './questionGroups/GroupModel';
+import _ from 'lodash';
 
 interface CreateAndBeginQuizButtonProps {
     categoryCounts?: Array<CategoryCount>,
@@ -24,49 +25,63 @@ function CreateAndBeginQuizButton({categoryCounts, groupIds, groupId}: CreateAnd
     const [modal, setModal] = useState<boolean>(false);
     const toggle = () => setModal(!modal);
   
+    const [isWorking, setIsWorking] = useState(false);
+
     const addSetMutation = useMutation(addSet, {
-        onSuccess: (data) => {
-          queryClient.invalidateQueries(['groups']);
-          beginAttemptMutation.mutate(data.questionGroupId);
-        }
-      });
-    
-      const beginAttemptMutation = useMutation(beginAttempt, {
-        onSuccess: () => {
-          queryClient.invalidateQueries(['attempts', 'attempt-in-progress']);
-          queryClient.invalidateQueries(['attempt-in-progress']);
-          startNextQuestionMutation.mutate();
-        },
-        onError: (error) => {
-          let err = error as AxiosError;
-          if (err.response?.status===400) {
-            const errMessage = err.request.response.split(': ')[1].split('\\r\\n')[0];
-            if (errMessage==="You can't start a new attempt while the last attempt is in progress") {
-                toggle();
-            }
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(['groups']);
+        beginAttemptMutation.mutate(data.questionGroupId);
+      }
+    });
+  
+    const beginAttemptMutation = useMutation(beginAttempt, {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['attempts', 'attempt-in-progress']);
+        queryClient.invalidateQueries(['attempt-in-progress']);
+        startNextQuestionMutation.mutate();
+      },
+      onError: (error) => {
+        let err = error as AxiosError;
+        if (err.response?.status===400) {
+          const errMessage = err.request.response.split(': ')[1].split('\\r\\n')[0];
+          if (errMessage==="You can't start a new attempt while the last attempt is in progress") {
+              toggle();
           }
         }
-      });
-    
-      const startNextQuestionMutation = useMutation(startNextQuestion, {
-        onSuccess: () => {
-          navigate(`/quiz`);
-        }
-      });
+      }
+    });
+  
+    const startNextQuestionMutation = useMutation(startNextQuestion, {
+      onSuccess: () => {
+        navigate(`/quiz`);
+      }
+    });
 
-      const killAttemptInProgressMutation = useMutation(killAttempt, {
-        onSuccess: () => {
-            toggle();
-            queryClient.invalidateQueries(['attempt-in-progress']);
-        },
-        mutationKey: ['terminate-attempt']
-      })
+    const killAttemptInProgressMutation = useMutation(killAttempt, {
+      onSuccess: () => {
+          toggle();
+          queryClient.invalidateQueries(['attempt-in-progress']);
+      },
+      mutationKey: ['terminate-attempt']
+    });
+
+    const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      setIsWorking(true);
+      if (groupIds && categoryCounts) {
+        addSetMutation.mutate({ categoryCounts: categoryCounts, groupIds: groupIds});
+      } else if (groupId) {
+        beginAttemptMutation.mutate(groupId);
+      } else {
+        e.preventDefault();
+      }
+      const enableButton = _.debounce(() => setIsWorking(false), 3000);
+      enableButton();
+    }
       
     return (
         <React.Fragment>
-            <Button color="primary" 
-            onClick={(e) => (groupIds&&categoryCounts) ? addSetMutation.mutate({ categoryCounts: categoryCounts, groupIds: groupIds})
-            : groupId ? beginAttemptMutation.mutate(groupId) : e.preventDefault()}>
+            <Button color="primary" disabled={isWorking}
+            onClick={handleSubmit}>
                 {groupIds ? 'Create Set and ' : ''}Begin Quiz
             </Button>
             <Modal isOpen={modal} toggle={toggle}>

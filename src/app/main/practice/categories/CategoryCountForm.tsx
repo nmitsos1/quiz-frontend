@@ -37,13 +37,6 @@ function CategoryCountForm({category, setCategory, groupIds, categoryCounts, set
     }
     let list = [...categoryCounts];
     list.push(categoryCount);
-    if (category !== 'Any') {
-      list.forEach((cc, index) => {
-        if (cc.questionCategory === 'Any') {
-          list.splice(index, 1);
-        }
-      })
-    }
     setCategoryCounts(list);
     setCategory(undefined);
   }

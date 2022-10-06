@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { Badge, Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from "reactstrap";
-import { CategoryCount, getCategories } from './CategoryModel'
+import { CategoryCount, getAvailableQuestionCount, getCategories } from './CategoryModel'
 import { AxiosError } from "axios";
 import { addSet } from "../questionGroups/GroupModel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -19,6 +19,7 @@ interface SamplingFormProps {
 function SamplingForm({groupIds}: SamplingFormProps) {
 
   const { isLoading, isError, data: categories, error } = useQuery(['categories'], getCategories);
+  const { data: anyCount } = useQuery(['category-count', groupIds], () => getAvailableQuestionCount('Any', groupIds));
 
   const [isOpen, setIsOpen] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
@@ -29,6 +30,17 @@ function SamplingForm({groupIds}: SamplingFormProps) {
   useEffect(() => {
     setCategoryCounts([]);
   }, [groupIds]);
+
+  let isAnyFacetInvalid = false;
+  let facetCount = 0;
+  if (anyCount) {
+    if (categoryCounts.length > 0) {
+      facetCount = categoryCounts.map(cc => cc.count).reduce((a,b) => a+b);
+      if (facetCount > anyCount) {
+        isAnyFacetInvalid = true;
+      }
+    }
+  }
 
   if (isLoading) {
     return <h4>Loading Filter Data...</h4>
@@ -54,8 +66,7 @@ function SamplingForm({groupIds}: SamplingFormProps) {
       <h4>Question Sample</h4>
       <label>
         Enter your filtering criteria for question categories below and click begin to create a 
-        randomized question set. If you plan on applying the 'Any' filter, you must apply it last
-        after setting other desired category filters.
+        randomized question set. The question limit per set is <b>250</b> questions.
       </label>
       <Dropdown isOpen={isOpen} toggle={toggle}>
         <DropdownToggle color="primary" outline caret>{selectedCategory || 'Select a category'}</DropdownToggle>
@@ -68,18 +79,29 @@ function SamplingForm({groupIds}: SamplingFormProps) {
         </DropdownMenu>
       </Dropdown>
       {selectedCategory ?
-      <CategoryCountForm category={selectedCategory} setCategory={setSelectedCategory} groupIds={groupIds} categoryCounts={categoryCounts} setCategoryCounts={setCategoryCounts}/>
+      <CategoryCountForm category={selectedCategory} setCategory={setSelectedCategory} groupIds={groupIds} 
+      categoryCounts={categoryCounts} setCategoryCounts={setCategoryCounts}/>
       : 
       <br />
       }
       <hr />
       {categoryCounts.map((cc, index) => {
-        return (<Button key={index} outline color="success">{cc.questionCategory}{' '}<Badge>{cc.count}</Badge>{' '}
+        return (<Button key={index} outline color={`${cc.questionCategory==='Any' && isAnyFacetInvalid ? 'danger' : 'success'}`}>
+          {cc.questionCategory}{' '}<Badge>{cc.count}</Badge>{' '}
           <FontAwesomeIcon onClick={() => removeCategoryCount(index)} icon={faX as IconProp}></FontAwesomeIcon>
         </Button>)
       })}
-      {categoryCounts.length > 0 ?
-      <React.Fragment><br/><br/><CreateAndBeginQuizButton categoryCounts={categoryCounts} groupIds={groupIds}/></React.Fragment>
+      {isAnyFacetInvalid ?
+      <div>
+        You have applied an 'Any' facet with a count greater than the number of questions remaining after applying your other facets. 
+        Please remove this facet and reapply with a lower question count.
+      </div>
+      :
+      (categoryCounts.length > 0) ?
+      categoryCounts.map(cc => cc.count).reduce((a,b) => a+b) <= 250 ?
+      <React.Fragment><br/><br/><CreateAndBeginQuizButton categoryCounts={categoryCounts} groupIds={groupIds}/> <label>{facetCount} Total Questions</label></React.Fragment>
+      :
+      <div>You are over the question limit. Your current question total is {facetCount} and the limit is 250.</div>
       :
       <div>No filters added.</div>}
     </div>

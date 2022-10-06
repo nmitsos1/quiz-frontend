@@ -3,13 +3,14 @@ import { faUser, faSchool, faBan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Input, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import SchoolCard from "./SchoolCard";
-import { addSchool, getSchools } from "./SchoolModel";
+import { addSchool, getSchools, School } from "./SchoolModel";
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import EditGroups from "./EditGroups";
+import Pagination, { Page } from "../Pagination";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBd-0G7MbAm5kFMgfSCu91OdMqwxcoGTX4",
@@ -55,9 +56,17 @@ interface SchoolsProps {
 }
 function Schools({ name, selectedIds, setSelectedIds } : SchoolsProps) {
 
-    const { isLoading, isError, data: schools, error } = useQuery(['schools', name], () => getSchools(name));
+    const [page, setPage] = useState(1);
+    const [count, setCount] = useState(5);
+    const { isError, data: schoolPage, error } = useQuery(['schools', name, page, count], () => getSchools(name, page, count));
+    const [pageData, setPageData] = useState<Page<School>>();
 
-    if (isLoading) {
+    useEffect(() => {
+        if (schoolPage)
+            setPageData(schoolPage);
+    },[schoolPage]);
+
+    if (!pageData) {
         return <h4>Loading Schools...</h4>
     }
 
@@ -66,11 +75,15 @@ function Schools({ name, selectedIds, setSelectedIds } : SchoolsProps) {
         return <h4>There was a problem loading Schools. {err.message} - {err.response?.statusText}</h4>
     }
 
-    if (schools?.length === 0) {
+    const schools = pageData.content;
+
+    if (schools.length === 0) {
         return <h4>No Schools to display.</h4>
     }
     return (
         <React.Fragment>
+            <hr />
+            <Pagination page={pageData} setPage={setPage} setCount={setCount}/>
             {
             schools.map(school => {
                 return (

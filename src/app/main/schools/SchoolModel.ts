@@ -1,3 +1,4 @@
+import { Page } from './../Pagination';
 import axios from "axios";
 
 export interface School {
@@ -24,8 +25,8 @@ export const getSchoolById = async (id: number) => {
     .then(response => response.data);
 }
 
-export const getSchools = async (name: String) => {
-    return await axios.get<Array<School>>(`/api/admin/schools?name=${name}`)
+export const getSchools = async (name: String, page: number, count: number) => {
+    return await axios.get<Page<School>>(`/api/admin/schools?name=${name}&page=${page}&count=${count}`)
     .then(response => response.data);
 }
 

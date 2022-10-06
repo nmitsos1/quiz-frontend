@@ -185,6 +185,7 @@ function BulkAddGroups({selectedIds, groups}: BulkAddGroupsProps) {
 
     const handleSubmit = () => {
         bulkAddGroupsMutation.mutate({schoolIds: selectedIds, groupIds: groupsToAdd.map(g => g.questionGroupId)})
+        setGroupsToAdd([])
     }
 
     const addGroup = (group: Group) => {
@@ -201,7 +202,7 @@ function BulkAddGroups({selectedIds, groups}: BulkAddGroupsProps) {
 
     return (
         <div>
-            <h4>Bulk Add Question Groups To Selected Schools</h4>
+            <h4>Bulk Add Question Groups To {selectedIds.length} Selected Schools</h4>
             {groups.length===0 ? <div>There are no other groups to add</div> :
                 <Dropdown isOpen={isOpen} toggle={toggle}>
                     <DropdownToggle color="primary" caret>Select a group to add</DropdownToggle>

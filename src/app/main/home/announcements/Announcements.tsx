@@ -23,16 +23,15 @@ function Announcements() {
     return <h4>There was a problem loading Announcements. {err.message} - {err.response?.statusText}</h4>
   }
 
-  if (announcements?.length === 0) {
-    return <h4>No Announcements to display.</h4>
-  }
-
   return (
     <div className='announcements'>
       <h4>Announcements</h4>
       {school?.role===ROLE.ADMIN ? <AddAnnouncementModal /> : <React.Fragment/>}
       <div>
-        {announcements?.map(announcement => {
+        {announcements?.length === 0 ?
+          <h4>No Announcements to display.</h4>
+          :
+        announcements?.map(announcement => {
           return (
             <AnnouncementCard key={announcement.announcementId} announcementId={announcement.announcementId} title={announcement.title} content={announcement.content}
              createdAt={announcement.createdAt} updatedAt={announcement.updatedAt}/>
@@ -74,9 +73,9 @@ function AddAnnouncementModal() {
         <ModalBody>
           <label><span className="asterisk">*</span> = Required Field</label><br/>
           <label htmlFor="title"><b>Announcement Title</b><span className="asterisk">*</span></label>
-          <Input type="text" name="title" required onChange={(event) => setTitle(event.target.value)}/>
+          <Input maxLength={60} type="text" name="title" required onChange={(event) => setTitle(event.target.value)}/>
           <label htmlFor="content"><b>Announcement Content</b><span className="asterisk">*</span></label>
-          <Input type="textarea" rows="5" name="content" required onChange={(event) => setContent(event.target.value)}/>
+          <Input maxLength={500} type="textarea" rows="5" name="content" required onChange={(event) => setContent(event.target.value)}/>
         </ModalBody>
         <ModalFooter>
           <Button disabled={title==='' || content===''} color="primary" onClick={handleSubmit}>Add <FontAwesomeIcon icon={faBullhorn as IconProp}/></Button>

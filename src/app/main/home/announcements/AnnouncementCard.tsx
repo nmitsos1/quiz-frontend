@@ -66,9 +66,9 @@ function UpdateAnnouncementModal({announcementId: id, title, content}: Announcem
         <ModalBody>
           <label><span className="asterisk">*</span> = Required Field</label><br/>
           <label htmlFor="title"><b>Announcement Title</b><span className="asterisk">*</span></label>
-          <Input type="text" name="title" required defaultValue={title} onChange={(event) => setUpdatedTitle(event.target.value)}/>
+          <Input maxLength={60} type="text" name="title" required defaultValue={title} onChange={(event) => setUpdatedTitle(event.target.value)}/>
           <label htmlFor="content"><b>Announcement Content</b><span className="asterisk">*</span></label>
-          <Input type="textarea" rows="5" name="content" required defaultValue={content} onChange={(event) => setUpdatedContent(event.target.value)}/>
+          <Input maxLength={500} type="textarea" rows="5" name="content" required defaultValue={content} onChange={(event) => setUpdatedContent(event.target.value)}/>
         </ModalBody>
         <ModalFooter>
           <Button disabled={updatedTitle==='' || updatedContent===''} color="primary" onClick={handleSubmit}>Update <FontAwesomeIcon icon={faEdit}/></Button>

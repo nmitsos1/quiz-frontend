@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-regular-svg-icons';
 import { faBan, faTrash, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { deleteSchool, School, updateSchool } from './SchoolModel';
+import { deleteSchool, ROLE, School, updateSchool } from './SchoolModel';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
@@ -58,8 +58,11 @@ function SchoolCard({school, selectedIds, setSelectedIds}: SchoolCardProps) {
       <CardBody>
         <CardText><b>Email:</b> {school.email}</CardText>
       </CardBody>
+      {school.role === ROLE.ADMIN ?
+      <CardFooter><small><i>Admin</i></small></CardFooter>
+      :
       <CardFooter><small><i>Added on {Moment(school.createdAt).format('MMMM D, YYYY hh:mm A')}{school.createdAt === school.updatedAt ? '' :
-       `, last edited ${Moment(school.updatedAt).format('MMMM D, YYYY hh:mm A')}`}</i></small></CardFooter>
+      `, last edited ${Moment(school.updatedAt).format('MMMM D, YYYY hh:mm A')}`}</i></small></CardFooter>}
     </Card>
   );
 }

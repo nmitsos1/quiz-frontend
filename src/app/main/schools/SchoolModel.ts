@@ -7,7 +7,13 @@ export interface School {
     email: string,
     role?: ROLE,
     createdAt?: Date,
-    updatedAt?: Date
+    updatedAt?: Date,
+    address1?: string,
+    address2?: string,
+    city?: string,
+    state?: string,
+    zip?: string,
+    phone?: string
 }
 
 export enum ROLE {
@@ -17,6 +23,11 @@ export enum ROLE {
 
 export const getMySchool = async () => {
     return await axios.get<School>('/api/user/school')
+    .then(response => response.data);
+}
+
+export const updateMySchool = async (school: School) => {
+    return await axios.put<School>(`api/user/school`, school)
     .then(response => response.data);
 }
 

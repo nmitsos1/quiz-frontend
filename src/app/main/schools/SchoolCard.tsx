@@ -9,6 +9,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { deleteSchool, ROLE, School, updateSchool } from './SchoolModel';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
+import { StateDropdown } from '../Shared';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBd-0G7MbAm5kFMgfSCu91OdMqwxcoGTX4",
@@ -82,8 +83,15 @@ function UpdateSchoolModal({school}: SchoolModalProps) {
 
   const [isSuccessful, setIsSuccessful] = useState<boolean>(false);
 
-  const [updatedSchoolName, setUpdatedSchoolName] = useState(school.schoolName);
   const [updatedEmail, setUpdatedEmail] = useState(school.email);
+  
+  const [updatedSchoolName, setUpdatedSchoolName] = useState(school.schoolName);
+  const [updatedAddress1, setAddress1] = useState(school.address1 || '');
+  const [updatedAddress2, setAddress2] = useState(school.address2 || '');
+  const [updatedCity, setCity] = useState(school.city || '');
+  const [updatedSelectedState, setSelectedState] = useState(school.state || '');
+  const [updatedZip, setZip] = useState(school.zip || '');
+  const [updatedPhone, setPhone] = useState(school.phone || '');
 
   const updateSchoolMutation = useMutation(updateSchool, {
     onSuccess: () => {
@@ -97,13 +105,24 @@ function UpdateSchoolModal({school}: SchoolModalProps) {
   });
 
   const handleSubmit = () => {
+    const updatedSchool: School = {
+      schoolId: school.schoolId,
+      email: updatedEmail,
+      schoolName: updatedSchoolName,
+      address1: updatedAddress1,
+      address2: updatedAddress2,
+      city: updatedCity,
+      state: updatedSelectedState,
+      zip: updatedZip,
+      phone: updatedPhone
+  }
     admin.auth().createUserWithEmailAndPassword(school.email, window.crypto.randomUUID())
     .then(() => {
         admin.auth().signOut();
-        updateSchoolMutation.mutate({ schoolId: school.schoolId, schoolName: updatedSchoolName, email: updatedEmail});
+        updateSchoolMutation.mutate(updatedSchool);
       }).catch(error => {
         if (error.code === 'auth/email-already-in-use') {
-            updateSchoolMutation.mutate({ schoolId: school.schoolId, schoolName: updatedSchoolName, email: updatedEmail});
+            updateSchoolMutation.mutate(updatedSchool);
         } else {
             setIsSuccessful(false);
         }
@@ -121,10 +140,28 @@ function UpdateSchoolModal({school}: SchoolModalProps) {
         <ModalHeader toggle={toggle}>Update School</ModalHeader>
         <ModalBody>
           <label><span className="asterisk">*</span> = Required Field</label><br/>
-          <label htmlFor="name"><b>School Name</b><span className="asterisk">*</span></label>
-          <Input type="text" name="name" required defaultValue={school.schoolName} onChange={(event) => setUpdatedSchoolName(event.target.value)}/>
           <label htmlFor="email"><b>School Email</b><span className="asterisk">*</span></label>
           <Input type="text" name="email" required defaultValue={school.email} onChange={(event) => setUpdatedEmail(event.target.value)}/>
+          <label htmlFor="name"><b>School Name</b></label>
+          <Input maxLength={60} type="text" name="name" required defaultValue={school.schoolName} onChange={(event) => setUpdatedSchoolName(event.target.value)}/>
+          <label htmlFor="address1"><b>Address Line 1</b></label>
+          <Input maxLength={60} type="text" name="address1" required defaultValue={school.address1} onChange={(event) => setAddress1(event.target.value)}/>
+          <label htmlFor="address2"><b>Address Line 2</b></label>
+          <Input maxLength={60} type="text" name="address2" required defaultValue={school.address2} onChange={(event) => setAddress2(event.target.value)}/>
+          <label htmlFor="city"><b>City</b></label>
+          <Input maxLength={60} type="text" name="city" required defaultValue={school.city} onChange={(event) => setCity(event.target.value)}/>
+          <Row>
+              <Col>
+                  <label htmlFor="state"><b>State</b></label>
+                  <StateDropdown selectedState={updatedSelectedState} setSelectedState={setSelectedState}/>
+              </Col>
+              <Col>
+                  <label htmlFor="zip"><b>ZIP Code</b></label>
+                  <Input maxLength={12} type="text" name="zip" required defaultValue={school.zip} onChange={(event) => setZip(event.target.value)}/>
+              </Col>
+          </Row>
+          <label htmlFor="phone"><b>Phone Number</b></label>
+          <Input maxLength={15} type="text" name="phone" required defaultValue={school.phone} onChange={(event) => setPhone(event.target.value)}/>
         </ModalBody>
         <ModalFooter>
           <Button disabled={updatedSchoolName==='' || updatedEmail===''} color="primary" onClick={handleSubmit}>Update <FontAwesomeIcon icon={faEdit}/></Button>
@@ -132,7 +169,7 @@ function UpdateSchoolModal({school}: SchoolModalProps) {
         </ModalFooter>
       </Modal>
       <Modal isOpen={secondModal} toggle={secondToggle}>
-          <ModalHeader toggle={secondToggle}>{isSuccessful ? 'School Added' : 'An Error Occurred'}</ModalHeader>
+          <ModalHeader toggle={secondToggle}>{isSuccessful ? 'School Updated' : 'An Error Occurred'}</ModalHeader>
           <ModalBody>
               {isSuccessful ? 'This school has been updated with the given email address and a random password. ' + 
               ' Next, the user must go to the login screen, enter this email address, and select the Reset Password link in order to set a new password.'

@@ -4,13 +4,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React, { useEffect, useState } from "react";
-import { Button, Col, Input, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
+import { Button, Col, Collapse, Dropdown, Input, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import SchoolCard from "./SchoolCard";
 import { addSchool, getSchools, School } from "./SchoolModel";
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import EditGroups from "./EditGroups";
 import Pagination, { Page } from "../Pagination";
+import { StateDropdown } from "../Shared";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBd-0G7MbAm5kFMgfSCu91OdMqwxcoGTX4",
@@ -100,14 +101,33 @@ function AddSchoolModal() {
     const [modal, setModal] = useState<boolean>(false);
     const toggle = () => setModal(!modal);
   
+    const [isOpen, setIsOpen] = useState(false);
+    const toggleInfo = () => setIsOpen(!isOpen);
+
     const [secondModal, setSecondModal] = useState<boolean>(false);
     const secondToggle = () => setSecondModal(!secondModal);
-
     const [isSuccessful, setIsSuccessful] = useState<boolean>(false);
 
-    const [schoolName, setSchoolName] = useState('');
     const [email, setEmail] = useState('');
-  
+
+    const [schoolName, setSchoolName] = useState('');
+    const [address1, setAddress1] = useState('');
+    const [address2, setAddress2] = useState('');
+    const [city, setCity] = useState('');
+    const [selectedState, setSelectedState] = useState('');
+    const [zip, setZip] = useState('');
+    const [phone, setPhone] = useState('');
+
+    useEffect(() => {
+        setSchoolName('');
+        setAddress1('');
+        setAddress2('');
+        setCity('');
+        setSelectedState('');
+        setZip('');
+        setPhone('');
+    }, [isOpen, modal]);
+
     const addSchoolMutation = useMutation(addSchool, {
       onSuccess: () => {
         queryClient.invalidateQueries(['schools']);
@@ -120,13 +140,23 @@ function AddSchoolModal() {
     });
   
     const handleSubmit = () => {
+        const school: School = {
+            email: email,
+            schoolName: schoolName,
+            address1: address1,
+            address2: address2,
+            city: city,
+            state: selectedState,
+            zip: zip,
+            phone: phone
+        }
         admin.auth().createUserWithEmailAndPassword(email, window.crypto.randomUUID())
         .then(() => {
             admin.auth().signOut();
-            addSchoolMutation.mutate({schoolName: schoolName, email: email});
+            addSchoolMutation.mutate(school);
         }).catch(error => {
             if (error.code === 'auth/email-already-in-use') {
-                addSchoolMutation.mutate({schoolName: schoolName, email: email});
+                addSchoolMutation.mutate(school);
             } else {
                 setIsSuccessful(false);
             }
@@ -145,13 +175,38 @@ function AddSchoolModal() {
           <ModalHeader toggle={toggle}>Add School</ModalHeader>
           <ModalBody>
             <label><span className="asterisk">*</span> = Required Field</label><br/>
-            <label htmlFor="name"><b>School Name</b><span className="asterisk">*</span></label>
-            <Input type="text" name="name" required onChange={(event) => setSchoolName(event.target.value)}/>
             <label htmlFor="email"><b>Email</b><span className="asterisk">*</span></label>
-            <Input type="text" name="email" required onChange={(event) => setEmail(event.target.value)}/>
+            <Input maxLength={60} type="text" name="email" required onChange={(event) => setEmail(event.target.value)}/>
+            <br />
+            <Button color="dark" outline onClick={toggleInfo} active={isOpen}>{isOpen ? 'Clear and close below ' : 'Enter all '}school information</Button>
+            {isOpen ? <React.Fragment />
+            : <div>If you do not enter all school information, the school will be prompted to enter this when they sign in with the email above.</div>}
+            <Collapse isOpen={isOpen}>
+                <hr/>
+                <label htmlFor="name"><b>School Name</b></label>
+                <Input maxLength={60} type="text" name="name" required value={schoolName} onChange={(event) => setSchoolName(event.target.value)}/>
+                <label htmlFor="address1"><b>Address Line 1</b></label>
+                <Input maxLength={60} type="text" name="address1" required value={address1} onChange={(event) => setAddress1(event.target.value)}/>
+                <label htmlFor="address2"><b>Address Line 2</b></label>
+                <Input maxLength={60} type="text" name="address2" required value={address2} onChange={(event) => setAddress2(event.target.value)}/>
+                <label htmlFor="city"><b>City</b></label>
+                <Input maxLength={60} type="text" name="city" required value={city} onChange={(event) => setCity(event.target.value)}/>
+                <Row>
+                    <Col>
+                        <label htmlFor="state"><b>State</b></label>
+                        <StateDropdown selectedState={selectedState} setSelectedState={setSelectedState}/>
+                    </Col>
+                    <Col>
+                        <label htmlFor="zip"><b>ZIP Code</b></label>
+                        <Input maxLength={12} type="text" name="zip" required value={zip} onChange={(event) => setZip(event.target.value)}/>
+                    </Col>
+                </Row>
+                <label htmlFor="phone"><b>Phone Number</b></label>
+                <Input maxLength={15} type="text" name="phone" required value={phone} onChange={(event) => setPhone(event.target.value)}/>
+            </Collapse>
           </ModalBody>
           <ModalFooter>
-            <Button disabled={schoolName==='' || email===''} color="primary" onClick={handleSubmit}>Add <FontAwesomeIcon icon={faSchool as IconProp}/></Button>
+            <Button disabled={email===''} color="primary" onClick={handleSubmit}>Add <FontAwesomeIcon icon={faSchool as IconProp}/></Button>
             <Button outline color="secondary" onClick={toggle}>Cancel <FontAwesomeIcon icon={faBan as IconProp}/></Button>
           </ModalFooter>
         </Modal>

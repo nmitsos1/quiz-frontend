@@ -10,7 +10,8 @@ export interface Attempt {
     currentScore: number,
     endTime: Date,
     questionInstanceAttempts: Array<QuestionInstanceAttempt>,
-    questionGroup: Group
+    questionGroup: Group,
+    ruleSet: RuleSet
 }
 
 export enum RuleSet {
@@ -33,6 +34,11 @@ export function getRuleSetDescriptions(ruleSet: RuleSet) {
 
 export const getAttemptById = async (id: string | undefined) => {
     return await axios.get<Attempt>(`/api/user/attempts/${id}`)
+    .then(response => response.data);
+}
+
+export const getMyAttempt = async () => {
+    return await axios.get<Attempt>(`/api/user/attempt`)
     .then(response => response.data);
 }
 

@@ -7,12 +7,14 @@ import { attempt, isUndefined } from "lodash";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Badge, Button, Card, CardBody, CardText, Col, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
-import { killAttempt } from "./attempt/AttemptModel";
+import { getAttemptById, getMyAttempt, getMyAttempts, killAttempt, RuleSet } from "./attempt/AttemptModel";
 import { Answer, answerCurrentQuestion, getCurrentQuestion, startNextQuestion } from "./QuestionModel";
+import { DefaultTimer, RelayTimer } from "./QuizTimers";
 
 function Quiz() {
 
     const { isLoading, isError, data: questionAttempt, error } = useQuery(['question-attempt'], getCurrentQuestion);
+    const { data: attempt } = useQuery(['attempt'], getMyAttempt);
     const questionNumber = questionAttempt?.questionInstance.questionIndex;
     const question = questionAttempt?.questionInstance.question;
     const answerOne = questionAttempt?.answer;
@@ -64,7 +66,7 @@ function Quiz() {
 
     const letters = ['A. ', 'B. ', 'C. ', 'D. ', 'E. ', 'F. '];
 
-    if (isLoading) {
+    if (isLoading || !attempt) {
         return <h4>Loading Next Question...</h4>
     }
 
@@ -72,6 +74,8 @@ function Quiz() {
         let err = error as AxiosError
         return <h4>There was a problem loading your current question. {err.message} - {err.response?.statusText}</h4>
     }
+
+    let isAnswered = !!((score && score > 0) || (score === 0 && endTime));
 
     return (
         <div className="quiz-page">
@@ -86,7 +90,18 @@ function Quiz() {
                 <h4>{question?.questionText}</h4>
                 </Col>
                 <Col xs="2">
-                {startTime ? <div className="float-right-class"><QuizTimer key={startTime.toString()} startTime={startTime} endTime={endTime} /></div> : <React.Fragment />}
+                {startTime ? 
+                <div className="float-right-class">
+                    {
+                        attempt.ruleSet === RuleSet.DEFAULT ?
+                        <DefaultTimer key={startTime.toString()} startTime={startTime} endTime={endTime} />
+                        :
+                        attempt.ruleSet === RuleSet.RELAY ?
+                        <RelayTimer key={startTime.toString()} startTime={startTime} endTime={endTime} answerCurrentQuestionMutation={answerCurrentQuestionMutation}/>
+                        : <React.Fragment />
+                    }
+                </div>
+                : <React.Fragment />}
                 </Col>
             </Row>
             <Col>
@@ -121,16 +136,20 @@ function Quiz() {
                 );
             })}
             <hr />
-            {(score && score > 0) || (score === 0 && endTime) ?
-            <Button block outline size="lg" color='primary'
-            onClick={() => startNextQuestionMutation.mutate()}>
-                Continue
-            </Button>
-            :
-            <Button block size="lg" disabled={!selectedAnswer} color='primary'
+            <Button block size="lg" disabled={!selectedAnswer || isAnswered} color='primary'
             onClick={handleSubmit}>
                 Submit Answer
             </Button>
+            {isAnswered ?
+            <React.Fragment>
+                <br />
+                <Button block outline size="lg" color='primary'
+                onClick={() => startNextQuestionMutation.mutate()}>
+                    Continue
+                </Button>
+            </React.Fragment>
+            :
+            <React.Fragment />
             }
             <Modal isOpen={modal} toggle={toggle}>
                 <ModalHeader toggle={toggle}>Terminate Quiz</ModalHeader>
@@ -148,31 +167,4 @@ function Quiz() {
     )
 }
 
-interface QuizTimerProps {
-    startTime: Date,
-    endTime?: Date
-}
-function QuizTimer({startTime, endTime}: QuizTimerProps) {
-
-    const [time, setTime] = useState((endTime ? new Date(endTime).getTime() : Date.now()) - new Date(startTime).getTime());
-    
-    useEffect(() => {
-        if (!endTime) {
-            const intervalTimer = setInterval(() => setTime(Date.now() - new Date(startTime).getTime()), 100);
-            return () => clearInterval(intervalTimer);
-        } else {
-            return () => clearInterval(undefined);
-        }
-    }, [endTime]);
-
-    const seconds = Math.floor(time/1000);
-
-    return (
-        <h3>
-            <Badge color={seconds < 7 ? 'success' : seconds < 15 ? 'dark' : seconds < 30 ? 'warning' : 'danger'}>
-                {seconds}
-            </Badge>
-        </h3>
-    );
-}
 export default Quiz

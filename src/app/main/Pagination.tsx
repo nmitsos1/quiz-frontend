@@ -60,7 +60,7 @@ export default function Pagination<Type>({page, setPage, setCount, isLoading}: P
             <Button outline color="dark" disabled={page.last || isLoading} onClick={() => setPage(page.totalPages)}>
                 <FontAwesomeIcon icon={faAnglesRight as IconProp} size='sm' />
             </Button>{' '}
-            <div style={{display: 'inline-block'}}>
+            <div className="inline-block-class">
                 <Dropdown isOpen={isOpen} toggle={toggle} disabled={isLoading}>
                     <DropdownToggle color="primary" outline caret disabled={isLoading}>{page.pageable.pageSize} records per page</DropdownToggle>
                     <DropdownMenu>

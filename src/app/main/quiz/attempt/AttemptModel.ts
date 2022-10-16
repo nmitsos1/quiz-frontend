@@ -13,6 +13,24 @@ export interface Attempt {
     questionGroup: Group
 }
 
+export enum RuleSet {
+    DEFAULT = 'Default',
+    RELAY = 'Relay',
+    UNTIMED = 'Untimed'
+}
+
+export function getRuleSetDescriptions(ruleSet: RuleSet) {
+    switch (ruleSet) {
+        case RuleSet.RELAY:
+            return '10 seconds to answer each question. You only get one guess, scoring is all or nothing.'
+        case RuleSet.UNTIMED:
+            return 'You may take as long as you like to submit a single answer for each question.'
+        case RuleSet.DEFAULT:
+        default:
+            return 'The default mode used in official events. More points for faster answers, with an opportunity to guess again if you get it wrong for fewer points.'
+    }
+}
+
 export const getAttemptById = async (id: string | undefined) => {
     return await axios.get<Attempt>(`/api/user/attempts/${id}`)
     .then(response => response.data);
@@ -33,8 +51,12 @@ export const isLastAttemptInProgress = async () => {
     .then(response => response.data);
 }
 
-export const beginAttempt = async (groupId: number) => {
-    return await axios.post<Attempt>(`/api/user/attempts/groups/${groupId}`)
+export interface beginAttemptParams {
+    groupId: number,
+    ruleSet: RuleSet
+}
+export const beginAttempt = async (params: beginAttemptParams) => {
+    return await axios.post<Attempt>(`/api/user/attempts/groups/${params.groupId}/${params.ruleSet}`)
     .then(response => response.data);
 }
 

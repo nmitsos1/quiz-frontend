@@ -5,8 +5,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import { beginAttempt, killAttempt } from '../quiz/attempt/AttemptModel';
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import { beginAttempt, getRuleSetDescriptions, killAttempt, RuleSet } from '../quiz/attempt/AttemptModel';
 import { startNextQuestion } from '../quiz/QuestionModel';
 import { CategoryCount } from './categories/CategoryModel';
 import { addSet } from './questionGroups/GroupModel';
@@ -25,18 +25,22 @@ function CreateAndBeginQuizButton({categoryCounts, groupIds, groupId}: CreateAnd
     const [modal, setModal] = useState<boolean>(false);
     const toggle = () => setModal(!modal);
   
+    const [isOpen, setIsOpen] = useState(false);
+    const toggleDropdown = () => setIsOpen(!isOpen);
+  
     const [isWorking, setIsWorking] = useState(false);
+    const [ruleSet, setRuleSet] = useState<RuleSet>(RuleSet.DEFAULT);
 
     const addSetMutation = useMutation(addSet, {
       onSuccess: (data) => {
         queryClient.invalidateQueries(['groups']);
-        beginAttemptMutation.mutate(data.questionGroupId);
+        beginAttemptMutation.mutate({groupId: data.questionGroupId, ruleSet: ruleSet});
       }
     });
   
     const beginAttemptMutation = useMutation(beginAttempt, {
       onSuccess: () => {
-        queryClient.invalidateQueries(['attempts', 'attempt-in-progress']);
+        queryClient.invalidateQueries(['attempts']);
         queryClient.invalidateQueries(['attempt-in-progress']);
         startNextQuestionMutation.mutate();
       },
@@ -70,7 +74,7 @@ function CreateAndBeginQuizButton({categoryCounts, groupIds, groupId}: CreateAnd
       if (groupIds && categoryCounts) {
         addSetMutation.mutate({ categoryCounts: categoryCounts, groupIds: groupIds});
       } else if (groupId) {
-        beginAttemptMutation.mutate(groupId);
+        beginAttemptMutation.mutate({groupId: groupId, ruleSet: ruleSet});
       } else {
         e.preventDefault();
       }
@@ -80,6 +84,17 @@ function CreateAndBeginQuizButton({categoryCounts, groupIds, groupId}: CreateAnd
       
     return (
         <React.Fragment>
+          <label><b>Select a Rule Set</b></label>
+            <Dropdown isOpen={isOpen} toggle={toggleDropdown}>
+              <DropdownToggle color="primary" outline caret>{ruleSet}</DropdownToggle>
+              <DropdownMenu>
+              {Object.values(RuleSet).map((ruleset, index) => {
+                return (<DropdownItem onClick={() => setRuleSet(ruleset)} key={index+1}>{ruleset}</DropdownItem>)
+              })}
+              </DropdownMenu>
+            </Dropdown>
+            <label>{getRuleSetDescriptions(ruleSet)}</label>
+            <hr/>
             <Button color="primary" disabled={isWorking}
             onClick={handleSubmit}>
                 {groupIds ? 'Create Set and ' : ''}Begin Quiz

@@ -28,7 +28,7 @@
   float: right;
 }
 
-.terminate-button {
+.float-right-class {
   float: right;
 }
 
@@ -47,4 +47,8 @@
 .dropdown-menu {
   max-height: 300px;
   overflow-y: scroll;
+}
+
+.inline-block-class {
+  display: inline-block;
 }

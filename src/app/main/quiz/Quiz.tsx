@@ -4,9 +4,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { attempt, isUndefined } from "lodash";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Button, Card, CardBody, CardText, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import { Badge, Button, Card, CardBody, CardText, Col, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import { killAttempt } from "./attempt/AttemptModel";
 import { Answer, answerCurrentQuestion, getCurrentQuestion, startNextQuestion } from "./QuestionModel";
 
@@ -18,6 +18,8 @@ function Quiz() {
     const answerOne = questionAttempt?.answer;
     const answerTwo = questionAttempt?.secondAnswer;
     const score = questionAttempt?.questionScore;
+    const startTime = questionAttempt?.questionStartTime;
+    const endTime = questionAttempt?.questionEndTime;
     
     const [selectedAnswer, setSelectedAnswer] = useState<Answer>();
 
@@ -75,11 +77,20 @@ function Quiz() {
         <div className="quiz-page">
             <h3>
                 Question #{isUndefined(questionNumber) ? '?' : (questionNumber + 1)}
-                {(score && score > 0) || (score === 0 && answerTwo) ? ` - You scored ${score} point${score === 1 ? '' : 's'}`: ''}
-                <Button className="terminate-button" color="danger" outline onClick={toggle}>Terminate Quiz</Button>
+                {(score && score > 0) || (score === 0 && endTime) ? ` - You scored ${score} point${score === 1 ? '' : 's'}`: ''}
+                <Button className="float-right-class" color="danger" outline onClick={toggle}>Terminate Quiz</Button>
             </h3>
             <br /><br />
-            <h4>{question?.questionText}</h4>
+            <Row>
+                <Col xs="10">
+                <h4>{question?.questionText}</h4>
+                </Col>
+                <Col xs="2">
+                {startTime ? <div className="float-right-class"><QuizTimer key={startTime.toString()} startTime={startTime} endTime={endTime} /></div> : <React.Fragment />}
+                </Col>
+            </Row>
+            <Col>
+            </Col>
             <hr />
             {question?.answers.map((answer, index) => {
                 const isWrong = (answer.answerText === answerOne && (score===0 || answerTwo)) || (answer.answerText === answerTwo && score===0);
@@ -92,7 +103,7 @@ function Quiz() {
                         </CardBody>
                     </Card>
                     :
-                    ((score && score > 0) || (score === 0 && answerTwo)) ?
+                    ((score && score > 0) || (score === 0 && endTime)) ?
                     <Card key={index} className="answer-card">
                         <CardBody>
                             <CardText><h5>{letters[index]}{answer.answerText}</h5></CardText>
@@ -110,7 +121,7 @@ function Quiz() {
                 );
             })}
             <hr />
-            {(score && score > 0) || (score === 0 && answerTwo) ?
+            {(score && score > 0) || (score === 0 && endTime) ?
             <Button block outline size="lg" color='primary'
             onClick={() => startNextQuestionMutation.mutate()}>
                 Continue
@@ -137,4 +148,31 @@ function Quiz() {
     )
 }
 
+interface QuizTimerProps {
+    startTime: Date,
+    endTime?: Date
+}
+function QuizTimer({startTime, endTime}: QuizTimerProps) {
+
+    const [time, setTime] = useState((endTime ? new Date(endTime).getTime() : Date.now()) - new Date(startTime).getTime());
+    
+    useEffect(() => {
+        if (!endTime) {
+            const intervalTimer = setInterval(() => setTime(Date.now() - new Date(startTime).getTime()), 100);
+            return () => clearInterval(intervalTimer);
+        } else {
+            return () => clearInterval(undefined);
+        }
+    }, [endTime]);
+
+    const seconds = Math.floor(time/1000);
+
+    return (
+        <h3>
+            <Badge color={seconds < 7 ? 'success' : seconds < 15 ? 'dark' : seconds < 30 ? 'warning' : 'danger'}>
+                {seconds}
+            </Badge>
+        </h3>
+    );
+}
 export default Quiz

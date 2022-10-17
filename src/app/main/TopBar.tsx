@@ -34,9 +34,14 @@ function TopBar() {
             <NavLink tag={Link} to="/attempts">History</NavLink>
           </NavItem>
           {school?.role === ROLE.ADMIN ?
-          <NavItem>
-            <NavLink tag={Link} to="/schools">Schools</NavLink>
-          </NavItem>
+          <React.Fragment >
+            <NavItem>
+              <NavLink tag={Link} to="/schools">Schools</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink tag={Link} to="/questions">Questions</NavLink>
+            </NavItem>
+          </React.Fragment>
           : <React.Fragment />
           }
           {(isAttemptInProgress && !location.pathname.includes('quiz')) ?

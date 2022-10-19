@@ -1,7 +1,7 @@
-import { UseMutationResult, useQueryClient } from "@tanstack/react-query";
+import { UseMutationResult } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { Badge } from "reactstrap";
-import { Answer } from "./QuestionModel";
+import { Answer } from "../questions/QuestionModel";
 
 interface QuizTimerProps {
     startTime: Date,

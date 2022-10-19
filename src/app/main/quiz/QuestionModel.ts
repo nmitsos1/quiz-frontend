@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Page } from "../Pagination";
+import { Answer, Question } from "../questions/QuestionModel";
 
 export interface QuestionInstanceAttempt {
     questionInstanceAttemptId: number,
@@ -16,19 +17,6 @@ export interface QuestionInstance {
     questionInstanceId: number,
     questionIndex: number,
     question: Question
-}
-
-export interface Question {
-    questionId: number,
-    originalIdentifier: number,
-    questionCategory: string,
-    questionText: string,
-    answers: Array<Answer>
-}
-
-export interface Answer {
-    answerId: number,
-    answerText: string
 }
 
 export const getCurrentQuestion = async () => {

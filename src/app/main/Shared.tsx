@@ -23,3 +23,5 @@ export function StateDropdown({selectedState, setSelectedState}:StateDropdownPro
         </Dropdown>
     )
 }
+
+export const letters = ['A. ', 'B. ', 'C. ', 'D. ', 'E. ', 'F. '];

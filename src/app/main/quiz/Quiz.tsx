@@ -7,8 +7,10 @@ import { attempt, isUndefined } from "lodash";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Badge, Button, Card, CardBody, CardText, Col, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
+import { Answer } from "../questions/QuestionModel";
+import { letters } from "../Shared";
 import { getAttemptById, getMyAttempt, getMyAttempts, killAttempt, RuleSet } from "./attempt/AttemptModel";
-import { Answer, answerCurrentQuestion, getCurrentQuestion, startNextQuestion } from "./QuestionModel";
+import { answerCurrentQuestion, getCurrentQuestion, startNextQuestion } from "./QuestionModel";
 import { DefaultTimer, RelayTimer } from "./QuizTimers";
 
 function Quiz() {
@@ -63,8 +65,6 @@ function Quiz() {
             setSelectedAnswer(undefined);
         }
     }
-
-    const letters = ['A. ', 'B. ', 'C. ', 'D. ', 'E. ', 'F. '];
 
     if (isLoading || !attempt) {
         return <h4>Loading Next Question...</h4>

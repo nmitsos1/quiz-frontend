@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { beginAttempt, getRuleSetDescriptions, killAttempt, RuleSet } from '../quiz/attempt/AttemptModel';
-import { startNextQuestion } from '../quiz/QuestionModel';
+import { startNextQuestion } from '../quiz/QuestionAttemptModel';
 import { CategoryCount } from './categories/CategoryModel';
 import { addSet } from './questionGroups/GroupModel';
 import _ from 'lodash';

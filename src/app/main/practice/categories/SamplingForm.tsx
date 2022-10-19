@@ -10,7 +10,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import CategoryCountForm from "./CategoryCountForm";
 import { beginAttempt } from "../../quiz/attempt/AttemptModel";
 import { useNavigate } from "react-router-dom";
-import { startNextQuestion } from "../../quiz/QuestionModel";
+import { startNextQuestion } from "../../quiz/QuestionAttemptModel";
 import CreateAndBeginQuizButton from "../CreateAndBeginQuizButton";
 
 interface SamplingFormProps {

@@ -1,5 +1,5 @@
 import { Group } from './../../practice/questionGroups/GroupModel';
-import { QuestionInstanceAttempt } from './../QuestionModel';
+import { QuestionInstanceAttempt } from '../QuestionAttemptModel';
 import axios from "axios";
 
 export interface Attempt {

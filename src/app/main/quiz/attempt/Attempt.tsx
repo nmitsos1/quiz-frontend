@@ -9,7 +9,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faAngleLeft, faAngleRight, faAnglesLeft, faAnglesRight, faBan, faChevronCircleLeft, faChevronLeft, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { UpdateSetModal } from "../../practice/questionGroups/GroupCard";
-import { getMyQuestionsByAttemptId, getMyQuestionsCountByGroupId, QuestionInstanceAttempt } from "../QuestionModel";
+import { getMyQuestionsByAttemptId, getMyQuestionsCountByGroupId, QuestionInstanceAttempt } from "../QuestionAttemptModel";
 import Pagination, { Page } from "../../Pagination";
 
 function Attempt() {

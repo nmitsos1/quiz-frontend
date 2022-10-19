@@ -10,7 +10,7 @@ import { Badge, Button, Card, CardBody, CardText, Col, Modal, ModalBody, ModalFo
 import { Answer } from "../questions/QuestionModel";
 import { letters } from "../Shared";
 import { getAttemptById, getMyAttempt, getMyAttempts, killAttempt, RuleSet } from "./attempt/AttemptModel";
-import { answerCurrentQuestion, getCurrentQuestion, startNextQuestion } from "./QuestionModel";
+import { answerCurrentQuestion, getCurrentQuestion, startNextQuestion } from "./QuestionAttemptModel";
 import { DefaultTimer, RelayTimer } from "./QuizTimers";
 
 function Quiz() {

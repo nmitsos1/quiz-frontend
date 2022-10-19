@@ -1,4 +1,4 @@
-import { QuestionInstance } from './../../quiz/QuestionModel';
+import { QuestionInstance } from '../../quiz/QuestionAttemptModel';
 import axios from "axios";
 import { CategoryCount } from "../categories/CategoryModel";
 

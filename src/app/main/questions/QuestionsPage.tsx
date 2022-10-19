@@ -5,7 +5,7 @@ import { Col, Input, Row } from 'reactstrap';
 import Pagination, { Page } from '../Pagination';
 import { getQuestions, Question } from './QuestionModel';
 import QuestionCard from './QuestionCard';
-import QuestionsUpload from './QuestionUpload';
+import QuestionsUpload from './upload/QuestionUpload';
 
 function QuestionsPage() {
 

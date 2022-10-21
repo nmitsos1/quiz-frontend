@@ -1,16 +1,12 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { Badge, Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from "reactstrap";
 import { CategoryCount, getAvailableQuestionCount, getCategories } from './CategoryModel'
 import { AxiosError } from "axios";
-import { addSet } from "../questionGroups/GroupModel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import CategoryCountForm from "./CategoryCountForm";
-import { beginAttempt } from "../../quiz/attempt/AttemptModel";
-import { useNavigate } from "react-router-dom";
-import { startNextQuestion } from "../../quiz/QuestionAttemptModel";
 import CreateAndBeginQuizButton from "../CreateAndBeginQuizButton";
 
 interface SamplingFormProps {

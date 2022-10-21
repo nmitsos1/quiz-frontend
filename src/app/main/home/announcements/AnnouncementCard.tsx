@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Card, CardBody, CardColumns, CardFooter, CardHeader, CardText, CardTitle, Col, Input, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
+import { Button, Card, CardBody, CardFooter, CardHeader, CardText, CardTitle, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Announcement, deleteAnnouncement, updateAnnouncement } from './AnnouncementModel';
 import { getMySchool, ROLE } from '../../schools/SchoolModel';
 import Moment from 'moment';
@@ -25,7 +25,7 @@ function AnnouncementCard({announcementId: id, title, content, createdAt, update
           : <React.Fragment />}
         </CardTitle>
       </CardHeader>
-      <CardBody>
+      <CardBody className='preserve-format'>
         <CardText>{content}</CardText>
       </CardBody>
       <CardFooter><small><i>Posted on {Moment(createdAt).format('MMMM D, YYYY hh:mm A')}{createdAt === updatedAt ? '' :

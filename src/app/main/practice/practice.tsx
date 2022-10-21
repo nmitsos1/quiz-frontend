@@ -1,19 +1,17 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
-import { Button, Col, Nav, NavItem, NavLink, Row } from "reactstrap";
+import { Col, Nav, NavItem, NavLink, Row } from "reactstrap";
 import { AxiosError } from "axios";
 import { getGroups, getMyGroupById, Group } from "./questionGroups/GroupModel";
 import GroupCard from "./questionGroups/GroupCard";
 import SamplingForm from "./categories/SamplingForm";
-import { getCategories, getCategoryCountsByGroupId } from "./categories/CategoryModel";
-import { beginAttempt } from "../quiz/attempt/AttemptModel";
-import { useNavigate } from "react-router-dom";
-import { startNextQuestion } from "../quiz/QuestionAttemptModel";
+import { getCategoryCountsByGroupId } from "./categories/CategoryModel";
 import CreateAndBeginQuizButton from "./CreateAndBeginQuizButton";
+import { IdProps } from "../Shared";
 
 function Practice() {
 
-  const { isLoading, isError, data: groups, error, isSuccess } = useQuery(['groups'], getGroups);
+  const { isLoading, isError, data: groups, error } = useQuery(['groups'], getGroups);
 
   const [isCustomTab, setIsCustomTab] = useState(false);
 
@@ -50,7 +48,6 @@ function Practice() {
     </div>
   )
 }
-
 
 interface QuizGroupProps {
   groups: Array<Group>
@@ -90,18 +87,7 @@ function CreateCustomQuiz({groups}: QuizGroupProps) {
 
 function YourCustomQuizzes({groups}: QuizGroupProps) {
 
-  const { isLoading, isError, data: categories, error } = useQuery(['categories'], getCategories);
-
   const [selectedId, setSelectedId] = useState<number>();
-
-  if (isLoading) {
-    return <h4>Loading Categories...</h4>
-  }
-
-  if (isError) {
-    let err = error as AxiosError
-    return <h4>There was a problem loading categories. {err.message} - {err.response?.statusText}</h4>
-  }
 
   return (
     <Row>
@@ -130,10 +116,7 @@ function YourCustomQuizzes({groups}: QuizGroupProps) {
   );
 }
 
-interface CustomQuizInformationProps {
-  id: number
-}
-function CustomQuizInformation({id}: CustomQuizInformationProps) {
+function CustomQuizInformation({id}: IdProps) {
 
   const { data: group } = useQuery(['group', id], () => getMyGroupById(id));
   const { isLoading, isError, data: categoryCounts, error } = useQuery(['group-category-counts', id], () => getCategoryCountsByGroupId(id));

@@ -65,6 +65,19 @@ function App() {
     return config;
   });
 
+  interface SpringErrorData {
+    error: string,
+    message: string,
+    status: number,
+    errors: Array<SpringError>
+  }
+
+  interface SpringError {
+    defaultMessage: string,
+    objectName: string,
+    field: string,
+  }
+
   /** Global queryClient callbacks for queries and mutations. Used for message handling here */
   const queryClient = new QueryClient({
     queryCache: new QueryCache({
@@ -80,7 +93,17 @@ function App() {
         const key = mutation.options.mutationKey
         if (key) {
           let err = error as AxiosError;
-          const errMessage = err.request.response.split(': ')[1].split('\\r\\n')[0];
+          console.log(err.request)
+          console.log(err.response?.data)
+          const errorData: SpringErrorData = err.response?.data as SpringErrorData;
+          let errMessage = `${errorData.message}`;
+          if (errorData.errors) {
+            errMessage = errMessage + '\r\n';
+            errorData.errors.forEach((springError) => {
+              errMessage = errMessage + springError.defaultMessage + '\r\n';
+            })
+          }
+          //const errMessage = err.request.response.split(': ')[1].split('\\r\\n')[0];
           setAlertColor('danger');
           setAlertMessage(`${err.message} - ${errMessage}`);
           setCurrentDate(new Date())

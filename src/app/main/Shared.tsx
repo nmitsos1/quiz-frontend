@@ -25,3 +25,7 @@ export function StateDropdown({selectedState, setSelectedState}:StateDropdownPro
 }
 
 export const letters = ['A. ', 'B. ', 'C. ', 'D. ', 'E. ', 'F. '];
+
+export interface IdProps {
+    id: number
+}

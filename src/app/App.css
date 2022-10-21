@@ -7,7 +7,11 @@
 }
 
 .alert-bar .alert {
-  margin: 0px
+  margin: 0px;
+}
+
+.preserve-format {
+  white-space: pre-wrap;
 }
 
 .modal-open {

@@ -11,9 +11,9 @@ interface MessageBarProps {
 function MessageBar({message, color, setMessage}: MessageBarProps) {
 
   return (
-    <div className='alert-bar'>
+    <div className='alert-bar preserve-format'>
       <Alert hidden={message===''} color={color} isOpen={message!==''} onClick={(_.debounce(() => setMessage(''), 0))}>
-        {message.split(' AT ')[0]}
+        {message.split(' AT ')[0].trim()}
       </Alert>
     </div>
   );

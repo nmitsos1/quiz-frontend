@@ -3,13 +3,13 @@ import { faBan, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { attempt, isUndefined } from "lodash";
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Badge, Button, Card, CardBody, CardText, Col, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
+import { isUndefined } from "lodash";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button, Card, CardBody, CardText, Col, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import { Answer } from "../questions/QuestionModel";
 import { letters } from "../Shared";
-import { getAttemptById, getMyAttempt, getMyAttempts, killAttempt, RuleSet } from "./attempt/AttemptModel";
+import { getMyAttempt, killAttempt, RuleSet } from "./attempt/AttemptModel";
 import { answerCurrentQuestion, getCurrentQuestion, startNextQuestion } from "./QuestionAttemptModel";
 import { DefaultTimer, RelayTimer } from "./QuizTimers";
 

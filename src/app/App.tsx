@@ -54,15 +54,20 @@ function App() {
 
   /** Refresh token logic with debounce */
   const refreshToken = () => {
-    firebase.auth().currentUser?.getIdToken(true);
+    firebase.auth().currentUser?.getIdToken(true).then(async (token) => {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+    });
     queryClient.clear();
     queryClient.resetQueries();
   }
   const debouncedRefreshToken = useMemo(() => _.debounce(refreshToken, 500), []);
 
-  axios.interceptors.request.use((config) => {
-    //debouncedRefreshToken();
-    return config;
+  axios.interceptors.response.use((response) => response, (error) => {
+    if (error.response.status === 401) {
+      console.log('401! Needs to refresh!')
+      debouncedRefreshToken();
+    }
+    return Promise.reject(error);
   });
 
   interface SpringErrorData {
@@ -80,14 +85,6 @@ function App() {
 
   /** Global queryClient callbacks for queries and mutations. Used for message handling here */
   const queryClient = new QueryClient({
-    queryCache: new QueryCache({
-      onError: (error) => {
-        let err = error as AxiosError
-        if (err.response?.status===401) {
-          debouncedRefreshToken();
-        }
-      }
-    }),
     mutationCache: new MutationCache({
       onError: (error, variables, context, mutation) => {
         const key = mutation.options.mutationKey

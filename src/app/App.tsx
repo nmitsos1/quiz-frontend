@@ -64,7 +64,6 @@ function App() {
 
   axios.interceptors.response.use((response) => response, (error) => {
     if (error.response.status === 401) {
-      console.log('401! Needs to refresh!')
       debouncedRefreshToken();
     }
     return Promise.reject(error);
@@ -90,8 +89,6 @@ function App() {
         const key = mutation.options.mutationKey
         if (key) {
           let err = error as AxiosError;
-          console.log(err.request)
-          console.log(err.response?.data)
           const errorData: SpringErrorData = err.response?.data as SpringErrorData;
           let errMessage = `${errorData.message}`;
           if (errorData.errors) {

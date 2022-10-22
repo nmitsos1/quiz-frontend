@@ -41,6 +41,9 @@ function TopBar() {
             <NavItem>
               <NavLink tag={Link} to="/questions">Questions</NavLink>
             </NavItem>
+            <NavItem>
+              <NavLink tag={Link} to="/groups">Groups</NavLink>
+            </NavItem>
           </React.Fragment>
           : <React.Fragment />
           }

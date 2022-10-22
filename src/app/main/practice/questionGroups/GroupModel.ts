@@ -25,7 +25,7 @@ interface BulkAddGroupsParams {
   groupIds: Array<number>
 }
 
-export const getGroups = async () => {
+export const getMyGroups = async () => {
   return await axios.get<Array<Group>>('/api/user/groups')
   .then(response => response.data);
 }

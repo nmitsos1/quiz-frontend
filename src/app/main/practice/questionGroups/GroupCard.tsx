@@ -2,10 +2,8 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faEdit, faBan, faTrash, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { title } from 'process';
 import React, { useState } from 'react';
-import { Button, Card, CardBody, CardColumns, CardFooter, CardHeader, CardText, CardTitle, Col, Input, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
-import { Announcement, deleteAnnouncement } from '../../home/announcements/AnnouncementModel';
+import { Button, Card, CardBody, CardFooter, CardHeader, CardText, CardTitle, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { deleteMySet, Group, updateMySet } from './GroupModel';
 
 interface GroupCardProps {
@@ -33,7 +31,6 @@ function GroupCard({group, selectedIds, setSelectedIds, isSingleSelect}: GroupCa
         }
       }}>
       <CardHeader>
-        <CardColumns></CardColumns>
         <CardTitle>
           <b>{group.questionGroupName}</b>
           {isSingleSelect

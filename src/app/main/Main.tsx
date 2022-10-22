@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getMySchool, ROLE } from "./schools/SchoolModel";
 import Attempts from "./quiz/attempt/Attempts";
 import QuestionsPage from "./questions/QuestionsPage";
+import GroupsPage from "./groups/GroupsPage";
 
 function Main() {
 
@@ -22,7 +23,8 @@ function Main() {
         { path: "/attempt/:attemptId", element: <Attempt /> },
         { path: "/attempts", element: <Attempts /> },
         { path: "/schools", element: <SchoolPage /> },
-        { path: "/questions", element: <QuestionsPage /> }
+        { path: "/questions", element: <QuestionsPage /> },
+        { path: "/groups", element: <GroupsPage /> }
     ]
     : [
         { path: "/", element: <Home /> },

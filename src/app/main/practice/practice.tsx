@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { Col, Nav, NavItem, NavLink, Row } from "reactstrap";
 import { AxiosError } from "axios";
-import { getGroups, getMyGroupById, Group } from "./questionGroups/GroupModel";
+import { getMyGroups, getMyGroupById, Group } from "./questionGroups/GroupModel";
 import GroupCard from "./questionGroups/GroupCard";
 import SamplingForm from "./categories/SamplingForm";
 import { getCategoryCountsByGroupId } from "./categories/CategoryModel";
@@ -11,7 +11,7 @@ import { IdProps } from "../Shared";
 
 function Practice() {
 
-  const { isLoading, isError, data: groups, error } = useQuery(['groups'], getGroups);
+  const { isLoading, isError, data: groups, error } = useQuery(['groups'], getMyGroups);
 
   const [isCustomTab, setIsCustomTab] = useState(false);
 

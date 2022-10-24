@@ -4,15 +4,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { Button, Card, CardBody, CardFooter, CardHeader, CardText, CardTitle, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import { deleteMySet, Group, updateMySet } from './GroupModel';
+import { deleteGroup, deleteMySet, Group, updateGroup, updateMySet } from './GroupModel';
 
 interface GroupCardProps {
   group: Group,
   selectedIds: Array<number>,
   setSelectedIds: Function,
-  isSingleSelect: boolean
+  isSingleSelect: boolean,
+  isAdminPage?: boolean
 }
-function GroupCard({group, selectedIds, setSelectedIds, isSingleSelect}: GroupCardProps) {
+function GroupCard({group, selectedIds, setSelectedIds, isSingleSelect, isAdminPage}: GroupCardProps) {
   
   return (
     <Card key={group.questionGroupId} className={`group-card ${selectedIds.includes(group.questionGroupId) ? 'selected-card': ''}`}
@@ -36,8 +37,8 @@ function GroupCard({group, selectedIds, setSelectedIds, isSingleSelect}: GroupCa
           {isSingleSelect
           ?
           <div className='card-buttons'>
-            <UpdateSetModal group={group}/>{' '}
-            <DeleteSetModal group={group} setSelectedIds={setSelectedIds}/>
+            <UpdateSetModal group={group} isAdminPage={isAdminPage}/>{' '}
+            <DeleteSetModal group={group} setSelectedIds={setSelectedIds} isAdminPage={isAdminPage}/>
           </div>
           : <React.Fragment /> }
 
@@ -56,9 +57,10 @@ function GroupCard({group, selectedIds, setSelectedIds, isSingleSelect}: GroupCa
 interface GroupModalProps {
   group: Group,
   isButtonHidden?: boolean,
-  setSelectedIds?: Function
+  setSelectedIds?: Function,
+  isAdminPage?: boolean
 }
-export function UpdateSetModal({group, isButtonHidden}: GroupModalProps) {
+export function UpdateSetModal({group, isButtonHidden, isAdminPage}: GroupModalProps) {
   const queryClient = useQueryClient();
 
   const [modal, setModal] = useState<boolean>(!!isButtonHidden);
@@ -67,7 +69,7 @@ export function UpdateSetModal({group, isButtonHidden}: GroupModalProps) {
   const [updatedName, setUpdatedName] = useState(isButtonHidden ? '' : group.questionGroupName);
   const [updatedDescription, setUpdatedDescription] = useState(isButtonHidden ? '' : group.questionGroupDescription);
 
-  const updateSetMutation = useMutation(updateMySet, {
+  const updateSetMutation = useMutation(isAdminPage ? updateGroup : updateMySet, {
     onSuccess: () => {
       queryClient.invalidateQueries(['groups'])
       queryClient.invalidateQueries(['attempt'])
@@ -107,7 +109,7 @@ export function UpdateSetModal({group, isButtonHidden}: GroupModalProps) {
   );
 }
 
-function DeleteSetModal({group, setSelectedIds}: GroupModalProps) {
+function DeleteSetModal({group, setSelectedIds, isAdminPage}: GroupModalProps) {
   const queryClient = useQueryClient();
 
   const [modal, setModal] = useState<boolean>(false);
@@ -115,7 +117,7 @@ function DeleteSetModal({group, setSelectedIds}: GroupModalProps) {
 
   const [deleteText, setDeleteText] = useState<string>();
 
-  const deleteSetMutation = useMutation(deleteMySet, {
+  const deleteSetMutation = useMutation(isAdminPage ? deleteGroup : deleteMySet, {
     onSuccess: () => {
       queryClient.invalidateQueries(['groups'])
     },

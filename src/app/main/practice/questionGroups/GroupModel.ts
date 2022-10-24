@@ -1,6 +1,7 @@
 import { QuestionInstance } from '../../quiz/QuestionAttemptModel';
 import axios from "axios";
 import { CategoryCount } from "../categories/CategoryModel";
+import { Page } from '../../Pagination';
 
 export interface Group {
   questionGroupId: number,
@@ -40,8 +41,8 @@ export const getGroupsBySchoolId = async (schoolId: number) => {
   .then(response => response.data);
 }
 
-export const getAllGroups = async () => {
-  return await axios.get<Array<Group>>(`/api/admin/groups`)
+export const getAllGroups = async (name: string, page: number, count: number) => {
+  return await axios.get<Page<Group>>(`/api/admin/groups?name=${name}&page=${page}&count=${count}`)
   .then(response => response.data);
 }
 
@@ -56,7 +57,7 @@ export const updateMySet = async (group: Group) => {
   .then(response => response.data);
 }
 
-export const updateSet = async (group: Group) => {
+export const updateGroup = async (group: Group) => {
   return await axios.put<Group>(`api/admin/groups/${group.questionGroupId}`, group)
   .then(response => response.data);
 }
@@ -73,5 +74,9 @@ export const bulkAddGroups = async ({schoolIds, groupIds}: BulkAddGroupsParams) 
 
 export const deleteMySet = async (id: number | undefined) => {
   return await axios.delete(`api/user/groups/${id}`);
+}
+
+export const deleteGroup = async (id: number | undefined) => {
+  return await axios.delete(`api/admin/groups/${id}`);
 }
 

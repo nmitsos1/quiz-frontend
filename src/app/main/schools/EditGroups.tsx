@@ -14,9 +14,10 @@ interface EditGroups {
 }
 function EditGroups({selectedIds}: EditGroups) {
 
-    const { isLoading, isError, data: groups, error } = useQuery(['groups'], () => getAllGroups());
+    const { isLoading, isError, data: groupPage, error } = useQuery(['groups'], () => getAllGroups('', 1, 1000));
+    const groups = groupPage?.content;
 
-    if (isLoading) {
+    if (isLoading || !groups) {
         return <h4>Loading Groups...</h4>
     }
 

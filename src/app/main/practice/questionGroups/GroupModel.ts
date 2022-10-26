@@ -52,6 +52,11 @@ export const addSet = async (set: SetRequest) => {
   .then(response => response.data);
 }
 
+export const addGroup = async (group: SetRequest) => {
+  return await axios.post<Group>('api/admin/groups', group)
+  .then(response => response.data);
+}
+
 export const updateMySet = async (group: Group) => {
   return await axios.put<Group>(`api/user/groups/${group.questionGroupId}`, group,)
   .then(response => response.data);

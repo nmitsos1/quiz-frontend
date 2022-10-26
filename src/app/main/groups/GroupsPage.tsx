@@ -3,6 +3,7 @@ import { AxiosError } from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Row, Col } from 'reactstrap';
 import Pagination, { Page } from '../Pagination';
+import SamplingForm from '../practice/categories/SamplingForm';
 import GroupCard from '../practice/questionGroups/GroupCard';
 import { getAllGroups, Group } from '../practice/questionGroups/GroupModel';
 
@@ -52,7 +53,7 @@ function GroupsPage() {
             {selectedId ?
             <div>ayy</div>
             :
-            <div>Select a question set on the left to view group information and begin an attempt.</div>
+            <SamplingForm groupIds={[]} isAdminPage={true}/>
             }
         </Col>
     </Row>

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { Badge, Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from "reactstrap";
-import { CategoryCount, getAvailableQuestionCount, getCategories } from './CategoryModel'
+import { CategoryCount, getMyAvailableQuestionCount, getCategories, getAvailableQuestionCount } from './CategoryModel'
 import { AxiosError } from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from '@fortawesome/free-solid-svg-icons';
@@ -10,12 +10,13 @@ import CategoryCountForm from "./CategoryCountForm";
 import CreateAndBeginQuizButton from "../CreateAndBeginQuizButton";
 
 interface SamplingFormProps {
-  groupIds: Array<number>
+  groupIds: Array<number>,
+  isAdminPage?: boolean
 }
-function SamplingForm({groupIds}: SamplingFormProps) {
+function SamplingForm({groupIds, isAdminPage}: SamplingFormProps) {
 
   const { isLoading, isError, data: categories, error } = useQuery(['categories'], getCategories);
-  const { data: anyCount } = useQuery(['category-count', groupIds], () => getAvailableQuestionCount('Any', groupIds));
+  const { data: anyCount } = useQuery(['category-count', groupIds], () => isAdminPage ? getAvailableQuestionCount('Any') : getMyAvailableQuestionCount('Any', groupIds));
 
   const [isOpen, setIsOpen] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
@@ -61,8 +62,8 @@ function SamplingForm({groupIds}: SamplingFormProps) {
     <div className="sampling-form">
       <h4>Question Sample</h4>
       <label>
-        Enter your filtering criteria for question categories below and click begin to create a 
-        randomized question set. The question limit per set is <b>250</b> questions.
+        Enter your filtering criteria for question categories below and click {isAdminPage ? 'Create Group' : 'begin'} to create a 
+        randomized question {isAdminPage ? 'group' : 'set'}. The question limit per set is <b>250</b> questions.
       </label>
       <Dropdown isOpen={isOpen} toggle={toggle}>
         <DropdownToggle color="primary" outline caret>{selectedCategory || 'Select a category'}</DropdownToggle>
@@ -76,7 +77,7 @@ function SamplingForm({groupIds}: SamplingFormProps) {
       </Dropdown>
       {selectedCategory ?
       <CategoryCountForm category={selectedCategory} setCategory={setSelectedCategory} groupIds={groupIds} 
-      categoryCounts={categoryCounts} setCategoryCounts={setCategoryCounts}/>
+      categoryCounts={categoryCounts} setCategoryCounts={setCategoryCounts} isAdminPage={isAdminPage}/>
       : 
       <br />
       }

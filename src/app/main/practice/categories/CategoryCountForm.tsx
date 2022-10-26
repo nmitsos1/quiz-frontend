@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { Button, Input } from "reactstrap";
-import { CategoryCount, getAvailableQuestionCount } from './CategoryModel'
+import { CategoryCount, getAvailableQuestionCount, getMyAvailableQuestionCount } from './CategoryModel'
 import { AxiosError } from "axios";
 
 interface CategoryCountFormProps {
@@ -9,12 +9,13 @@ interface CategoryCountFormProps {
   setCategory: Function,
   groupIds: Array<number>,
   categoryCounts: Array<CategoryCount>,
-  setCategoryCounts: Function
+  setCategoryCounts: Function,
+  isAdminPage?: boolean
 }
-function CategoryCountForm({category, setCategory, groupIds, categoryCounts, setCategoryCounts}: CategoryCountFormProps) {
+function CategoryCountForm({category, setCategory, groupIds, categoryCounts, setCategoryCounts, isAdminPage}: CategoryCountFormProps) {
 
   const { isLoading, isError, data: availableCount, error } = 
-    useQuery(['category-count', category, groupIds], () => getAvailableQuestionCount(category, groupIds));
+    useQuery(['category-count', category, groupIds], () => isAdminPage ? getAvailableQuestionCount(category) : getMyAvailableQuestionCount(category, groupIds));
   const [count, setCount] = useState<number>(0);
 
   if (isLoading) {

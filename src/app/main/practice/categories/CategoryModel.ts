@@ -10,8 +10,13 @@ export const getCategories = async () => {
   .then(response => response.data);
 }
 
-export const getAvailableQuestionCount = async (category: string, groupIds: Array<number>) => {
+export const getMyAvailableQuestionCount = async (category: string, groupIds: Array<number>) => {
   return await axios.get<number>(`/api/user/questions/count?category=${category.toUpperCase()}&groupIds=${groupIds}`)
+  .then(response => response.data);
+}
+
+export const getAvailableQuestionCount = async (category: string) => {
+  return await axios.get<number>(`/api/admin/questions/count?category=${category.toUpperCase()}`)
   .then(response => response.data);
 }
 

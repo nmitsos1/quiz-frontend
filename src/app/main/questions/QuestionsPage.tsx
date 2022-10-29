@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Button, ButtonGroup, Col, Input, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
+import { Button, ButtonGroup, Col, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Input, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
 import Pagination, { Page } from '../Pagination';
 import { addQuestion, Answer, getQuestions, Question } from './QuestionModel';
 import QuestionCard from './QuestionCard';
@@ -10,22 +10,50 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faBan, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
+import { getCategories } from '../practice/categories/CategoryModel';
 
 function QuestionsPage() {
 
+    const { isLoading, isError, data: categories, error } = useQuery(['categories'], getCategories);
+
+    const [selectedCategory, setSelectedCategory] = useState<string>();
     const [text, setText] = useState('');
 
+    const [isOpen, setIsOpen] = useState(false);
+    const toggle = () => setIsOpen(!isOpen);
+  
+    if (isLoading) {
+      return <h4>Loading Filter Data...</h4>
+    }
+  
+    if (isError) {
+      let err = error as AxiosError
+      return <h4>There was a problem loading filter categories. {err.message} - {err.response?.statusText}</h4>
+    }
+  
     return (
         <div className='questions-page'>
             <h3>Questions</h3>
             <Col>
                 <Row>
-                <Col><AddQuestionModal /><QuestionsUpload /></Col>
+                <Col xs="6"><AddQuestionModal /><QuestionsUpload /></Col>
+                <Col xs="2">
+                  <Dropdown isOpen={isOpen} toggle={toggle}>
+                    <DropdownToggle color="primary" outline caret>{selectedCategory || 'Filter by category'}</DropdownToggle>
+                    <DropdownMenu>
+                      <DropdownItem></DropdownItem>
+                      <DropdownItem onClick={() => setSelectedCategory('Any')} key={0}>{'Any'}</DropdownItem>
+                      {categories.map((category, index) => {
+                        return (<DropdownItem onClick={() => setSelectedCategory(category)} key={index+1}>{category}</DropdownItem>)
+                      })}
+                    </DropdownMenu>
+                  </Dropdown>
+                </Col>
                     <Col>
-                        <Input placeholder="Search by name..." onChange={event => setText(event.target.value)}/>
+                      <Input placeholder="Search by name..." onChange={event => setText(event.target.value)}/>
                     </Col>
                 </Row>
-                <Questions text={text} />
+                <Questions text={text} category={selectedCategory?.toLocaleUpperCase() || 'ANY'}/>
             </Col>
         </div>
     )
@@ -128,15 +156,20 @@ function AddQuestionModal() {
 
 
 interface QuestionsProps {
-    text: string
+    text: string,
+    category: string
 }
-function Questions({text}: QuestionsProps) {
+function Questions({text, category}: QuestionsProps) {
     const [page, setPage] = useState(1);
     const [count, setCount] = useState(5);
-    const { isError, data: questionPage, error } = useQuery(['questions', text, page, count], () => getQuestions(text, page, count));
+    const { isError, data: questionPage, error } = useQuery(['questions', text, category, page, count], () => getQuestions(text, category, page, count));
     const [pageData, setPageData] = useState<Page<Question>>();
 
     const [selectedId, setSelectedId] = useState<number>(-1);
+
+    useEffect(() => {
+      setPage(1);
+    }, [text, category]);
 
     useEffect(() => {
         if (questionPage)

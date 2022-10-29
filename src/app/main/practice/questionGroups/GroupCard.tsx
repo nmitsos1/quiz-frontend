@@ -21,7 +21,10 @@ function GroupCard({group, selectedIds, setSelectedIds, isSingleSelect, isAdminP
     color={`${selectedIds.includes(group.questionGroupId) ? 'info' : 'dark'}`} outline
       onClick={() => {
         if (isSingleSelect) {
-          setSelectedIds(group.questionGroupId);
+          if (selectedIds[0] === group.questionGroupId)
+            setSelectedIds(undefined);
+          else
+            setSelectedIds(group.questionGroupId);
         } else {
           let list = [...selectedIds];
           if (selectedIds.includes(group.questionGroupId))

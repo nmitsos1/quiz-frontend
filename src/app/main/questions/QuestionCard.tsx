@@ -14,9 +14,10 @@ interface QuestionCardProps {
     questionCategory: string,
     questionText: string,
     isSelected: boolean,
-    setSelectedId: Function
+    setSelectedId: Function,
+    groupId?: number
 }
-function QuestionCard({questionId, questionCategory, questionText, isSelected, setSelectedId}: QuestionCardProps) {
+function QuestionCard({questionId, questionCategory, questionText, isSelected, setSelectedId, groupId}: QuestionCardProps) {
     
     const [isOpen, setIsOpen] = useState(isSelected);
 
@@ -32,11 +33,13 @@ function QuestionCard({questionId, questionCategory, questionText, isSelected, s
             <div><b>{questionCategory}</b> - {questionText}</div>
           </CardTitle>
         </CardHeader>
+        {groupId ? <React.Fragment /> :
           <Collapse isOpen={isOpen}>
             <CardBody>
               {isSelected ? <QuestionCardBody id={questionId} /> : <React.Fragment><div>&nbsp;</div><div>&nbsp;</div></React.Fragment>}
             </CardBody>
           </Collapse>
+        }
       </Card>
     );
 }

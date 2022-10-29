@@ -6,6 +6,7 @@ import Pagination, { Page } from '../Pagination';
 import SamplingForm from '../practice/categories/SamplingForm';
 import GroupCard from '../practice/questionGroups/GroupCard';
 import { getAllGroups, Group } from '../practice/questionGroups/GroupModel';
+import QuestionsPage from '../questions/QuestionsPage';
 
 function GroupsPage() {
 
@@ -51,7 +52,7 @@ function GroupsPage() {
         </Col>
         <Col>
             {selectedId ?
-            <div>ayy</div>
+            <QuestionsPage groupId={selectedId}/>
             :
             <SamplingForm groupIds={[]} isAdminPage={true}/>
             }

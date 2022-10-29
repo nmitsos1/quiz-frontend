@@ -23,8 +23,8 @@ export interface QuestionRequest {
     isShuffled: boolean
 }
 
-export const getQuestions = async (query: String, category: String, page: number, count: number) => {
-    return await axios.get<Page<Question>>(`/api/admin/questions?query=${query}&category=${category}&page=${page}&count=${count}`)
+export const getQuestions = async (query: String, category: String, groupId: number | undefined, page: number, count: number) => {
+    return await axios.get<Page<Question>>(`/api/admin/questions?query=${query}&category=${category}&page=${page}&count=${count}${groupId ? `&groupId=${groupId}` : ''}`)
     .then(response => response.data);
 }
 

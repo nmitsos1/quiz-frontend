@@ -11,8 +11,12 @@ import { faBan, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 import { getCategories } from '../practice/categories/CategoryModel';
+import { IdProps } from '../Shared';
 
-function QuestionsPage() {
+interface QuestionPageProps {
+  groupId?: number
+}
+function QuestionsPage({groupId}: QuestionPageProps) {
 
     const { isLoading, isError, data: categories, error } = useQuery(['categories'], getCategories);
 
@@ -36,24 +40,30 @@ function QuestionsPage() {
             <h3>Questions</h3>
             <Col>
                 <Row>
-                <Col xs="6"><AddQuestionModal /><QuestionsUpload /></Col>
-                <Col xs="2">
-                  <Dropdown isOpen={isOpen} toggle={toggle}>
-                    <DropdownToggle color="primary" outline caret>{selectedCategory || 'Filter by category'}</DropdownToggle>
-                    <DropdownMenu>
-                      <DropdownItem></DropdownItem>
-                      <DropdownItem onClick={() => setSelectedCategory('Any')} key={0}>{'Any'}</DropdownItem>
-                      {categories.map((category, index) => {
-                        return (<DropdownItem onClick={() => setSelectedCategory(category)} key={index+1}>{category}</DropdownItem>)
-                      })}
-                    </DropdownMenu>
-                  </Dropdown>
-                </Col>
-                    <Col>
-                      <Input placeholder="Search by name..." onChange={event => setText(event.target.value)}/>
-                    </Col>
+                  {groupId ? <React.Fragment /> :
+                  <Col><AddQuestionModal /><QuestionsUpload /></Col>}
+                  <Col>
+                    <Row>
+                      <Col xs="4">
+                        <Dropdown isOpen={isOpen} toggle={toggle}>
+                          <DropdownToggle color="primary" outline caret>{selectedCategory || 'Filter by category'}</DropdownToggle>
+                          <DropdownMenu>
+                            <DropdownItem></DropdownItem>
+                            <DropdownItem onClick={() => setSelectedCategory('Any')} key={0}>{'Any'}</DropdownItem>
+                            {categories.map((category, index) => {
+                              return (<DropdownItem onClick={() => setSelectedCategory(category)} key={index+1}>{category}</DropdownItem>)
+                            })}
+                          </DropdownMenu>
+                        </Dropdown>
+                      </Col>
+                      <Col>
+                        <Input placeholder="Search by name..." onChange={event => setText(event.target.value)}/>
+                      </Col>
+                    </Row>
+                  </Col>
+                  
                 </Row>
-                <Questions text={text} category={selectedCategory?.toLocaleUpperCase() || 'ANY'}/>
+                <Questions text={text} category={selectedCategory?.toLocaleUpperCase() || 'ANY'} groupId={groupId}/>
             </Col>
         </div>
     )
@@ -157,19 +167,20 @@ function AddQuestionModal() {
 
 interface QuestionsProps {
     text: string,
-    category: string
+    category: string,
+    groupId?: number
 }
-function Questions({text, category}: QuestionsProps) {
+function Questions({text, category, groupId}: QuestionsProps) {
     const [page, setPage] = useState(1);
     const [count, setCount] = useState(5);
-    const { isError, data: questionPage, error } = useQuery(['questions', text, category, page, count], () => getQuestions(text, category, page, count));
+    const { isError, data: questionPage, error } = useQuery(['questions', text, category, groupId, page, count], () => getQuestions(text, category, groupId, page, count));
     const [pageData, setPageData] = useState<Page<Question>>();
 
     const [selectedId, setSelectedId] = useState<number>(-1);
 
     useEffect(() => {
       setPage(1);
-    }, [text, category]);
+    }, [text, category, groupId]);
 
     useEffect(() => {
         if (questionPage)
@@ -198,7 +209,7 @@ function Questions({text, category}: QuestionsProps) {
             questions.map(question => {
                 return (
                     <QuestionCard questionId={question.questionId} questionCategory={question.questionCategory} questionText={question.questionText} 
-                    isSelected={selectedId===question.questionId} setSelectedId={setSelectedId}/>
+                    isSelected={selectedId===question.questionId} setSelectedId={setSelectedId} groupId={groupId}/>
                 );
             })}
         </React.Fragment>

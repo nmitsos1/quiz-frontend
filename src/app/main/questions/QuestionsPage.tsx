@@ -61,7 +61,6 @@ function QuestionsPage({groupId}: QuestionPageProps) {
                       </Col>
                     </Row>
                   </Col>
-                  
                 </Row>
                 <Questions text={text} category={selectedCategory?.toLocaleUpperCase() || 'ANY'} groupId={groupId}/>
             </Col>

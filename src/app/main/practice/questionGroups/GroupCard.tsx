@@ -17,7 +17,6 @@ function GroupCard({group, selectedIds, setSelectedIds, isSingleSelect, isAdminP
   
   return (
     <Card key={group.questionGroupId} className={`group-card ${selectedIds.includes(group.questionGroupId) ? 'selected-card': ''}`}
-    //inverse={selectedIds.includes(group.questionGroupId) ? true : false} 
     color={`${selectedIds.includes(group.questionGroupId) ? 'info' : 'dark'}`} outline
       onClick={() => {
         if (isSingleSelect) {
@@ -50,9 +49,6 @@ function GroupCard({group, selectedIds, setSelectedIds, isSingleSelect, isAdminP
       <CardBody>
         <CardText>{group.questionGroupDescription || 'No description given.'}</CardText>
       </CardBody>
-      <CardFooter>
-        <i>{group.groupType}</i>
-      </CardFooter>
     </Card>
   );
 }

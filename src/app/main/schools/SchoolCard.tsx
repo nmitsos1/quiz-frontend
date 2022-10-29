@@ -35,7 +35,6 @@ function SchoolCard({school, selectedIds, setSelectedIds}: SchoolCardProps) {
 
   return (
     <Card key={school.schoolId} className={`school-card ${selectedIds.includes(school.schoolId) ? 'selected-card': ''}`}
-    //inverse={selectedIds.includes(school.schoolId) ? true : false}
     color={`${selectedIds.includes(school.schoolId) ? 'info' : 'dark'}`} outline
       onClick={() => {
         if (school.schoolId) {

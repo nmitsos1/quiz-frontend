@@ -11,7 +11,7 @@ import { IdProps } from "../Shared";
 
 function Practice() {
 
-  const { isLoading, isError, data: groups, error } = useQuery(['groups'], getMyGroups);
+  const { isLoading, isError, data: groups, error } = useQuery(['my-groups'], getMyGroups);
 
   const [isCustomTab, setIsCustomTab] = useState(false);
 

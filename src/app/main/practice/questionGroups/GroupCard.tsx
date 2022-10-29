@@ -70,6 +70,7 @@ export function UpdateSetModal({group, isButtonHidden, isAdminPage}: GroupModalP
 
   const updateSetMutation = useMutation(isAdminPage ? updateGroup : updateMySet, {
     onSuccess: () => {
+      queryClient.invalidateQueries(['my-groups'])
       queryClient.invalidateQueries(['groups'])
       queryClient.invalidateQueries(['attempt'])
     },
@@ -118,6 +119,7 @@ function DeleteSetModal({group, setSelectedIds, isAdminPage}: GroupModalProps) {
 
   const deleteSetMutation = useMutation(isAdminPage ? deleteGroup : deleteMySet, {
     onSuccess: () => {
+      queryClient.invalidateQueries(['my-groups'])
       queryClient.invalidateQueries(['groups'])
     },
     mutationKey: ['delete-group']

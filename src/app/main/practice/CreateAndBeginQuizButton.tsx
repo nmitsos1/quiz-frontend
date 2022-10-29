@@ -33,7 +33,7 @@ function CreateAndBeginQuizButton({categoryCounts, groupIds, groupId}: CreateAnd
 
     const addSetMutation = useMutation(addSet, {
       onSuccess: (data) => {
-        queryClient.invalidateQueries(['groups']);
+        queryClient.invalidateQueries(['my-groups']);
         beginAttemptMutation.mutate({groupId: data.questionGroupId, ruleSet: ruleSet});
       }
     });

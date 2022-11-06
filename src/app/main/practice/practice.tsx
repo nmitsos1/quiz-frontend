@@ -134,7 +134,7 @@ function CustomQuizInformation({id}: IdProps) {
     return <h4>There was a problem loading your group category data. {err.message} - {err.response?.statusText}</h4>
   }
 
-  const totalCount = categoryCounts.filter(cc => cc.questionCategory==='Any')[0].count;
+  const totalCount = categoryCounts.reduce((a, b) => {return a+b.count}, 0);
 
   return (
     <div>

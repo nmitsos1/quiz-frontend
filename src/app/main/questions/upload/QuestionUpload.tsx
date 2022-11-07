@@ -1,7 +1,7 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import { Button, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import { uploadQuestionPdf } from './UploadModel';
+import { Button, ButtonGroup, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import { uploadMultipleChoiceCsv, uploadShortAnswerCsv } from './UploadModel';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faBan, faUpload, faCloudArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,14 +9,26 @@ import fileDownload from 'js-file-download';
 
 function QuestionsUpload() {
 
+    const queryClient = useQueryClient();
+
     const [modal, setModal] = useState<boolean>(false);
     const toggle = () => setModal(!modal);
 
+    const [isMc, setIsMc] = useState(true);
     const [file, setFile] = useState<File>();
 
-    const uploadQuestionFileMutation = useMutation(uploadQuestionPdf, {
+    const uploadMcFileMutation = useMutation(uploadMultipleChoiceCsv, {
         onSuccess: (data) => {
-            fileDownload(data, 'malformed.csv')
+            fileDownload(data, 'MalformedMultipleChoice.csv');
+            queryClient.invalidateQueries(['questions'])
+        },
+        mutationKey: ['upload-file']
+    });
+
+    const uploadSaFileMutation = useMutation(uploadShortAnswerCsv, {
+        onSuccess: (data) => {
+            fileDownload(data, 'MalformedShortAnswer.csv');
+            queryClient.invalidateQueries(['questions'])
         },
         mutationKey: ['upload-file']
     });
@@ -32,7 +44,11 @@ function QuestionsUpload() {
 
     const handleSubmit = () => {
         if (file) {
-            uploadQuestionFileMutation.mutate(file);
+            if (isMc) {
+                uploadMcFileMutation.mutate(file);
+            } else {
+                uploadSaFileMutation.mutate(file);
+            }
             setFile(undefined);
         }
     }
@@ -45,6 +61,19 @@ function QuestionsUpload() {
           <Modal isOpen={modal} toggle={toggle}>
             <ModalHeader toggle={toggle}>Upload Questions</ModalHeader>
             <ModalBody>
+                <label>Question Type</label><br/>
+                <ButtonGroup>
+                    <Button color='primary' onClick={() => setIsMc(true)} 
+                    active={isMc} outline={!isMc}>
+                    Multiple Choice
+                    </Button>
+                    <Button color='primary' onClick={() => setIsMc(false)} 
+                    active={!isMc} outline={isMc}>
+                    Short Answer
+                    </Button>
+                </ButtonGroup>
+                <br /><br />
+                <label>Choose a document</label><br />
                 <Input type='file' name='file' onChange={fileSetter}/>
             </ModalBody>
             <ModalFooter>

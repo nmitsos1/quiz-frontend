@@ -87,7 +87,7 @@ function Quiz() {
             <br /><br />
             <Row>
                 <Col xs="10">
-                <h4>{question?.questionText}</h4>
+                <h4>{question?.text}</h4>
                 </Col>
                 <Col xs="2">
                 {startTime ? 

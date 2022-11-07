@@ -5,6 +5,7 @@ import { uploadQuestionPdf } from './UploadModel';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faBan, faUpload, faCloudArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import fileDownload from 'js-file-download';
 
 function QuestionsUpload() {
 
@@ -14,14 +15,15 @@ function QuestionsUpload() {
     const [file, setFile] = useState<File>();
 
     const uploadQuestionFileMutation = useMutation(uploadQuestionPdf, {
-        onSuccess: () => {
-            
-        }
+        onSuccess: (data) => {
+            fileDownload(data, 'malformed.csv')
+        },
+        mutationKey: ['upload-file']
     });
 
     const fileSetter = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
-            console.log(event.target.files[0]);
+            //console.log(event.target.files[0]);
             setFile(event.target.files[0]);
         } else {
             setFile(undefined);

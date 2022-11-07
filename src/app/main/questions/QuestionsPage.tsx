@@ -207,7 +207,7 @@ function Questions({text, category, groupId}: QuestionsProps) {
             {
             questions.map(question => {
                 return (
-                    <QuestionCard questionId={question.questionId} questionCategory={question.questionCategory} questionText={question.questionText} 
+                    <QuestionCard questionId={question.questionId} questionCategory={question.category} questionText={question.text} 
                     isSelected={selectedId===question.questionId} setSelectedId={setSelectedId} groupId={groupId}/>
                 );
             })}

@@ -127,7 +127,7 @@ function QuestionAttempts({attemptId, groupId, score}: QuestionAttemptsProps) {
                             </b></CardTitle>
                         </CardHeader>
                         <CardBody>
-                            <CardText>{q.questionInstance.question.questionText}</CardText>
+                            <CardText>{q.questionInstance.question.text}</CardText>
                             <CardText><b>Your Answer:</b> {q.answer}</CardText>
                             {q.secondAnswer ? <CardText>Second Try: {q.secondAnswer}</CardText> : <React.Fragment />}
                         </CardBody>

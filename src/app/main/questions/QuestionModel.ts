@@ -4,8 +4,8 @@ import { Page } from "../Pagination";
 export interface Question {
     questionId: number,
     originalIdentifier: number,
-    questionCategory: string,
-    questionText: string,
+    category: string,
+    text: string,
     answers: Array<Answer>
 }
 

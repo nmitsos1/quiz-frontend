@@ -7,7 +7,8 @@ export const uploadQuestionPdf = async (file: File) => {
     return await axios.post(`/api/admin/upload/questions`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
-        }
+        },
+        responseType: 'blob'
     })
     .then(response => response.data);
 }

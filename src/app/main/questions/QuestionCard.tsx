@@ -80,8 +80,8 @@ function UpdateQuestionModal({question, correctAnswer}: QuestionModalProps) {
     const [modal, setModal] = useState<boolean>(false);
     const toggle = () => setModal(!modal);
 
-    const [updatedCategory, setUpdatedCategory] = useState(question.questionCategory);
-    const [updatedText, setUpdatedText] = useState(question.questionText);
+    const [updatedCategory, setUpdatedCategory] = useState(question.category);
+    const [updatedText, setUpdatedText] = useState(question.text);
 
     const [answer1, setAnswer1] = useState(question.answers[0]);
     const [answer2, setAnswer2] = useState(question.answers[1]);
@@ -121,9 +121,9 @@ function UpdateQuestionModal({question, correctAnswer}: QuestionModalProps) {
             <ModalBody>
               <label><span className="asterisk">*</span> = Required Field</label><br/>
               <label htmlFor="content"><b>Question</b><span className="asterisk">*</span></label>
-              <Input maxLength={500} type="textarea" rows="4" name="content" required defaultValue={question.questionText} onChange={(event) => setUpdatedText(event.target.value)}/>
+              <Input maxLength={500} type="textarea" rows="4" name="content" required defaultValue={question.text} onChange={(event) => setUpdatedText(event.target.value)}/>
               <label htmlFor="category"><b>Question Category</b><span className="asterisk">*</span></label>
-              <Input maxLength={60} type="text" name="category" required defaultValue={question.questionCategory} onChange={(event) => setUpdatedCategory(event.target.value)}/>
+              <Input maxLength={60} type="text" name="category" required defaultValue={question.category} onChange={(event) => setUpdatedCategory(event.target.value)}/>
               <label htmlFor="answer1"><b>Answer 1</b><span className="asterisk">*</span></label>
               <Input maxLength={60} type="text" name="answer1" required defaultValue={answer1.answerText} 
                 onChange={(event) => setAnswer1({answerId: answer1.answerId, answerText: event.target.value})}/>

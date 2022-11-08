@@ -72,9 +72,18 @@ function QuestionsUpload() {
                     Short Answer
                     </Button>
                 </ButtonGroup>
+                <label>
+                    <b>Column Headers: </b>
+                    {isMc ?
+                    'Question, Correct Answer, Level, Question Type, Status, Topic, Title, Catlines'
+                    :
+                    'Question, Answer, Level, Type, Status, Topic, Catlines, Title'
+                    }
+                </label>
                 <br /><br />
-                <label>Choose a document</label><br />
+                <label>Select a CSV file to upload</label><br />
                 <Input type='file' name='file' onChange={fileSetter}/>
+                <label>Correctly formatted question rows will be entered into the database. You will receive a CSV file with incorrectly formatted rows.</label>
             </ModalBody>
             <ModalFooter>
                 <Button color='primary' disabled={!file} onClick={handleSubmit}>Upload Questions <FontAwesomeIcon icon={faCloudArrowUp as IconProp}/></Button>

@@ -11,13 +11,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface QuestionCardProps {
     questionId: number,
-    questionCategory: string,
-    questionText: string,
+    topic: string,
+    text: string,
     isSelected: boolean,
     setSelectedId: Function,
     groupId?: number
 }
-function QuestionCard({questionId, questionCategory, questionText, isSelected, setSelectedId, groupId}: QuestionCardProps) {
+function QuestionCard({questionId, topic, text, isSelected, setSelectedId, groupId}: QuestionCardProps) {
     
     const [isOpen, setIsOpen] = useState(isSelected);
 
@@ -30,7 +30,7 @@ function QuestionCard({questionId, questionCategory, questionText, isSelected, s
       onClick={() => setSelectedId(questionId)}>
         <CardHeader>
           <CardTitle>
-            <div><b>{questionCategory}</b> - {questionText}</div>
+            <div><b>{topic}</b> - {text}</div>
           </CardTitle>
         </CardHeader>
         {groupId ? <React.Fragment /> :
@@ -105,7 +105,7 @@ function UpdateQuestionModal({question, correctAnswer}: QuestionModalProps) {
         const answer: Answer = newCorrectAnswer===1 ? answer1 : newCorrectAnswer===2 ? answer2 : newCorrectAnswer===3 ? answer3 : newCorrectAnswer===4 ? answer4
          : {answerId:0,answerText:''};
         updateQuestionMutation.mutate({ 
-          questionId: question.questionId, questionCategory: updatedCategory, questionText: updatedText,
+          questionId: question.questionId, category: updatedCategory, text: updatedText,
           answers: newAnswers, correctAnswer: answer.answerText, isShuffled: true
         });
         toggle();

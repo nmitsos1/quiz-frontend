@@ -68,9 +68,9 @@ function SamplingForm({groupIds, isAdminPage}: SamplingFormProps) {
       <Dropdown isOpen={isOpen} toggle={toggle}>
         <DropdownToggle color="primary" outline caret>{selectedCategory || 'Select a category'}</DropdownToggle>
         <DropdownMenu>
-          {!categoryCounts.map(cc => cc.questionCategory).includes('Any') ?
+          {!categoryCounts.map(cc => cc.category).includes('Any') ?
           <DropdownItem onClick={() => categorySelection('Any')} key={0}>{'Any'}</DropdownItem> : <React.Fragment/>}
-        {categories.filter(category => !categoryCounts.map(cc => cc.questionCategory).includes(category)).map((category, index) => {
+        {categories.filter(category => !categoryCounts.map(cc => cc.category).includes(category)).map((category, index) => {
           return (<DropdownItem onClick={() => categorySelection(category)} key={index+1}>{category}</DropdownItem>)
         })}
         </DropdownMenu>
@@ -83,8 +83,8 @@ function SamplingForm({groupIds, isAdminPage}: SamplingFormProps) {
       }
       <hr />
       {categoryCounts.map((cc, index) => {
-        return (<Button key={index} outline color={`${cc.questionCategory==='Any' && isAnyFacetInvalid ? 'danger' : 'success'}`}>
-          {cc.questionCategory}{' '}<Badge>{cc.count}</Badge>{' '}
+        return (<Button key={index} outline color={`${cc.category==='Any' && isAnyFacetInvalid ? 'danger' : 'success'}`}>
+          {cc.category}{' '}<Badge>{cc.count}</Badge>{' '}
           <FontAwesomeIcon onClick={() => removeCategoryCount(index)} icon={faX as IconProp}></FontAwesomeIcon>
         </Button>)
       })}

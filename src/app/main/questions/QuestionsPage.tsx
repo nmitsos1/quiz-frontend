@@ -99,7 +99,7 @@ function AddQuestionModal() {
         const answer: Answer = correctAnswer===1 ? answer1 : correctAnswer===2 ? answer2 : correctAnswer===3 ? answer3 : correctAnswer===4 ? answer4
          : {answerId:0,answerText:''};
         addQuestionMutation.mutate({ 
-          questionId: 0, questionCategory: category, questionText: text,
+          questionId: 0, category: category, text: text,
           answers: answers, correctAnswer: answer.answerText, isShuffled: true
         });
         toggle();
@@ -207,7 +207,7 @@ function Questions({text, category, groupId}: QuestionsProps) {
             {
             questions.map(question => {
                 return (
-                    <QuestionCard questionId={question.questionId} questionCategory={question.category} questionText={question.text} 
+                    <QuestionCard questionId={question.questionId} topic={question.topic} text={question.text} 
                     isSelected={selectedId===question.questionId} setSelectedId={setSelectedId} groupId={groupId}/>
                 );
             })}

@@ -3,9 +3,14 @@ import { Page } from "../Pagination";
 
 export interface Question {
     questionId: number,
-    originalIdentifier: number,
-    category: string,
+    type: string,
+    title: string,
     text: string,
+    topic: string,
+    category: string,
+    level: string,
+    difficulty: string,
+    isPristine: boolean,
     answers: Array<Answer>
 }
 
@@ -16,8 +21,8 @@ export interface Answer {
 
 export interface QuestionRequest {
     questionId?: number,
-    questionCategory: string,
-    questionText: string,
+    category: string,
+    text: string,
     answers: Array<Answer>,
     correctAnswer: string,
     isShuffled: boolean

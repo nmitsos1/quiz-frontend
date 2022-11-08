@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export interface CategoryCount {
-  questionCategory: string,
+  category: string,
   count: number
 }
 

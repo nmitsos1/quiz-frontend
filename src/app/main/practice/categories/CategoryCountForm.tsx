@@ -33,7 +33,7 @@ function CategoryCountForm({category, setCategory, groupIds, categoryCounts, set
 
   const addCategoryCount = () => {
     const categoryCount: CategoryCount = {
-      questionCategory: category,
+      category: category,
       count: count
     }
     let list = [...categoryCounts];

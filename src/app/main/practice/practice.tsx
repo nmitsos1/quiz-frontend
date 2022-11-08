@@ -140,8 +140,8 @@ function CustomQuizInformation({id}: IdProps) {
     <div>
       <h5>{group.questionGroupName}</h5>
       {categoryCounts.map((categoryCount, index) => {
-        if (categoryCount.questionCategory!=='Any')
-          return (<div key={index}>{`${categoryCount.count} ${categoryCount.questionCategory} Question${categoryCount.count>1?'s':''}`}</div>)
+        if (categoryCount.category!=='Any')
+          return (<div key={index}>{`${categoryCount.count} ${categoryCount.category} Question${categoryCount.count>1?'s':''}`}</div>)
       })}
       <div><b>{totalCount} Total Question{totalCount>1 ? 's' : ''}</b></div>
       <hr />

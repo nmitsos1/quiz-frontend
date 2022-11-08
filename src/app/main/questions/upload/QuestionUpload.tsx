@@ -20,7 +20,8 @@ function QuestionsUpload() {
     const uploadMcFileMutation = useMutation(uploadMultipleChoiceCsv, {
         onSuccess: (data) => {
             fileDownload(data, 'MalformedMultipleChoice.csv');
-            queryClient.invalidateQueries(['questions'])
+            queryClient.invalidateQueries(['questions']);
+            toggle();
         },
         mutationKey: ['upload-file']
     });
@@ -28,7 +29,8 @@ function QuestionsUpload() {
     const uploadSaFileMutation = useMutation(uploadShortAnswerCsv, {
         onSuccess: (data) => {
             fileDownload(data, 'MalformedShortAnswer.csv');
-            queryClient.invalidateQueries(['questions'])
+            queryClient.invalidateQueries(['questions']);
+            toggle();
         },
         mutationKey: ['upload-file']
     });

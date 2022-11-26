@@ -14,16 +14,16 @@ export const getAnnouncements = async () => {
 }
 
 export const addAnnouncement = async (announcement: Announcement) => {
-  return await axios.post<Announcement>('api/admin/announcements', announcement)
+  return await axios.post<Announcement>('/api/admin/announcements', announcement)
   .then(response => response.data);
 }
 
 export const updateAnnouncement = async (announcement: Announcement) => {
-  return await axios.put<Announcement>(`api/admin/announcements/${announcement.announcementId}`, announcement)
+  return await axios.put<Announcement>(`/api/admin/announcements/${announcement.announcementId}`, announcement)
   .then(response => response.data);
 }
 
 export const deleteAnnouncement = async (id: number | undefined) => {
-  return await axios.delete(`api/admin/announcements/${id}`);
+  return await axios.delete(`/api/admin/announcements/${id}`);
 }
 

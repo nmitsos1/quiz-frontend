@@ -8,6 +8,10 @@ export interface Group {
   questionGroupName: string,
   questionGroupDescription: string,
   groupType?: string,
+  eventStartDate?: Date,
+  eventEndDate?: Date,
+  isPristine?: Boolean,
+  isEvent?: Boolean,
   questionInstances?: Array<QuestionInstance>
 }
 
@@ -48,22 +52,22 @@ export const getAllGroups = async (name: string, page: number, count: number) =>
 
 
 export const addSet = async (set: SetRequest) => {
-  return await axios.post<Group>('api/user/groups', set)
+  return await axios.post<Group>('/api/user/groups', set)
   .then(response => response.data);
 }
 
 export const addGroup = async (group: SetRequest) => {
-  return await axios.post<Group>('api/admin/groups', group)
+  return await axios.post<Group>('/api/admin/groups', group)
   .then(response => response.data);
 }
 
 export const updateMySet = async (group: Group) => {
-  return await axios.put<Group>(`api/user/groups/${group.questionGroupId}`, group,)
+  return await axios.put<Group>(`/api/user/groups/${group.questionGroupId}`, group,)
   .then(response => response.data);
 }
 
 export const updateGroup = async (group: Group) => {
-  return await axios.put<Group>(`api/admin/groups/${group.questionGroupId}`, group)
+  return await axios.put<Group>(`/api/admin/groups/${group.questionGroupId}`, group)
   .then(response => response.data);
 }
 
@@ -78,10 +82,10 @@ export const bulkAddGroups = async ({schoolIds, groupIds}: BulkAddGroupsParams) 
 }
 
 export const deleteMySet = async (id: number | undefined) => {
-  return await axios.delete(`api/user/groups/${id}`);
+  return await axios.delete(`/api/user/groups/${id}`);
 }
 
 export const deleteGroup = async (id: number | undefined) => {
-  return await axios.delete(`api/admin/groups/${id}`);
+  return await axios.delete(`/api/admin/groups/${id}`);
 }
 

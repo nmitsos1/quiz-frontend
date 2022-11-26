@@ -27,7 +27,7 @@ export const getMySchool = async () => {
 }
 
 export const updateMySchool = async (school: School) => {
-    return await axios.put<School>(`api/user/school`, school)
+    return await axios.put<School>(`/api/user/school`, school)
     .then(response => response.data);
 }
 
@@ -42,16 +42,16 @@ export const getSchools = async (name: String, page: number, count: number) => {
 }
 
 export const addSchool = async (school: School) => {
-    return await axios.post<School>('api/admin/schools', school)
+    return await axios.post<School>('/api/admin/schools', school)
     .then(response => response.data);
 }
 
 export const updateSchool = async (school: School) => {
-    return await axios.put<School>(`api/admin/schools/${school.schoolId}`, school)
+    return await axios.put<School>(`/api/admin/schools/${school.schoolId}`, school)
     .then(response => response.data);
 }
   
 export const deleteSchool = async (id: number | undefined) => {
-    return await axios.delete(`api/admin/schools/${id}`);
+    return await axios.delete(`/api/admin/schools/${id}`);
 }
   

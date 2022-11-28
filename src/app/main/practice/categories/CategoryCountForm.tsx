@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Button, Input } from "reactstrap";
 import { CategoryCount, getAvailableQuestionCount, getMyAvailableQuestionCount } from './CategoryModel'
 import { AxiosError } from "axios";
+import { GroupRequest } from "../questionGroups/GroupModel";
 
 interface CategoryCountFormProps {
   category: string,
@@ -10,12 +11,12 @@ interface CategoryCountFormProps {
   groupIds: Array<number>,
   categoryCounts: Array<CategoryCount>,
   setCategoryCounts: Function,
-  isAdminPage?: boolean
+  adminGroupRequest?: GroupRequest
 }
-function CategoryCountForm({category, setCategory, groupIds, categoryCounts, setCategoryCounts, isAdminPage}: CategoryCountFormProps) {
+function CategoryCountForm({category, setCategory, groupIds, categoryCounts, setCategoryCounts, adminGroupRequest}: CategoryCountFormProps) {
 
   const { isLoading, isError, data: availableCount, error } = 
-    useQuery(['category-count', category, groupIds], () => isAdminPage ? getAvailableQuestionCount(category) : getMyAvailableQuestionCount(category, groupIds));
+    useQuery(['category-count', category, groupIds], () => adminGroupRequest ? getAvailableQuestionCount(category) : getMyAvailableQuestionCount(category, groupIds));
   const [count, setCount] = useState<number>(0);
 
   if (isLoading) {

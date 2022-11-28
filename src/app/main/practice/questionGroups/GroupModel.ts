@@ -11,13 +11,26 @@ export interface Group {
   eventStartDate?: Date,
   eventEndDate?: Date,
   isPristine?: Boolean,
-  isEvent?: Boolean,
+  isClean?: Boolean,
   questionInstances?: Array<QuestionInstance>
 }
 
 export interface SetRequest {
   categoryCounts: Array<CategoryCount>,
   groupIds: Array<number>
+}
+
+export interface GroupRequest {
+  name: string,
+  description: string,
+  isPackage: boolean,
+  startDate?: Date,
+  endDate?: Date,
+  isPristine: boolean,
+  pristineState: string,
+  isClean: boolean,
+  cleanState: string,
+  categoryCounts?: Array<CategoryCount>
 }
 
 interface UpdateSchoolGroupsParams {

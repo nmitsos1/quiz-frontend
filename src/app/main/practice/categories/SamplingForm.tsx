@@ -8,15 +8,16 @@ import { faX } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import CategoryCountForm from "./CategoryCountForm";
 import CreateAndBeginQuizButton from "../CreateAndBeginQuizButton";
+import { GroupRequest } from "../questionGroups/GroupModel";
 
 interface SamplingFormProps {
   groupIds: Array<number>,
-  isAdminPage?: boolean
+  adminGroupRequest?: GroupRequest
 }
-function SamplingForm({groupIds, isAdminPage}: SamplingFormProps) {
+function SamplingForm({groupIds, adminGroupRequest}: SamplingFormProps) {
 
   const { isLoading, isError, data: categories, error } = useQuery(['categories'], getCategories);
-  const { data: anyCount } = useQuery(['category-count', groupIds], () => isAdminPage ? getAvailableQuestionCount('Any') : getMyAvailableQuestionCount('Any', groupIds));
+  const { data: anyCount } = useQuery(['category-count', groupIds], () => adminGroupRequest ? getAvailableQuestionCount('Any') : getMyAvailableQuestionCount('Any', groupIds));
 
   const [isOpen, setIsOpen] = useState(false);
   const toggle = () => setIsOpen(!isOpen);
@@ -62,8 +63,8 @@ function SamplingForm({groupIds, isAdminPage}: SamplingFormProps) {
     <div className="sampling-form">
       <h4>Question Sample</h4>
       <label>
-        Enter your filtering criteria for question categories below and click {isAdminPage ? 'Create Group' : 'begin'} to create a 
-        randomized question {isAdminPage ? 'group' : 'set'}. The question limit per set is <b>250</b> questions.
+        Enter your filtering criteria for question categories below and click {adminGroupRequest ? 'Create Group' : 'begin'} to create a 
+        randomized question {adminGroupRequest ? 'group' : 'set'}. The question limit per set is <b>250</b> questions.
       </label>
       <Dropdown isOpen={isOpen} toggle={toggle}>
         <DropdownToggle color="primary" outline caret>{selectedCategory || 'Select a category'}</DropdownToggle>
@@ -77,7 +78,7 @@ function SamplingForm({groupIds, isAdminPage}: SamplingFormProps) {
       </Dropdown>
       {selectedCategory ?
       <CategoryCountForm category={selectedCategory} setCategory={setSelectedCategory} groupIds={groupIds} 
-      categoryCounts={categoryCounts} setCategoryCounts={setCategoryCounts} isAdminPage={isAdminPage}/>
+      categoryCounts={categoryCounts} setCategoryCounts={setCategoryCounts} adminGroupRequest={adminGroupRequest}/>
       : 
       <br />
       }

@@ -16,7 +16,9 @@ interface CategoryCountFormProps {
 function CategoryCountForm({category, setCategory, groupIds, categoryCounts, setCategoryCounts, adminGroupRequest}: CategoryCountFormProps) {
 
   const { isLoading, isError, data: availableCount, error } = 
-    useQuery(['category-count', category, groupIds], () => adminGroupRequest ? getAvailableQuestionCount(category) : getMyAvailableQuestionCount(category, groupIds));
+    useQuery(['category-count', category, groupIds, adminGroupRequest?.state, adminGroupRequest?.isPristine, adminGroupRequest?.isClean], () => adminGroupRequest ? 
+      getAvailableQuestionCount(category, adminGroupRequest?.state, adminGroupRequest?.isPristine, adminGroupRequest?.isClean)
+        : getMyAvailableQuestionCount(category, groupIds));
   const [count, setCount] = useState<number>(0);
 
   if (isLoading) {

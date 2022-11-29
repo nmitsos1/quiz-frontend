@@ -17,7 +17,10 @@ interface SamplingFormProps {
 function SamplingForm({groupIds, adminGroupRequest}: SamplingFormProps) {
 
   const { isLoading, isError, data: categories, error } = useQuery(['categories'], getCategories);
-  const { data: anyCount } = useQuery(['category-count', groupIds], () => adminGroupRequest ? getAvailableQuestionCount('Any') : getMyAvailableQuestionCount('Any', groupIds));
+  const { data: anyCount } = useQuery(
+    ['category-count', groupIds, adminGroupRequest?.state, adminGroupRequest?.isPristine, adminGroupRequest?.isClean],
+      () => adminGroupRequest ? getAvailableQuestionCount('Any', adminGroupRequest?.state, adminGroupRequest?.isPristine, adminGroupRequest?.isClean) 
+        : getMyAvailableQuestionCount('Any', groupIds));
 
   const [isOpen, setIsOpen] = useState(false);
   const toggle = () => setIsOpen(!isOpen);

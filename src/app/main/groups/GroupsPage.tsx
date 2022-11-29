@@ -72,10 +72,8 @@ function CreateQuestionGroup() {
   const [endDate, setEndDate] = useState<Date>();
 
   const [isPristine, setIsPristine] = useState(true);
-  const [pristineState, setPristineState] = useState('All');
-
   const [isClean, setIsClean] = useState(true);
-  const [cleanState, setCleanState] = useState('All');
+  const [state, setState] = useState('All');
 
   const [isSample, setIsSample] = useState(true);
 
@@ -86,11 +84,19 @@ function CreateQuestionGroup() {
     if (isPackage) {
       setStartDate(undefined);
       setEndDate(undefined);
+      setIsPristine(true);
     } else {
       setIsPristine(true);
-      setPristineState('All');
     }
   }, [isPackage]);
+
+  useEffect(() => {
+    if (isPristine) {
+      setState('All');
+    } else {
+      setState('AL');
+    }
+  }, [isPristine]) 
 
   const fileSetter = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -136,7 +142,7 @@ function CreateQuestionGroup() {
         {isPristine ? 
         <div>
           <label>Pristine in what state?</label>
-          <StateDropdown selectedState={pristineState} setSelectedState={setPristineState} includesAll={true}/>
+          <StateDropdown selectedState={state} setSelectedState={setState} includesAll={true}/>
         </div>
         : 
         <div>
@@ -154,7 +160,7 @@ function CreateQuestionGroup() {
           {isClean ? 
           <div>
             <label>Clean in what state?</label>
-            <StateDropdown selectedState={cleanState} setSelectedState={setCleanState} />
+            <StateDropdown selectedState={state} setSelectedState={setState} />
           </div>
           : <React.Fragment /> }
         </div>}
@@ -192,9 +198,8 @@ function CreateQuestionGroup() {
           startDate: startDate,
           endDate: endDate,
           isPristine: isPristine,
-          pristineState: pristineState,
           isClean: isClean,
-          cleanState: cleanState
+          state: state
         }}/>
         :
         <div>

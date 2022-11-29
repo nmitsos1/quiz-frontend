@@ -27,9 +27,8 @@ export interface GroupRequest {
   startDate?: Date,
   endDate?: Date,
   isPristine: boolean,
-  pristineState: string,
   isClean: boolean,
-  cleanState: string,
+  state: string,
   categoryCounts?: Array<CategoryCount>
 }
 

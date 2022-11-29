@@ -15,8 +15,8 @@ export const getMyAvailableQuestionCount = async (category: string, groupIds: Ar
   .then(response => response.data);
 }
 
-export const getAvailableQuestionCount = async (category: string) => {
-  return await axios.get<number>(`/api/admin/questions/count?category=${category.toUpperCase()}`)
+export const getAvailableQuestionCount = async (category: string, state: string, isPristine: boolean, isClean: boolean) => {
+  return await axios.get<number>(`/api/admin/questions/count?category=${category.toUpperCase()}&state=${state}&isPristine=${isPristine}&isClean=${isClean}`)
   .then(response => response.data);
 }
 

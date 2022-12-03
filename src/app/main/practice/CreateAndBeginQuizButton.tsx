@@ -9,15 +9,16 @@ import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Modal, Mo
 import { beginAttempt, getRuleSetDescriptions, killAttempt, RuleSet } from '../quiz/attempt/AttemptModel';
 import { startNextQuestion } from '../quiz/QuestionAttemptModel';
 import { CategoryCount } from './categories/CategoryModel';
-import { addSet } from './questionGroups/GroupModel';
+import { addGroup, addSet, GroupRequest } from './questionGroups/GroupModel';
 import _ from 'lodash';
 
 interface CreateAndBeginQuizButtonProps {
     categoryCounts?: Array<CategoryCount>,
     groupIds?: Array<number>,
-    groupId?: number
+    groupId?: number,
+    adminGroupRequest?: GroupRequest
 }
-function CreateAndBeginQuizButton({categoryCounts, groupIds, groupId}: CreateAndBeginQuizButtonProps) {
+function CreateAndBeginQuizButton({categoryCounts, groupIds, groupId, adminGroupRequest}: CreateAndBeginQuizButtonProps) {
 
     const queryClient = useQueryClient();
     const navigate = useNavigate();
@@ -38,6 +39,14 @@ function CreateAndBeginQuizButton({categoryCounts, groupIds, groupId}: CreateAnd
       }
     });
   
+    const addGroupMutation = useMutation(addGroup, {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['my-groups']);
+        queryClient.invalidateQueries(['categories']);
+      },
+      mutationKey: ['create-group']
+    });
+
     const beginAttemptMutation = useMutation(beginAttempt, {
       onSuccess: () => {
         queryClient.invalidateQueries(['attempts']);
@@ -82,9 +91,28 @@ function CreateAndBeginQuizButton({categoryCounts, groupIds, groupId}: CreateAnd
       enableButton();
     }
       
+    const handleAdminSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      setIsWorking(true);
+      if (adminGroupRequest && categoryCounts) {
+        adminGroupRequest.categoryCounts = categoryCounts;
+        if (adminGroupRequest.isPackage) {
+          addGroupMutation.mutate(adminGroupRequest);
+        } else {
+          if (adminGroupRequest.startDate && adminGroupRequest.endDate) {
+            addGroupMutation.mutate(adminGroupRequest);
+          }
+        }
+      }
+      const enableButton = _.debounce(() => setIsWorking(false), 3000);
+      enableButton();
+    }
+
     return (
         <React.Fragment>
-          <label><b>Select a Rule Set</b></label>
+          {adminGroupRequest ? <React.Fragment/>
+          :
+          <React.Fragment>
+            <label><b>Select a Rule Set</b></label>
             <Dropdown isOpen={isOpen} toggle={toggleDropdown}>
               <DropdownToggle color="primary" outline caret>{ruleSet}</DropdownToggle>
               <DropdownMenu>
@@ -94,11 +122,20 @@ function CreateAndBeginQuizButton({categoryCounts, groupIds, groupId}: CreateAnd
               </DropdownMenu>
             </Dropdown>
             <label>{getRuleSetDescriptions(ruleSet)}</label>
-            <hr/>
+            <hr/>          
+          </React.Fragment>
+          }
+          {adminGroupRequest ?
+            <Button color="primary" disabled={isWorking}
+            onClick={handleAdminSubmit}>
+                Create {adminGroupRequest.isPackage ? 'Package' : 'Official Event'}
+            </Button>
+            :
             <Button color="primary" disabled={isWorking}
             onClick={handleSubmit}>
                 {groupIds ? 'Create Set and ' : ''}Begin Quiz
             </Button>
+          }
             <Modal isOpen={modal} toggle={toggle}>
                 <ModalHeader toggle={toggle}>Terminate Quiz Attempt in Progress?</ModalHeader>
                 <ModalBody>

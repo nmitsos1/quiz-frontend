@@ -140,10 +140,11 @@ function CreateQuestionGroup() {
             </Button>
         </ButtonGroup>
         {isPristine ? 
+        isSample ?
         <div>
           <label>Pristine in what state?</label>
           <StateDropdown selectedState={state} setSelectedState={setState} includesAll={true}/>
-        </div>
+        </div> : <React.Fragment />
         : 
         <div>
           <label>Clean Question Group? (Used for external events/non practice set packages)</label><br/>
@@ -157,9 +158,9 @@ function CreateQuestionGroup() {
               Not Clean
               </Button>
           </ButtonGroup>
-          {isClean ? 
+          {!isPristine && isSample ? 
           <div>
-            <label>Clean in what state?</label>
+            <label>{isClean ? 'Clean' : 'Unclean'} in what state?</label>
             <StateDropdown selectedState={state} setSelectedState={setState} />
           </div>
           : <React.Fragment /> }

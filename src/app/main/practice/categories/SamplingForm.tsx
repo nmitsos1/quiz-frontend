@@ -100,7 +100,7 @@ function SamplingForm({groupIds, adminGroupRequest}: SamplingFormProps) {
       :
       (categoryCounts.length > 0) ?
       categoryCounts.map(cc => cc.count).reduce((a,b) => a+b) <= 250 ?
-      <React.Fragment><br/><br/><CreateAndBeginQuizButton categoryCounts={categoryCounts} groupIds={groupIds}/> <label>{facetCount} Total Questions</label></React.Fragment>
+      <React.Fragment><br/><br/><CreateAndBeginQuizButton categoryCounts={categoryCounts} groupIds={groupIds} adminGroupRequest={adminGroupRequest}/> <label>{facetCount} Total Questions</label></React.Fragment>
       :
       <div>You are over the question limit. Your current question total is {facetCount} and the limit is 250.</div>
       :

@@ -1,5 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { faCloudUpload } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import fileDownload from 'js-file-download';
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Button, Modal, ButtonGroup, Input } from 'reactstrap';
 import Pagination, { Page } from '../Pagination';
@@ -7,6 +11,7 @@ import SamplingForm from '../practice/categories/SamplingForm';
 import GroupCard from '../practice/questionGroups/GroupCard';
 import { getAllGroups, Group } from '../practice/questionGroups/GroupModel';
 import QuestionsPage from '../questions/QuestionsPage';
+import { GroupUpload, uploadGroupMultipleChoiceCsv, uploadGroupShortAnswerCsv } from '../questions/upload/UploadModel';
 import { StateDropdown } from '../Shared';
 
 function GroupsPage() {
@@ -64,6 +69,8 @@ function GroupsPage() {
 
 function CreateQuestionGroup() {
 
+  const queryClient = useQueryClient();
+
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
@@ -98,6 +105,24 @@ function CreateQuestionGroup() {
     }
   }, [isPristine]) 
 
+  const uploadMcFileMutation = useMutation(uploadGroupMultipleChoiceCsv, {
+    onSuccess: (data) => {
+        fileDownload(data, 'MalformedMultipleChoice.csv');
+        queryClient.invalidateQueries(['groups'])
+        queryClient.invalidateQueries(['questions']);
+    },
+    mutationKey: ['upload-file']
+  });
+
+  const uploadSaFileMutation = useMutation(uploadGroupShortAnswerCsv, {
+      onSuccess: (data) => {
+          fileDownload(data, 'MalformedShortAnswer.csv');
+          queryClient.invalidateQueries(['groups'])
+          queryClient.invalidateQueries(['questions']);
+      },
+      mutationKey: ['upload-file']
+  });
+
   const fileSetter = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
         //console.log(event.target.files[0]);
@@ -106,6 +131,32 @@ function CreateQuestionGroup() {
         setFile(undefined);
     }
   }
+
+  const handleSubmit = () => {
+    if (file) {
+      const groupUpload: GroupUpload = {
+        file: file,
+        group: {
+          name: name,
+          description: description,
+          isPackage: isPackage,
+          startDate: startDate,
+          endDate: endDate,
+          isPristine: isPristine,
+          isClean: isClean,
+          state: state
+        }
+      }
+  
+      if (isMc) {
+          uploadMcFileMutation.mutate(groupUpload);
+      } else {
+          uploadSaFileMutation.mutate(groupUpload);
+      }
+      setFile(undefined);
+    }
+  }
+
 
   return (
     <div>
@@ -228,6 +279,8 @@ function CreateQuestionGroup() {
           <label>Select a CSV file to upload</label><br />
           <Input type='file' name='file' onChange={fileSetter}/>
           <label>Correctly formatted question rows will be entered into the database. You will receive a CSV file with incorrectly formatted rows.</label>
+          <br/><br/>
+          <Button color='primary' disabled={!file} onClick={handleSubmit}>Upload Questions as Group <FontAwesomeIcon icon={faCloudUpload as IconProp}/></Button>
         </div>
         }
       </div>

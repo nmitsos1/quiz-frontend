@@ -21,15 +21,15 @@ export interface Answer {
 
 export interface QuestionRequest {
     questionId?: number,
-    category: string,
+    topic: string,
     text: string,
     answers: Array<Answer>,
     correctAnswer: string,
     isShuffled: boolean
 }
 
-export const getQuestions = async (query: String, category: String, groupId: number | undefined, page: number, count: number) => {
-    return await axios.get<Page<Question>>(`/api/admin/questions?query=${query}&category=${category}&page=${page}&count=${count}${groupId ? `&groupId=${groupId}` : ''}`)
+export const getQuestions = async (query: String, topic: String, groupId: number | undefined, page: number, count: number) => {
+    return await axios.get<Page<Question>>(`/api/admin/questions?query=${query}&topic=${topic}&page=${page}&count=${count}${groupId ? `&groupId=${groupId}` : ''}`)
     .then(response => response.data);
 }
 

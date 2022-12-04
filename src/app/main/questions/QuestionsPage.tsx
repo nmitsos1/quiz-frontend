@@ -10,7 +10,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faBan, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
-import { getCategories } from '../practice/categories/CategoryModel';
+import { getTopics } from '../practice/topics/TopicModel';
 import { IdProps } from '../Shared';
 
 interface QuestionPageProps {
@@ -18,9 +18,9 @@ interface QuestionPageProps {
 }
 function QuestionsPage({groupId}: QuestionPageProps) {
 
-    const { isLoading, isError, data: categories, error } = useQuery(['categories'], getCategories);
+    const { isLoading, isError, data: topics, error } = useQuery(['topics'], getTopics);
 
-    const [selectedCategory, setSelectedCategory] = useState<string>();
+    const [selectedTopic, setSelectedTopic] = useState<string>();
     const [text, setText] = useState('');
 
     const [isOpen, setIsOpen] = useState(false);
@@ -32,7 +32,7 @@ function QuestionsPage({groupId}: QuestionPageProps) {
   
     if (isError) {
       let err = error as AxiosError
-      return <h4>There was a problem loading filter categories. {err.message} - {err.response?.statusText}</h4>
+      return <h4>There was a problem loading filter topics. {err.message} - {err.response?.statusText}</h4>
     }
   
     return (
@@ -46,12 +46,12 @@ function QuestionsPage({groupId}: QuestionPageProps) {
                     <Row>
                       <Col xs="4">
                         <Dropdown isOpen={isOpen} toggle={toggle}>
-                          <DropdownToggle color="primary" outline caret>{selectedCategory || 'Filter by category'}</DropdownToggle>
+                          <DropdownToggle color="primary" outline caret>{selectedTopic || 'Filter by topic'}</DropdownToggle>
                           <DropdownMenu>
                             <DropdownItem></DropdownItem>
-                            <DropdownItem onClick={() => setSelectedCategory('Any')} key={0}>{'Any'}</DropdownItem>
-                            {categories.map((category, index) => {
-                              return (<DropdownItem onClick={() => setSelectedCategory(category)} key={index+1}>{category}</DropdownItem>)
+                            <DropdownItem onClick={() => setSelectedTopic('Any')} key={0}>{'Any'}</DropdownItem>
+                            {topics.map((topic, index) => {
+                              return (<DropdownItem onClick={() => setSelectedTopic(topic)} key={index+1}>{topic}</DropdownItem>)
                             })}
                           </DropdownMenu>
                         </Dropdown>
@@ -62,7 +62,7 @@ function QuestionsPage({groupId}: QuestionPageProps) {
                     </Row>
                   </Col>
                 </Row>
-                <Questions text={text} category={selectedCategory?.toLocaleUpperCase() || 'ANY'} groupId={groupId}/>
+                <Questions text={text} topic={selectedTopic?.toLocaleUpperCase() || 'ANY'} groupId={groupId}/>
             </Col>
         </div>
     )
@@ -74,7 +74,7 @@ function AddQuestionModal() {
     const [modal, setModal] = useState<boolean>(false);
     const toggle = () => setModal(!modal);
 
-    const [category, setCategory] = useState('');
+    const [topic, setTopic] = useState('');
     const [text, setText] = useState('');
 
     const [answer1, setAnswer1] = useState<Answer>({answerId: -1, answerText: ''});
@@ -99,7 +99,7 @@ function AddQuestionModal() {
         const answer: Answer = correctAnswer===1 ? answer1 : correctAnswer===2 ? answer2 : correctAnswer===3 ? answer3 : correctAnswer===4 ? answer4
          : {answerId:0,answerText:''};
         addQuestionMutation.mutate({ 
-          questionId: 0, category: category, text: text,
+          questionId: 0, topic: topic, text: text,
           answers: answers, correctAnswer: answer.answerText, isShuffled: true
         });
         toggle();
@@ -116,8 +116,8 @@ function AddQuestionModal() {
               <label><span className="asterisk">*</span> = Required Field</label><br/>
               <label htmlFor="content"><b>Question</b><span className="asterisk">*</span></label>
               <Input maxLength={500} type="textarea" rows="4" name="content" required onChange={(event) => setText(event.target.value)}/>
-              <label htmlFor="category"><b>Question Category</b><span className="asterisk">*</span></label>
-              <Input maxLength={60} type="text" name="category" required onChange={(event) => setCategory(event.target.value)}/>
+              <label htmlFor="topic"><b>Question Topic</b><span className="asterisk">*</span></label>
+              <Input maxLength={60} type="text" name="topic" required onChange={(event) => setTopic(event.target.value)}/>
               <label htmlFor="answer1"><b>Answer 1</b><span className="asterisk">*</span></label>
               <Input maxLength={60} type="text" name="answer1" required 
                 onChange={(event) => setAnswer1({answerId: answer1.answerId, answerText: event.target.value})}/>
@@ -151,7 +151,7 @@ function AddQuestionModal() {
               </ButtonGroup>
             </ModalBody>
             <ModalFooter>
-              <Button disabled={category==='' || text==='' || answer1.answerText==='' 
+              <Button disabled={topic==='' || text==='' || answer1.answerText==='' 
                 || answer2.answerText==='' || answer3.answerText==='' || answer4.answerText==='' || correctAnswer===0}
                 color="primary" onClick={handleSubmit}>
                 Add <FontAwesomeIcon icon={faQuestionCircle as IconProp}/>
@@ -166,20 +166,20 @@ function AddQuestionModal() {
 
 interface QuestionsProps {
     text: string,
-    category: string,
+    topic: string,
     groupId?: number
 }
-function Questions({text, category, groupId}: QuestionsProps) {
+function Questions({text, topic, groupId}: QuestionsProps) {
     const [page, setPage] = useState(1);
     const [count, setCount] = useState(5);
-    const { isError, data: questionPage, error } = useQuery(['questions', text, category, groupId, page, count], () => getQuestions(text, category, groupId, page, count));
+    const { isError, data: questionPage, error } = useQuery(['questions', text, topic, groupId, page, count], () => getQuestions(text, topic, groupId, page, count));
     const [pageData, setPageData] = useState<Page<Question>>();
 
     const [selectedId, setSelectedId] = useState<number>(-1);
 
     useEffect(() => {
       setPage(1);
-    }, [text, category, groupId]);
+    }, [text, topic, groupId]);
 
     useEffect(() => {
         if (questionPage)

@@ -4,8 +4,8 @@ import { Col, Nav, NavItem, NavLink, Row } from "reactstrap";
 import { AxiosError } from "axios";
 import { getMyGroups, getMyGroupById, Group } from "./questionGroups/GroupModel";
 import GroupCard from "./questionGroups/GroupCard";
-import SamplingForm from "./categories/SamplingForm";
-import { getCategoryCountsByGroupId } from "./categories/CategoryModel";
+import SamplingForm from "./topics/SamplingForm";
+import { getTopicCountsByGroupId } from "./topics/TopicModel";
 import CreateAndBeginQuizButton from "./CreateAndBeginQuizButton";
 import { IdProps } from "../Shared";
 
@@ -119,29 +119,29 @@ function YourCustomQuizzes({groups}: QuizGroupProps) {
 function CustomQuizInformation({id}: IdProps) {
 
   const { data: group } = useQuery(['group', id], () => getMyGroupById(id));
-  const { isLoading, isError, data: categoryCounts, error } = useQuery(['group-category-counts', id], () => getCategoryCountsByGroupId(id));
+  const { isLoading, isError, data: topicCounts, error } = useQuery(['group-topic-counts', id], () => getTopicCountsByGroupId(id));
 
   if (!group) {
     return <h4>Loading Selected Group...</h4>
   }
 
   if (isLoading) {
-    return <h4>Loading Group Category Data...</h4>
+    return <h4>Loading Group Topic Data...</h4>
   }
 
   if (isError) {
     let err = error as AxiosError
-    return <h4>There was a problem loading your group category data. {err.message} - {err.response?.statusText}</h4>
+    return <h4>There was a problem loading your group topic data. {err.message} - {err.response?.statusText}</h4>
   }
 
-  const totalCount = categoryCounts.reduce((a, b) => {return a+b.count}, 0);
+  const totalCount = topicCounts.reduce((a, b) => {return a+b.count}, 0);
 
   return (
     <div>
       <h5>{group.questionGroupName}</h5>
-      {categoryCounts.map((categoryCount, index) => {
-        if (categoryCount.category!=='Any')
-          return (<div key={index}>{`${categoryCount.count} ${categoryCount.category} Question${categoryCount.count>1?'s':''}`}</div>)
+      {topicCounts.map((topicCount, index) => {
+        if (topicCount.topic!=='Any')
+          return (<div key={index}>{`${topicCount.count} ${topicCount.topic} Question${topicCount.count>1?'s':''}`}</div>)
       })}
       <div><b>{totalCount} Total Question{totalCount>1 ? 's' : ''}</b></div>
       <hr />

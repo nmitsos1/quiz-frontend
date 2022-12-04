@@ -1,6 +1,6 @@
 import { QuestionInstance } from '../../quiz/QuestionAttemptModel';
 import axios from "axios";
-import { CategoryCount } from "../categories/CategoryModel";
+import { TopicCount } from "../topics/TopicModel";
 import { Page } from '../../Pagination';
 
 export interface Group {
@@ -16,7 +16,7 @@ export interface Group {
 }
 
 export interface SetRequest {
-  categoryCounts: Array<CategoryCount>,
+  topicCounts: Array<TopicCount>,
   groupIds: Array<number>
 }
 
@@ -29,7 +29,7 @@ export interface GroupRequest {
   isPristine: boolean,
   isClean: boolean,
   state: string,
-  categoryCounts?: Array<CategoryCount>
+  topicCounts?: Array<TopicCount>
 }
 
 interface UpdateSchoolGroupsParams {

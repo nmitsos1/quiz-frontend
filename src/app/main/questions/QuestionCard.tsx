@@ -80,7 +80,7 @@ function UpdateQuestionModal({question, correctAnswer}: QuestionModalProps) {
     const [modal, setModal] = useState<boolean>(false);
     const toggle = () => setModal(!modal);
 
-    const [updatedCategory, setUpdatedCategory] = useState(question.category);
+    const [updatedTopic, setUpdatedTopic] = useState(question.topic);
     const [updatedText, setUpdatedText] = useState(question.text);
 
     const [answer1, setAnswer1] = useState(question.answers[0]);
@@ -105,7 +105,7 @@ function UpdateQuestionModal({question, correctAnswer}: QuestionModalProps) {
         const answer: Answer = newCorrectAnswer===1 ? answer1 : newCorrectAnswer===2 ? answer2 : newCorrectAnswer===3 ? answer3 : newCorrectAnswer===4 ? answer4
          : {answerId:0,answerText:''};
         updateQuestionMutation.mutate({ 
-          questionId: question.questionId, category: updatedCategory, text: updatedText,
+          questionId: question.questionId, topic: updatedTopic, text: updatedText,
           answers: newAnswers, correctAnswer: answer.answerText, isShuffled: true
         });
         toggle();
@@ -122,8 +122,8 @@ function UpdateQuestionModal({question, correctAnswer}: QuestionModalProps) {
               <label><span className="asterisk">*</span> = Required Field</label><br/>
               <label htmlFor="content"><b>Question</b><span className="asterisk">*</span></label>
               <Input maxLength={500} type="textarea" rows="4" name="content" required defaultValue={question.text} onChange={(event) => setUpdatedText(event.target.value)}/>
-              <label htmlFor="category"><b>Question Category</b><span className="asterisk">*</span></label>
-              <Input maxLength={60} type="text" name="category" required defaultValue={question.category} onChange={(event) => setUpdatedCategory(event.target.value)}/>
+              <label htmlFor="topic"><b>Question Topic</b><span className="asterisk">*</span></label>
+              <Input maxLength={60} type="text" name="topic" required defaultValue={question.topic} onChange={(event) => setUpdatedTopic(event.target.value)}/>
               <label htmlFor="answer1"><b>Answer 1</b><span className="asterisk">*</span></label>
               <Input maxLength={60} type="text" name="answer1" required defaultValue={answer1.answerText} 
                 onChange={(event) => setAnswer1({answerId: answer1.answerId, answerText: event.target.value})}/>
@@ -157,7 +157,7 @@ function UpdateQuestionModal({question, correctAnswer}: QuestionModalProps) {
               </ButtonGroup>
             </ModalBody>
             <ModalFooter>
-              <Button disabled={updatedCategory==='' || updatedText==='' || answer1.answerText==='' 
+              <Button disabled={updatedTopic==='' || updatedText==='' || answer1.answerText==='' 
                 || answer2.answerText==='' || answer3.answerText==='' || answer4.answerText==='' || newCorrectAnswer===0}
                 color="primary" onClick={handleSubmit}>
                 Update <FontAwesomeIcon icon={faEdit as IconProp}/>

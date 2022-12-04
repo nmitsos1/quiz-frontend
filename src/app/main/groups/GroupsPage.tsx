@@ -7,7 +7,7 @@ import fileDownload from 'js-file-download';
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Button, Modal, ButtonGroup, Input } from 'reactstrap';
 import Pagination, { Page } from '../Pagination';
-import SamplingForm from '../practice/categories/SamplingForm';
+import SamplingForm from '../practice/topics/SamplingForm';
 import GroupCard from '../practice/questionGroups/GroupCard';
 import { getAllGroups, Group } from '../practice/questionGroups/GroupModel';
 import QuestionsPage from '../questions/QuestionsPage';

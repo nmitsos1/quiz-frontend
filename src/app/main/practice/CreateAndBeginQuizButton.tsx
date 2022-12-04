@@ -8,17 +8,17 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { beginAttempt, getRuleSetDescriptions, killAttempt, RuleSet } from '../quiz/attempt/AttemptModel';
 import { startNextQuestion } from '../quiz/QuestionAttemptModel';
-import { CategoryCount } from './categories/CategoryModel';
+import { TopicCount } from './topics/TopicModel';
 import { addGroup, addSet, GroupRequest } from './questionGroups/GroupModel';
 import _ from 'lodash';
 
 interface CreateAndBeginQuizButtonProps {
-    categoryCounts?: Array<CategoryCount>,
+    topicCounts?: Array<TopicCount>,
     groupIds?: Array<number>,
     groupId?: number,
     adminGroupRequest?: GroupRequest
 }
-function CreateAndBeginQuizButton({categoryCounts, groupIds, groupId, adminGroupRequest}: CreateAndBeginQuizButtonProps) {
+function CreateAndBeginQuizButton({topicCounts, groupIds, groupId, adminGroupRequest}: CreateAndBeginQuizButtonProps) {
 
     const queryClient = useQueryClient();
     const navigate = useNavigate();
@@ -42,7 +42,7 @@ function CreateAndBeginQuizButton({categoryCounts, groupIds, groupId, adminGroup
     const addGroupMutation = useMutation(addGroup, {
       onSuccess: () => {
         queryClient.invalidateQueries(['groups']);
-        queryClient.invalidateQueries(['categories']);
+        queryClient.invalidateQueries(['topics']);
       },
       mutationKey: ['create-group']
     });
@@ -80,8 +80,8 @@ function CreateAndBeginQuizButton({categoryCounts, groupIds, groupId, adminGroup
 
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       setIsWorking(true);
-      if (groupIds && categoryCounts) {
-        addSetMutation.mutate({ categoryCounts: categoryCounts, groupIds: groupIds});
+      if (groupIds && topicCounts) {
+        addSetMutation.mutate({ topicCounts: topicCounts, groupIds: groupIds});
       } else if (groupId) {
         beginAttemptMutation.mutate({groupId: groupId, ruleSet: ruleSet});
       } else {
@@ -93,8 +93,8 @@ function CreateAndBeginQuizButton({categoryCounts, groupIds, groupId, adminGroup
       
     const handleAdminSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       setIsWorking(true);
-      if (adminGroupRequest && categoryCounts) {
-        adminGroupRequest.categoryCounts = categoryCounts;
+      if (adminGroupRequest && topicCounts) {
+        adminGroupRequest.topicCounts = topicCounts;
         if (adminGroupRequest.isPackage) {
           addGroupMutation.mutate(adminGroupRequest);
         } else {

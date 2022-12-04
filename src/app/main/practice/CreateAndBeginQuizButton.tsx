@@ -41,7 +41,7 @@ function CreateAndBeginQuizButton({categoryCounts, groupIds, groupId, adminGroup
   
     const addGroupMutation = useMutation(addGroup, {
       onSuccess: () => {
-        queryClient.invalidateQueries(['my-groups']);
+        queryClient.invalidateQueries(['groups']);
         queryClient.invalidateQueries(['categories']);
       },
       mutationKey: ['create-group']

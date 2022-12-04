@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Page } from "../Pagination";
-import { Answer, Question } from "../questions/QuestionModel";
+import { Question } from "../questions/QuestionModel";
 
 export interface QuestionInstanceAttempt {
     questionInstanceAttemptId: number,
@@ -29,8 +29,10 @@ export const startNextQuestion = async () => {
     .then(response => response.data);
 }
 
-export const answerCurrentQuestion = async (answer: Answer) => {
-    return await axios.post<Boolean>(`/api/user/attempts/question/answer`, answer)
+export const answerCurrentQuestion = async (answer: String) => {
+    return await axios.post<Boolean>(`/api/user/attempts/question/answer`, answer, {
+        headers: {"Content-Type": "text/plain"}
+    })
     .then(response => response.data);
 }
 

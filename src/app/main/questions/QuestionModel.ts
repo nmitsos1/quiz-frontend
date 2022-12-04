@@ -57,3 +57,8 @@ export const deleteQuestionById = async (id: number) => {
     return await axios.delete(`/api/admin/questions/${id}`)
     .then(response => response.data);
 }
+
+export enum QuestionType {
+    MULTIPLE_CHOICE = 'M',
+    SHORT_ANSWER = 'S'
+}

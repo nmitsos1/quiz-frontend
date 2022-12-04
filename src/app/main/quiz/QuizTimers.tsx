@@ -6,7 +6,7 @@ import { Answer } from "../questions/QuestionModel";
 interface QuizTimerProps {
     startTime: Date,
     endTime?: Date,
-    answerCurrentQuestionMutation?: UseMutationResult<Boolean, unknown, Answer, unknown>
+    answerCurrentQuestionMutation?: UseMutationResult<Boolean, unknown, String, unknown>
 }
 export function DefaultTimer({startTime, endTime}: QuizTimerProps) {
 
@@ -48,7 +48,7 @@ export function RelayTimer({startTime, endTime, answerCurrentQuestionMutation}: 
 
     useEffect(() => {
         if (!endTime && seconds <= 0 && answerCurrentQuestionMutation) {
-            answerCurrentQuestionMutation.mutate({answerId: 0, answerText: 'Out of time'});
+            answerCurrentQuestionMutation.mutate('!!Out of time!!');
             return () => clearInterval(undefined);
         }
     }, [seconds])

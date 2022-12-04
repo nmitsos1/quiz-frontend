@@ -6,8 +6,8 @@ import { AxiosError } from "axios";
 import { isUndefined } from "lodash";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Card, CardBody, CardText, Col, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
-import { Answer } from "../questions/QuestionModel";
+import { Button, Card, CardBody, CardText, Col, Input, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
+import { Answer, QuestionType } from "../questions/QuestionModel";
 import { letters } from "../Shared";
 import { getMyAttempt, killAttempt, RuleSet } from "./attempt/AttemptModel";
 import { answerCurrentQuestion, getCurrentQuestion, startNextQuestion } from "./QuestionAttemptModel";
@@ -19,13 +19,14 @@ function Quiz() {
     const { data: attempt } = useQuery(['attempt'], getMyAttempt);
     const questionNumber = questionAttempt?.questionInstance.questionIndex;
     const question = questionAttempt?.questionInstance.question;
+    const type = questionAttempt?.questionInstance.question.type
     const answerOne = questionAttempt?.answer;
     const answerTwo = questionAttempt?.secondAnswer;
     const score = questionAttempt?.questionScore;
     const startTime = questionAttempt?.questionStartTime;
     const endTime = questionAttempt?.questionEndTime;
     
-    const [selectedAnswer, setSelectedAnswer] = useState<Answer>();
+    const [selectedAnswer, setSelectedAnswer] = useState<string>();
 
     const [modal, setModal] = useState<boolean>(false);
     const toggle = () => setModal(!modal);
@@ -107,7 +108,15 @@ function Quiz() {
             <Col>
             </Col>
             <hr />
-            {question?.answers.map((answer, index) => {
+            {type === QuestionType.SHORT_ANSWER ?
+            <React.Fragment>
+                <h5>Type your answer here:</h5>
+                <Input maxLength={100} type="text" required value={selectedAnswer || ''} onChange={(event) => setSelectedAnswer(event.target.value)}/>
+                {answerOne ? <label>Your Answer: {answerOne}</label> : <React.Fragment />}
+                {answerTwo ? <React.Fragment><br/><label>Second Attempt: {answerTwo}</label></React.Fragment> : <React.Fragment />}
+            </React.Fragment>
+            :
+            question?.answers.map((answer, index) => {
                 const isWrong = (answer.answerText === answerOne && (score===0 || answerTwo)) || (answer.answerText === answerTwo && score===0);
                 const isRight = (answer.answerText === answerOne || answer.answerText === answerTwo) && score && score > 0;
                 return (
@@ -125,16 +134,17 @@ function Quiz() {
                         </CardBody>
                     </Card>
                     :
-                    <Card key={index} className="answer-card" onClick={() => setSelectedAnswer(answer)} 
-                    color={answer.answerId===selectedAnswer?.answerId ? 'primary' : 'secondary'} 
-                    outline={answer.answerId!==selectedAnswer?.answerId} 
-                    inverse={answer.answerId===selectedAnswer?.answerId}>
+                    <Card key={index} className="answer-card" onClick={() => setSelectedAnswer(answer.answerText)} 
+                    color={answer.answerText===selectedAnswer ? 'primary' : 'secondary'} 
+                    outline={answer.answerText!==selectedAnswer} 
+                    inverse={answer.answerText===selectedAnswer}>
                         <CardBody>
                             <CardText><h5>{letters[index]}{answer.answerText}</h5></CardText>
                         </CardBody>
                     </Card>
                 );
-            })}
+            })
+            }
             <hr />
             <Button block size="lg" disabled={!selectedAnswer || isAnswered} color='primary'
             onClick={handleSubmit}>

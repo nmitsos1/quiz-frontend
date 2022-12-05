@@ -26,6 +26,7 @@ const admin = firebase.initializeApp(firebaseConfig, 'Admin');
   
 function SchoolPage() {
     const [name, setName] = useState('');
+    const [state, setState] = useState('All');
     const [selectedIds, setSelectedIds] = useState<Array<number>>([]);
 
     return (
@@ -34,12 +35,15 @@ function SchoolPage() {
             <Row>
                 <Col>
                     <Row>
-                    <Col><AddSchoolModal /></Col>
+                        <Col xs="6"><AddSchoolModal /></Col>
+                        <Col xs="2">
+                            <StateDropdown selectedState={state} setSelectedState={setState} includesAll/>
+                        </Col>
                         <Col>
                             <Input placeholder="Search by name..." onChange={event => setName(event.target.value)}/>
                         </Col>
                     </Row>
-                    <Schools name={name} selectedIds={selectedIds} setSelectedIds={setSelectedIds}/>
+                    <Schools name={name} state={state} selectedIds={selectedIds} setSelectedIds={setSelectedIds}/>
                 </Col>
                 <Col>
                     <EditGroups selectedIds={selectedIds} />
@@ -52,14 +56,15 @@ function SchoolPage() {
 
 interface SchoolsProps {
     name: string,
+    state: string,
     selectedIds: Array<number>,
     setSelectedIds: Function
 }
-function Schools({ name, selectedIds, setSelectedIds } : SchoolsProps) {
+function Schools({ name, state, selectedIds, setSelectedIds } : SchoolsProps) {
 
     const [page, setPage] = useState(1);
     const [count, setCount] = useState(5);
-    const { isError, data: schoolPage, error } = useQuery(['schools', name, page, count], () => getSchools(name, page, count));
+    const { isError, data: schoolPage, error } = useQuery(['schools', name, state, page, count], () => getSchools(name, state, page, count));
     const [pageData, setPageData] = useState<Page<School>>();
 
     useEffect(() => {

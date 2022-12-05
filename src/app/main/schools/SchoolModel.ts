@@ -36,8 +36,8 @@ export const getSchoolById = async (id: number) => {
     .then(response => response.data);
 }
 
-export const getSchools = async (name: String, page: number, count: number) => {
-    return await axios.get<Page<School>>(`/api/admin/schools?name=${name}&page=${page}&count=${count}`)
+export const getSchools = async (name: string, state: string, page: number, count: number) => {
+    return await axios.get<Page<School>>(`/api/admin/schools?name=${name}&state=${state}&page=${page}&count=${count}`)
     .then(response => response.data);
 }
 

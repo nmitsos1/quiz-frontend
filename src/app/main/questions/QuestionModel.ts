@@ -21,6 +21,7 @@ export interface Answer {
 
 export interface QuestionRequest {
     questionId?: number,
+    type: string,
     topic: string,
     text: string,
     answers: Array<Answer>,
@@ -59,6 +60,7 @@ export const deleteQuestionById = async (id: number) => {
 }
 
 export enum QuestionType {
-    MULTIPLE_CHOICE = 'M',
-    SHORT_ANSWER = 'S'
+    MULTIPLE_CHOICE = 'V',
+    SHORT_ANSWER = 'S',
+    PYRAMID = 'P'
 }

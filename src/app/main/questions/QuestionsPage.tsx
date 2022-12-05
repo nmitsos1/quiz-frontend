@@ -3,7 +3,7 @@ import { AxiosError } from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Button, ButtonGroup, Col, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Input, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
 import Pagination, { Page } from '../Pagination';
-import { addQuestion, Answer, getQuestions, Question } from './QuestionModel';
+import { addQuestion, Answer, getQuestions, Question, QuestionType } from './QuestionModel';
 import QuestionCard from './QuestionCard';
 import QuestionsUpload from './upload/QuestionUpload';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
@@ -11,7 +11,6 @@ import { faBan, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 import { getTopics } from '../practice/topics/TopicModel';
-import { IdProps } from '../Shared';
 
 interface QuestionPageProps {
   groupId?: number
@@ -74,6 +73,8 @@ function AddQuestionModal() {
     const [modal, setModal] = useState<boolean>(false);
     const toggle = () => setModal(!modal);
 
+    const [isMc, setIsMc] = useState(true);
+
     const [topic, setTopic] = useState('');
     const [text, setText] = useState('');
 
@@ -81,7 +82,7 @@ function AddQuestionModal() {
     const [answer2, setAnswer2] = useState<Answer>({answerId: -2, answerText: ''});
     const [answer3, setAnswer3] = useState<Answer>({answerId: -3, answerText: ''});
     const [answer4, setAnswer4] = useState<Answer>({answerId: -4, answerText: ''});
-    const [correctAnswer, setCorrectAnswer] = useState(0);
+    const [correctAnswer, setCorrectAnswer] = useState(isMc ? 0 : 1);
 
     const addQuestionMutation = useMutation(addQuestion, {
         onSuccess: () => {
@@ -93,13 +94,13 @@ function AddQuestionModal() {
     });
 
     const handleSubmit = () => {
-        const answers: Array<Answer> = [
+        const answers: Array<Answer> = isMc ? [
           answer1, answer2, answer3, answer4
-        ]
+        ] : [answer1]
         const answer: Answer = correctAnswer===1 ? answer1 : correctAnswer===2 ? answer2 : correctAnswer===3 ? answer3 : correctAnswer===4 ? answer4
          : {answerId:0,answerText:''};
         addQuestionMutation.mutate({ 
-          questionId: 0, topic: topic, text: text,
+          questionId: 0, topic: topic, text: text, type: isMc ? QuestionType.MULTIPLE_CHOICE : QuestionType.SHORT_ANSWER,
           answers: answers, correctAnswer: answer.answerText, isShuffled: true
         });
         toggle();
@@ -111,48 +112,63 @@ function AddQuestionModal() {
             Add Question <FontAwesomeIcon icon={faCircleQuestion as IconProp}/>
           </Button>
           <Modal isOpen={modal} toggle={toggle}>
-            <ModalHeader toggle={toggle}>Update Question</ModalHeader>
+            <ModalHeader toggle={toggle}>Add New Pristine Question</ModalHeader>
             <ModalBody>
+              <label>Question Type</label><br/>
+              <ButtonGroup>
+                <Button color='primary' onClick={() => setIsMc(true)} 
+                  active={isMc} outline={!isMc}>
+                  Multiple Choice
+                </Button>
+                <Button color='primary' onClick={() => setIsMc(false)} 
+                  active={!isMc} outline={isMc}>
+                  Short Answer
+                </Button>
+              </ButtonGroup><br />
               <label><span className="asterisk">*</span> = Required Field</label><br/>
               <label htmlFor="content"><b>Question</b><span className="asterisk">*</span></label>
-              <Input maxLength={500} type="textarea" rows="4" name="content" required onChange={(event) => setText(event.target.value)}/>
+              <Input maxLength={500} type="textarea" rows="3" name="content" required onChange={(event) => setText(event.target.value)}/>
               <label htmlFor="topic"><b>Question Topic</b><span className="asterisk">*</span></label>
               <Input maxLength={60} type="text" name="topic" required onChange={(event) => setTopic(event.target.value)}/>
-              <label htmlFor="answer1"><b>Answer 1</b><span className="asterisk">*</span></label>
+              <label htmlFor="answer1"><b>Answer{isMc ? ' 1' : ''}</b><span className="asterisk">*</span></label>
               <Input maxLength={60} type="text" name="answer1" required 
                 onChange={(event) => setAnswer1({answerId: answer1.answerId, answerText: event.target.value})}/>
-              <label htmlFor="answer2"><b>Answer 2</b><span className="asterisk">*</span></label>
-              <Input maxLength={60} type="text" name="answer2" required 
-                onChange={(event) => setAnswer2({answerId: answer2.answerId, answerText: event.target.value})}/>
-              <label htmlFor="answer3"><b>Answer 3</b><span className="asterisk">*</span></label>
-              <Input maxLength={60} type="text" name="answer3" required 
-                onChange={(event) => setAnswer3({answerId: answer3.answerId, answerText: event.target.value})}/>
-              <label htmlFor="answer4"><b>Answer 4</b><span className="asterisk">*</span></label>
-              <Input maxLength={60} type="text" name="answer4" required 
-                onChange={(event) => setAnswer4({answerId: answer4.answerId, answerText: event.target.value})}/>
-              <label htmlFor="correct"><b>Select Correct Answer</b><span className="asterisk">*</span></label>
-              <ButtonGroup>
-                <Button color='primary' onClick={() => setCorrectAnswer(1)} 
-                  active={correctAnswer===1} outline={correctAnswer!==1}>
-                  Answer 1
-                </Button>
-                <Button color='primary' onClick={() => setCorrectAnswer(2)} 
-                  active={correctAnswer===2} outline={correctAnswer!==2}>
-                  Answer 2
-                </Button>
-                <Button color='primary' onClick={() => setCorrectAnswer(3)} 
-                  active={correctAnswer===3} outline={correctAnswer!==3}>
-                  Answer 3
-                </Button>
-                <Button color='primary' onClick={() => setCorrectAnswer(4)} 
-                  active={correctAnswer===4} outline={correctAnswer!==4}>
-                  Answer 4
-                </Button>
-              </ButtonGroup>
+                {isMc ? 
+                <React.Fragment>
+                  <label htmlFor="answer2"><b>Answer 2</b><span className="asterisk">*</span></label>
+                  <Input maxLength={60} type="text" name="answer2" required 
+                    onChange={(event) => setAnswer2({answerId: answer2.answerId, answerText: event.target.value})}/>
+                  <label htmlFor="answer3"><b>Answer 3</b><span className="asterisk">*</span></label>
+                  <Input maxLength={60} type="text" name="answer3" required 
+                    onChange={(event) => setAnswer3({answerId: answer3.answerId, answerText: event.target.value})}/>
+                  <label htmlFor="answer4"><b>Answer 4</b><span className="asterisk">*</span></label>
+                  <Input maxLength={60} type="text" name="answer4" required 
+                    onChange={(event) => setAnswer4({answerId: answer4.answerId, answerText: event.target.value})}/>
+                  <label htmlFor="correct"><b>Select Correct Answer</b><span className="asterisk">*</span></label>
+                  <ButtonGroup>
+                    <Button color='primary' onClick={() => setCorrectAnswer(1)} 
+                      active={correctAnswer===1} outline={correctAnswer!==1}>
+                      Answer 1
+                    </Button>
+                    <Button color='primary' onClick={() => setCorrectAnswer(2)} 
+                      active={correctAnswer===2} outline={correctAnswer!==2}>
+                      Answer 2
+                    </Button>
+                    <Button color='primary' onClick={() => setCorrectAnswer(3)} 
+                      active={correctAnswer===3} outline={correctAnswer!==3}>
+                      Answer 3
+                    </Button>
+                    <Button color='primary' onClick={() => setCorrectAnswer(4)} 
+                      active={correctAnswer===4} outline={correctAnswer!==4}>
+                      Answer 4
+                    </Button>
+                  </ButtonGroup>
+                </React.Fragment> : <React.Fragment />
+                }
             </ModalBody>
             <ModalFooter>
-              <Button disabled={topic==='' || text==='' || answer1.answerText==='' 
-                || answer2.answerText==='' || answer3.answerText==='' || answer4.answerText==='' || correctAnswer===0}
+              <Button disabled={topic==='' || text==='' || answer1.answerText==='' || (isMc &&
+                (answer2.answerText==='' || answer3.answerText==='' || answer4.answerText==='' || correctAnswer===0))}
                 color="primary" onClick={handleSubmit}>
                 Add <FontAwesomeIcon icon={faQuestionCircle as IconProp}/>
               </Button>

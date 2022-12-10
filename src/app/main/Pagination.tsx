@@ -69,7 +69,11 @@ export default function Pagination<Type>({page, setPage, setCount, isLoading}: P
                         })}
                     </DropdownMenu>
                 </Dropdown>
-            </div>
+            </div>{' '}
+            <label>
+                <i>Showing records <b>{(page.pageable.pageNumber * page.pageable.pageSize) + 1} - {(page.pageable.pageNumber * page.pageable.pageSize) + page.numberOfElements}</b>
+                {' '}out of <b>{page.totalElements} total</b></i>
+            </label>
         </div>
     );
 }

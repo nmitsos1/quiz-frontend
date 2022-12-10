@@ -35,7 +35,9 @@ function SchoolPage() {
             <Row>
                 <Col>
                     <Row>
-                        <Col xs="6"><AddSchoolModal /></Col>
+                        <Col xs="6">
+                            <AddSchoolModal />
+                        </Col>
                         <Col xs="2">
                             <StateDropdown selectedState={state} setSelectedState={setState} includesAll/>
                         </Col>
@@ -89,6 +91,9 @@ function Schools({ name, state, selectedIds, setSelectedIds } : SchoolsProps) {
     return (
         <React.Fragment>
             <hr />
+            {selectedIds.length > 0 ?
+                <Button outline color="secondary" onClick={() => setSelectedIds([])} className="float-right-class">Deselect All</Button>
+            : <React.Fragment />}
             <Pagination page={pageData} setPage={setPage} setCount={setCount}/>
             {
             schools.map(school => {

@@ -42,6 +42,15 @@ interface BulkAddGroupsParams {
   groupIds: Array<number>
 }
 
+interface GroupPdfData {
+  groupId: number,
+  isCustom: boolean,
+  numberOfRounds: number,
+  isMax: boolean,
+  numberOfQuestions: number,
+  hasBonus: boolean
+}
+
 export const getMyGroups = async () => {
   return await axios.get<Array<Group>>('/api/user/groups')
   .then(response => response.data);
@@ -101,3 +110,14 @@ export const deleteGroup = async (id: number | undefined) => {
   return await axios.delete(`/api/admin/groups/${id}`);
 }
 
+export const downloadMyGroupPdf = async (groupPdfData: GroupPdfData) => {
+  return await axios.post(`/api/user/groups/${groupPdfData.groupId}/pdf`, groupPdfData, {
+    responseType: 'blob'
+  }).then(response => response.data);
+}
+
+export const downloadGroupPdf = async (groupPdfData: GroupPdfData) => {
+  return await axios.post(`/api/admin/groups/${groupPdfData.groupId}/pdf`, groupPdfData, {
+    responseType: 'blob'
+  }).then(response => response.data);
+}

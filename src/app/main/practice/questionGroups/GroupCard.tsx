@@ -1,10 +1,11 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { faEdit, faBan, faTrash, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faBan, faTrash, faTrashAlt, faFilePdf, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import fileDownload from 'js-file-download';
 import React, { useState } from 'react';
-import { Button, Card, CardBody, CardFooter, CardHeader, CardText, CardTitle, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import { deleteGroup, deleteMySet, Group, updateGroup, updateMySet } from './GroupModel';
+import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, CardText, CardTitle, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import { deleteGroup, deleteMySet, downloadGroupPdf, downloadMyGroupPdf, Group, updateGroup, updateMySet } from './GroupModel';
 
 interface GroupCardProps {
   group: Group,
@@ -39,10 +40,14 @@ function GroupCard({group, selectedIds, setSelectedIds, isSingleSelect, isAdminP
           {isSingleSelect
           ?
           <div className='card-buttons'>
+            <DownloadPdfModal group={group} isAdminPage={isAdminPage} />{' '}
             <UpdateSetModal group={group} isAdminPage={isAdminPage}/>{' '}
             <DeleteSetModal group={group} setSelectedIds={setSelectedIds} isAdminPage={isAdminPage}/>
           </div>
-          : <React.Fragment /> }
+          : 
+          <div className='card-buttons'>
+            <DownloadPdfModal group={group} isAdminPage={isAdminPage} />
+          </div>}
 
         </CardTitle>
       </CardHeader>
@@ -153,6 +158,98 @@ function DeleteSetModal({group, setSelectedIds, isAdminPage}: GroupModalProps) {
         <ModalFooter>
           <Button color="secondary" onClick={cancelDelete}>Cancel <FontAwesomeIcon icon={faBan as IconProp}/></Button>{' '}
           <Button color="danger" outline onClick={handleSubmit} disabled={deleteText!=='DELETE'}>Delete <FontAwesomeIcon icon={faTrashAlt as IconProp}/></Button>
+        </ModalFooter>
+      </Modal>
+    </React.Fragment>
+  );
+}
+
+function DownloadPdfModal({group, isAdminPage}: GroupModalProps) {
+
+  const [modal, setModal] = useState<boolean>(false);
+  const toggle = () => setModal(!modal);
+
+  const [isCustom, setIsCustom] = useState(false);
+  const [numberOfRounds, setNumberOfRounds] = useState<number>(1);
+  const [isMax, setIsMax] = useState(true);
+  const [numberOfQuestions, setNumberOfQuestions] = useState<number>(1);
+  const [hasBonus, setHasBonus] = useState(false);
+
+  const downloadGroupMutation = useMutation(isAdminPage ? downloadGroupPdf : downloadMyGroupPdf, {
+    onSuccess: (data) => {
+      fileDownload(data, `${group.questionGroupName}.pdf`)
+    },
+    mutationKey: ['download-group']
+  });
+
+  const handleSubmit = () => {
+    downloadGroupMutation.mutate({
+      groupId: group.questionGroupId,
+      isCustom: isCustom,
+      numberOfRounds: numberOfRounds,
+      isMax: isMax,
+      numberOfQuestions: numberOfQuestions,
+      hasBonus: hasBonus
+    });
+    toggle();
+  };
+
+  return (
+    <React.Fragment>
+      <Button onClick={(e) => {e.stopPropagation(); toggle();}} color="info" outline size='sm'>
+        <FontAwesomeIcon icon={faDownload as IconProp} size='sm'/>
+      </Button>
+      <Modal isOpen={modal} toggle={toggle}>
+        <ModalHeader toggle={toggle}>Download PDF</ModalHeader>
+        <ModalBody>
+          <label>Would you like to customize your download?</label><br/>
+          <ButtonGroup>
+              <Button color='primary' onClick={() => setIsCustom(true)} 
+              active={isCustom} outline={!isCustom}>
+              Yes
+              </Button>
+              <Button color='primary' onClick={() => setIsCustom(false)} 
+              active={!isCustom} outline={isCustom}>
+              No
+              </Button>
+          </ButtonGroup>
+          {isCustom ?
+          <div>
+            <label>How many rounds?</label><br/>
+            <Input type="number" value={numberOfRounds} onChange={(event) => setNumberOfRounds(parseInt(event.target.value))}/>
+            <label>How many questions per round?</label><br/>
+            <ButtonGroup>
+              <Button color='primary' onClick={() => setIsMax(true)} 
+              active={isMax} outline={!isMax}>
+              Maximum amount
+              </Button>
+              <Button color='primary' onClick={() => setIsMax(false)} 
+              active={!isMax} outline={isMax}>
+              Custom
+              </Button>
+            </ButtonGroup>
+            {!isMax ?
+            <div>
+              <label>Questions per round</label>
+              <Input type="number" value={numberOfQuestions} onChange={(event) => setNumberOfQuestions(parseInt(event.target.value))}/>
+            </div>
+            : <React.Fragment />}
+            <label>Bonus questions for each round?</label><br/>
+            <ButtonGroup>
+              <Button color='primary' onClick={() => setHasBonus(true)} 
+              active={hasBonus} outline={!hasBonus}>
+              Yes
+              </Button>
+              <Button color='primary' onClick={() => setHasBonus(false)} 
+              active={!hasBonus} outline={hasBonus}>
+              No
+              </Button>
+          </ButtonGroup>
+          </div> : <React.Fragment />}
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={handleSubmit} disabled={isCustom && (!(numberOfRounds > 0) || (!isMax && !(numberOfQuestions > 0)))}>Download PDF <FontAwesomeIcon icon={faFilePdf as IconProp}/></Button>
+          <Button color="secondary" outline onClick={toggle}>Cancel <FontAwesomeIcon icon={faBan as IconProp}/></Button>{' '}
         </ModalFooter>
       </Modal>
     </React.Fragment>

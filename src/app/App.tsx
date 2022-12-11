@@ -7,7 +7,7 @@ import StyledFirebaseAuth from './../StyledFirebaseAuth';
 import axios, { AxiosError } from 'axios'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import _ from 'lodash';
+import _, { split } from 'lodash';
 import MessageBar from './MessageBar';
 import Moment from 'moment';
 import Main from './main/Main';
@@ -85,17 +85,30 @@ function App() {
   /** Global queryClient callbacks for queries and mutations. Used for message handling here */
   const queryClient = new QueryClient({
     mutationCache: new MutationCache({
-      onError: (error, variables, context, mutation) => {
+      onError: async (error, variables, context, mutation) => {
         const key = mutation.options.mutationKey
         if (key) {
           let err = error as AxiosError;
-          const errorData: SpringErrorData = err.response?.data as SpringErrorData;
-          let errMessage = `${errorData.message}`;
-          if (errorData.errors) {
-            errMessage = errMessage + '\r\n';
-            errorData.errors.forEach((springError) => {
-              errMessage = errMessage + springError.defaultMessage + '\r\n';
-            })
+          let errMessage = '';
+          console.log(err);
+          if (err.request.responseType === 'blob') {
+            console.log('ITS A BLOB');
+            let blob: Blob = err.response?.data as Blob;
+            console.log(blob);
+            errMessage = await blob.text();
+            console.log(errMessage);
+            errMessage = errMessage.split(': ')[1].split('\\r\\n')[0];
+          } else {
+            const errorData: SpringErrorData = err.response?.data as SpringErrorData;
+            errMessage = `${errorData.message}`;
+            if (errorData.errors) {
+              errMessage = errMessage + '\r\n';
+              errorData.errors.forEach((springError) => {
+                errMessage = errMessage + springError.defaultMessage + '\r\n';
+              })
+            } else {
+              errMessage = err.request.response.split(': ')[1].split('\\r\\n')[0];
+            }
           }
           //const errMessage = err.request.response.split(': ')[1].split('\\r\\n')[0];
           setAlertColor('danger');

@@ -90,13 +90,9 @@ function App() {
         if (key) {
           let err = error as AxiosError;
           let errMessage = '';
-          console.log(err);
           if (err.request.responseType === 'blob') {
-            console.log('ITS A BLOB');
             let blob: Blob = err.response?.data as Blob;
-            console.log(blob);
             errMessage = await blob.text();
-            console.log(errMessage);
             errMessage = errMessage.split(': ')[1].split('\\r\\n')[0];
           } else {
             const errorData: SpringErrorData = err.response?.data as SpringErrorData;

@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import fileDownload from 'js-file-download';
 import React, { useState } from 'react';
 import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, CardText, CardTitle, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import { deleteGroup, deleteMySet, downloadGroupPdf, downloadMyGroupPdf, Group, updateGroup, updateMySet } from './GroupModel';
+import { deleteGroup, deleteMySet, downloadGroupAnswersPdf, downloadGroupPdf, downloadMyGroupAnswersPdf, downloadMyGroupPdf, Group, updateGroup, updateMySet } from './GroupModel';
 
 interface GroupCardProps {
   group: Group,
@@ -179,12 +179,34 @@ function DownloadPdfModal({group, isAdminPage}: GroupModalProps) {
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
 
+  const [hasAnswerPassword, setHasAnswerPassword] = useState(false);
+  const [answerPassword, setAnswerPassword] = useState<string>('');
+  const [confirmAnswerPassword, setConfirmAnswerPassword] = useState<string>('');
+
   const downloadGroupMutation = useMutation(isAdminPage ? downloadGroupPdf : downloadMyGroupPdf, {
     onSuccess: (data) => {
-      fileDownload(data, `${group.questionGroupName}.pdf`)
+      fileDownload(data, `${group.questionGroupName}.pdf`);
+      downloadGroupAnswersMutation.mutate({
+        groupId: group.questionGroupId,
+        isCustom: isCustom,
+        numberOfRounds: numberOfRounds,
+        isMax: isMax,
+        numberOfQuestions: numberOfQuestions,
+        hasBonus: hasBonus,
+        hasPassword: hasAnswerPassword,
+        password: answerPassword
+      });
     },
     mutationKey: ['download-group']
   });
+
+  const downloadGroupAnswersMutation = useMutation(isAdminPage ? downloadGroupAnswersPdf : downloadMyGroupAnswersPdf, {
+    onSuccess: (data) => {
+      fileDownload(data, `${group.questionGroupName} - Answers.pdf`)
+    },
+    mutationKey: ['download-group']
+  });
+
 
   const handleSubmit = () => {
     downloadGroupMutation.mutate({
@@ -252,7 +274,7 @@ function DownloadPdfModal({group, isAdminPage}: GroupModalProps) {
               </Button>
             </ButtonGroup>
           </div> : <br />}
-          <label>Encrypt file with password?</label><br/>
+          <label>Encrypt questions file with password?</label><br/>
             <ButtonGroup>
               <Button color='primary' onClick={() => setHasPassword(true)} 
               active={hasPassword} outline={!hasPassword}>
@@ -265,12 +287,32 @@ function DownloadPdfModal({group, isAdminPage}: GroupModalProps) {
             </ButtonGroup>
             {hasPassword ?
             <div>
-              <label>Enter Password</label>
+              <label>Enter Question Document Password</label>
               <Input type="password" value={password} onChange={(event) => setPassword(event.target.value)}/>
-              <label>Confirm Password</label>
+              <label>Confirm Question Document Password</label>
               <Input type="password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)}/>
             </div>
+            : <br />}
+            <label>Encrypt answers file with password?</label><br/>
+            <ButtonGroup>
+              <Button color='primary' onClick={() => setHasAnswerPassword(true)} 
+              active={hasAnswerPassword} outline={!hasAnswerPassword}>
+              Yes
+              </Button>
+              <Button color='primary' onClick={() => setHasAnswerPassword(false)} 
+              active={!hasAnswerPassword} outline={hasAnswerPassword}>
+              No
+              </Button>
+            </ButtonGroup>
+            {hasAnswerPassword ?
+            <div>
+              <label>Enter Answer Document Password</label>
+              <Input type="password" value={answerPassword} onChange={(event) => setAnswerPassword(event.target.value)}/>
+              <label>Confirm Answer Document Password</label>
+              <Input type="password" value={confirmAnswerPassword} onChange={(event) => setConfirmAnswerPassword(event.target.value)}/>
+            </div>
             : <React.Fragment />}
+
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={handleSubmit} 

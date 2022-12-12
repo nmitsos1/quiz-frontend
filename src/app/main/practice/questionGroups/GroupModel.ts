@@ -123,3 +123,15 @@ export const downloadGroupPdf = async (groupPdfData: GroupPdfData) => {
     responseType: 'blob'
   }).then(response => response.data);
 }
+
+export const downloadMyGroupAnswersPdf = async (groupPdfData: GroupPdfData) => {
+  return await axios.post(`/api/user/groups/${groupPdfData.groupId}/pdf/answers`, groupPdfData, {
+    responseType: 'blob'
+  }).then(response => response.data);
+}
+
+export const downloadGroupAnswersPdf = async (groupPdfData: GroupPdfData) => {
+  return await axios.post(`/api/admin/groups/${groupPdfData.groupId}/pdf/answers`, groupPdfData, {
+    responseType: 'blob'
+  }).then(response => response.data);
+}

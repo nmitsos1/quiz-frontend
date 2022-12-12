@@ -3,7 +3,7 @@ import { faEdit, faBan, faTrash, faTrashAlt, faFilePdf, faDownload } from '@fort
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import fileDownload from 'js-file-download';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, ButtonGroup, Card, CardBody, CardFooter, CardHeader, CardText, CardTitle, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { deleteGroup, deleteMySet, downloadGroupAnswersPdf, downloadGroupPdf, downloadMyGroupAnswersPdf, downloadMyGroupPdf, Group, updateGroup, updateMySet } from './GroupModel';
 
@@ -197,16 +197,47 @@ function DownloadPdfModal({group, isAdminPage}: GroupModalProps) {
         password: answerPassword
       });
     },
+    onError: () => {
+      closeDownloadModal();
+    },
     mutationKey: ['download-group']
   });
 
   const downloadGroupAnswersMutation = useMutation(isAdminPage ? downloadGroupAnswersPdf : downloadMyGroupAnswersPdf, {
     onSuccess: (data) => {
-      fileDownload(data, `${group.questionGroupName} - Answers.pdf`)
+      fileDownload(data, `${group.questionGroupName} - Answers.pdf`);
+      closeDownloadModal();
     },
     mutationKey: ['download-group']
   });
 
+  useEffect(() => {
+    if (!isCustom) {
+      setNumberOfRounds(1);
+      setIsMax(true);
+      setHasBonus(false);
+    }
+  }, [isCustom]);
+  
+  useEffect(() => {
+    if (isMax) {
+      setNumberOfQuestions(1);
+    }
+  }, [isMax]);
+
+  useEffect(() => {
+    if (!hasPassword) {
+      setPassword('');
+      setConfirmPassword('');
+    }
+  }, [hasPassword]);
+
+  useEffect(() => {
+    if (!hasAnswerPassword) {
+      setAnswerPassword('');
+      setConfirmAnswerPassword('');
+    }
+  }, [hasAnswerPassword]);
 
   const handleSubmit = () => {
     downloadGroupMutation.mutate({
@@ -219,16 +250,22 @@ function DownloadPdfModal({group, isAdminPage}: GroupModalProps) {
       hasPassword: hasPassword,
       password: password
     });
-    toggle();
   };
+
+  const closeDownloadModal = () => {
+    toggle();
+    setIsCustom(false);
+    setHasPassword(false);
+    setHasAnswerPassword(false);
+  }
 
   return (
     <React.Fragment>
       <Button onClick={(e) => {e.stopPropagation(); toggle();}} color="info" outline size='sm'>
         <FontAwesomeIcon icon={faDownload as IconProp} size='sm'/>
       </Button>
-      <Modal isOpen={modal} toggle={toggle}>
-        <ModalHeader toggle={toggle}>Download PDF</ModalHeader>
+      <Modal isOpen={modal} toggle={closeDownloadModal}>
+        <ModalHeader toggle={closeDownloadModal}>Download PDF</ModalHeader>
         <ModalBody>
           <label>Would you like to customize your download?</label><br/>
           <ButtonGroup>
@@ -243,7 +280,7 @@ function DownloadPdfModal({group, isAdminPage}: GroupModalProps) {
           </ButtonGroup>
           {isCustom ?
           <div>
-            <label>How many rounds?</label><br/>
+            <label>How many rounds?<span className="asterisk">*</span></label><br/>
             <Input type="number" value={numberOfRounds} onChange={(event) => setNumberOfRounds(parseInt(event.target.value))}/>
             <label>How many questions per round?</label><br/>
             <ButtonGroup>
@@ -258,7 +295,7 @@ function DownloadPdfModal({group, isAdminPage}: GroupModalProps) {
             </ButtonGroup>
             {!isMax ?
             <div>
-              <label>Questions per round</label>
+              <label>Questions per round<span className="asterisk">*</span></label>
               <Input type="number" value={numberOfQuestions} onChange={(event) => setNumberOfQuestions(parseInt(event.target.value))}/>
             </div>
             : <React.Fragment />}
@@ -287,9 +324,9 @@ function DownloadPdfModal({group, isAdminPage}: GroupModalProps) {
             </ButtonGroup>
             {hasPassword ?
             <div>
-              <label>Enter Question Document Password</label>
+              <label>Enter Question Document Password<span className="asterisk">*</span></label>
               <Input type="password" value={password} onChange={(event) => setPassword(event.target.value)}/>
-              <label>Confirm Question Document Password</label>
+              <label>Confirm Question Document Password<span className="asterisk">*</span></label>
               <Input type="password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)}/>
             </div>
             : <br />}
@@ -306,9 +343,9 @@ function DownloadPdfModal({group, isAdminPage}: GroupModalProps) {
             </ButtonGroup>
             {hasAnswerPassword ?
             <div>
-              <label>Enter Answer Document Password</label>
+              <label>Enter Answer Document Password<span className="asterisk">*</span></label>
               <Input type="password" value={answerPassword} onChange={(event) => setAnswerPassword(event.target.value)}/>
-              <label>Confirm Answer Document Password</label>
+              <label>Confirm Answer Document Password<span className="asterisk">*</span></label>
               <Input type="password" value={confirmAnswerPassword} onChange={(event) => setConfirmAnswerPassword(event.target.value)}/>
             </div>
             : <React.Fragment />}
@@ -316,10 +353,11 @@ function DownloadPdfModal({group, isAdminPage}: GroupModalProps) {
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={handleSubmit} 
-          disabled={(isCustom && (!(numberOfRounds > 0) || (!isMax && !(numberOfQuestions > 0))) || (hasPassword && (password !== confirmPassword)))}>
+          disabled={(isCustom && (!(numberOfRounds > 0) || (!isMax && !(numberOfQuestions > 0))) || (hasPassword && ((password !== confirmPassword) || !password || !confirmPassword))
+          || (hasAnswerPassword && ((answerPassword !== confirmAnswerPassword) || !answerPassword || !confirmAnswerPassword)))}>
             Download PDF <FontAwesomeIcon icon={faFilePdf as IconProp}/>
           </Button>
-          <Button color="secondary" outline onClick={toggle}>Cancel <FontAwesomeIcon icon={faBan as IconProp}/></Button>{' '}
+          <Button color="secondary" outline onClick={closeDownloadModal}>Cancel <FontAwesomeIcon icon={faBan as IconProp}/></Button>{' '}
         </ModalFooter>
       </Modal>
     </React.Fragment>

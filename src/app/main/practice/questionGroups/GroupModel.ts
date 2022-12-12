@@ -48,7 +48,9 @@ interface GroupPdfData {
   numberOfRounds: number,
   isMax: boolean,
   numberOfQuestions: number,
-  hasBonus: boolean
+  hasBonus: boolean,
+  hasPassword: boolean,
+  password: string
 }
 
 export const getMyGroups = async () => {

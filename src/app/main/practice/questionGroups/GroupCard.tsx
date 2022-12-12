@@ -175,6 +175,10 @@ function DownloadPdfModal({group, isAdminPage}: GroupModalProps) {
   const [numberOfQuestions, setNumberOfQuestions] = useState<number>(1);
   const [hasBonus, setHasBonus] = useState(false);
 
+  const [hasPassword, setHasPassword] = useState(false);
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+
   const downloadGroupMutation = useMutation(isAdminPage ? downloadGroupPdf : downloadMyGroupPdf, {
     onSuccess: (data) => {
       fileDownload(data, `${group.questionGroupName}.pdf`)
@@ -189,7 +193,9 @@ function DownloadPdfModal({group, isAdminPage}: GroupModalProps) {
       numberOfRounds: numberOfRounds,
       isMax: isMax,
       numberOfQuestions: numberOfQuestions,
-      hasBonus: hasBonus
+      hasBonus: hasBonus,
+      hasPassword: hasPassword,
+      password: password
     });
     toggle();
   };
@@ -244,11 +250,33 @@ function DownloadPdfModal({group, isAdminPage}: GroupModalProps) {
               active={!hasBonus} outline={hasBonus}>
               No
               </Button>
-          </ButtonGroup>
-          </div> : <React.Fragment />}
+            </ButtonGroup>
+          </div> : <br />}
+          <label>Encrypt file with password?</label><br/>
+            <ButtonGroup>
+              <Button color='primary' onClick={() => setHasPassword(true)} 
+              active={hasPassword} outline={!hasPassword}>
+              Yes
+              </Button>
+              <Button color='primary' onClick={() => setHasPassword(false)} 
+              active={!hasPassword} outline={hasPassword}>
+              No
+              </Button>
+            </ButtonGroup>
+            {hasPassword ?
+            <div>
+              <label>Enter Password</label>
+              <Input type="password" value={password} onChange={(event) => setPassword(event.target.value)}/>
+              <label>Confirm Password</label>
+              <Input type="password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)}/>
+            </div>
+            : <React.Fragment />}
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={handleSubmit} disabled={isCustom && (!(numberOfRounds > 0) || (!isMax && !(numberOfQuestions > 0)))}>Download PDF <FontAwesomeIcon icon={faFilePdf as IconProp}/></Button>
+          <Button color="primary" onClick={handleSubmit} 
+          disabled={(isCustom && (!(numberOfRounds > 0) || (!isMax && !(numberOfQuestions > 0))) || (hasPassword && (password !== confirmPassword)))}>
+            Download PDF <FontAwesomeIcon icon={faFilePdf as IconProp}/>
+          </Button>
           <Button color="secondary" outline onClick={toggle}>Cancel <FontAwesomeIcon icon={faBan as IconProp}/></Button>{' '}
         </ModalFooter>
       </Modal>

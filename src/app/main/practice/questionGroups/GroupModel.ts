@@ -68,6 +68,11 @@ export const getGroupsBySchoolId = async (schoolId: number) => {
   .then(response => response.data);
 }
 
+export const getEventsBySchoolId = async (schoolId: number) => {
+  return await axios.get<Array<Group>>(`/api/admin/events/schools/${schoolId}`)
+  .then(response => response.data);
+}
+
 export const getAllGroups = async (name: string, page: number, count: number) => {
   return await axios.get<Page<Group>>(`/api/admin/groups?name=${name}&page=${page}&count=${count}`)
   .then(response => response.data);
@@ -101,6 +106,16 @@ export const updateGroupsForSchool = async ({schoolId, ids}: UpdateSchoolGroupsP
 
 export const bulkAddGroups = async ({schoolIds, groupIds}: BulkAddGroupsParams) => {
   return await axios.put(`/api/admin/groups/schools`, {schoolIds: schoolIds, groupIds: groupIds})
+  .then(response => response.data);
+}
+
+export const updateEventsForSchool = async ({schoolId, ids}: UpdateSchoolGroupsParams) => {
+  return await axios.put(`/api/admin/events/schools/${schoolId}`, {ids: ids})
+  .then(response => response.data);
+}
+
+export const bulkAddEvents = async ({schoolIds, groupIds}: BulkAddGroupsParams) => {
+  return await axios.put(`/api/admin/events/schools`, {schoolIds: schoolIds, groupIds: groupIds})
   .then(response => response.data);
 }
 

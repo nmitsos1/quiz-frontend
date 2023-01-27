@@ -5,9 +5,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Button, Badge, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row, Col } from 'reactstrap';
-import { bulkAddEvents, bulkAddGroups, getAllGroups, getEventsBySchoolId, getGroupsBySchoolId, Group, updateEventsForSchool, updateGroupsForSchool } from '../practice/questionGroups/GroupModel';
+import { bulkAddEvents, bulkAddGroups, getAllGroups, getGroupsBySchoolId, Group, updateEventsForSchool, updateGroupsForSchool } from '../practice/questionGroups/GroupModel';
 import { getSchoolById } from './SchoolModel';
 import _ from 'lodash';
+import { getEventsBySchoolId } from '../events/EventModel';
 
 interface EditGroups {
     selectedIds: Array<number>

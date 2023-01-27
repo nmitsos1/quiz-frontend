@@ -32,7 +32,7 @@ export interface GroupRequest {
   topicCounts?: Array<TopicCount>
 }
 
-interface UpdateSchoolGroupsParams {
+export interface UpdateSchoolGroupsParams {
   schoolId: number,
   ids: Array<number>
 }
@@ -68,16 +68,10 @@ export const getGroupsBySchoolId = async (schoolId: number) => {
   .then(response => response.data);
 }
 
-export const getEventsBySchoolId = async (schoolId: number) => {
-  return await axios.get<Array<Group>>(`/api/admin/events/schools/${schoolId}`)
-  .then(response => response.data);
-}
-
 export const getAllGroups = async (name: string, page: number, count: number) => {
   return await axios.get<Page<Group>>(`/api/admin/groups?name=${name}&page=${page}&count=${count}`)
   .then(response => response.data);
 }
-
 
 export const addSet = async (set: SetRequest) => {
   return await axios.post<Group>('/api/user/groups', set)

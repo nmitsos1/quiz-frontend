@@ -87,30 +87,29 @@ function App() {
     mutationCache: new MutationCache({
       onError: async (error, variables, context, mutation) => {
         const key = mutation.options.mutationKey
-        if (key) {
-          let err = error as AxiosError;
-          let errMessage = '';
-          if (err.request.responseType === 'blob') {
-            let blob: Blob = err.response?.data as Blob;
-            errMessage = await blob.text();
-            errMessage = errMessage.split(': ')[1].split('\\r\\n')[0];
+        
+        let err = error as AxiosError;
+        let errMessage = '';
+        if (err.request.responseType === 'blob') {
+          let blob: Blob = err.response?.data as Blob;
+          errMessage = await blob.text();
+          errMessage = errMessage.split(': ')[1].split('\\r\\n')[0];
+        } else {
+          const errorData: SpringErrorData = err.response?.data as SpringErrorData;
+          errMessage = `${errorData.message}`;
+          if (errorData.errors) {
+            errMessage = errMessage + '\r\n';
+            errorData.errors.forEach((springError) => {
+              errMessage = errMessage + springError.defaultMessage + '\r\n';
+            })
           } else {
-            const errorData: SpringErrorData = err.response?.data as SpringErrorData;
-            errMessage = `${errorData.message}`;
-            if (errorData.errors) {
-              errMessage = errMessage + '\r\n';
-              errorData.errors.forEach((springError) => {
-                errMessage = errMessage + springError.defaultMessage + '\r\n';
-              })
-            } else {
-              errMessage = err.request.response.split(': ')[1].split('\\r\\n')[0];
-            }
+            errMessage = err.request.response.split(': ')[1].split('\\r\\n')[0];
           }
-          //const errMessage = err.request.response.split(': ')[1].split('\\r\\n')[0];
-          setAlertColor('danger');
-          setAlertMessage(`${err.message} - ${errMessage}`);
-          setCurrentDate(new Date())
         }
+        //const errMessage = err.request.response.split(': ')[1].split('\\r\\n')[0];
+        setAlertColor('danger');
+        setAlertMessage(`${err.message} - ${errMessage}`);
+        setCurrentDate(new Date())
       },
       onSuccess: (data, variables, context, mutation) => {
         const key = mutation.options.mutationKey

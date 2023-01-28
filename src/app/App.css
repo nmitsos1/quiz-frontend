@@ -60,3 +60,7 @@
 .left-margin-class {
   margin-left: 30px;
 }
+
+input[type] {
+  max-width: 300px;
+}

@@ -1,15 +1,16 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import React, { useState } from 'react';
 import { Alert, Button, Card, CardBody, CardHeader, CardText, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { getMyEvents } from './EventModel';
 import Moment from 'moment';
-import { beginAttempt, beginEvent, killAttempt } from '../quiz/attempt/AttemptModel';
+import { Attempt, beginAttempt, beginEvent, isAttemptOnGroupCompleted, killAttempt } from '../quiz/attempt/AttemptModel';
 import { startNextQuestion } from '../quiz/QuestionAttemptModel';
 import { useNavigate } from 'react-router-dom';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faBan, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Group } from '../practice/questionGroups/GroupModel';
 
 function Events() {
 
@@ -66,33 +67,11 @@ function Events() {
     }
 
     const nextEvent = groups[0];
-    const current = new Date();
-    const inProgress = (nextEvent.eventStartDate && nextEvent.eventEndDate) ?
-     (current >= Moment(nextEvent.eventStartDate).toDate() && current < Moment(nextEvent.eventEndDate).toDate()) : false;
     
     return (
         <div>
             <h3>Your Events</h3>
-            <Card>
-                <CardHeader><h4>{inProgress ? 'Event now in progress: ' : 'Your next upcoming event: '} <b>{nextEvent.questionGroupName}</b></h4></CardHeader>
-                <CardBody>
-                    <CardText>
-                        {inProgress ? 
-                        <React.Fragment>
-                            <Button block color='primary' outline onClick={() => beginEventMutation.mutate(nextEvent.questionGroupId)}><h3>Click here to Begin Event</h3></Button>
-                            <br/>
-                        </React.Fragment>
-                        : <br />}
-                        <Alert color={inProgress ? 'success' : 'info'}>
-                            <h4><i>Event Start Date: <b>{`${Moment(nextEvent.eventStartDate).format('MMMM D, YYYY hh:mm A')}`}</b></i></h4>
-                            <h4><i>Event End Date: <b>{`${Moment(nextEvent.eventEndDate).format('MMMM D, YYYY hh:mm A')}`}</b></i></h4>
-                        </Alert>
-                        <Alert color='secondary'>
-                            <h5>{nextEvent.questionGroupDescription}</h5>
-                        </Alert>
-                    </CardText>
-                </CardBody>
-            </Card>
+            <NextEvent nextEvent={nextEvent} beginEventMutation={beginEventMutation} />
             <hr/>
             <h4>Upcoming</h4>
             {groups.length > 1 ?
@@ -125,6 +104,55 @@ function Events() {
             </ModalFooter>
         </Modal>
         </div>
+    )
+}
+
+interface NextEventProps {
+    nextEvent: Group,
+    beginEventMutation: UseMutationResult<Attempt, unknown, number, unknown>
+}
+function NextEvent({nextEvent, beginEventMutation}: NextEventProps) {
+
+    const {data: attemptCompleted} = useQuery(['attempt-completed', nextEvent.questionGroupId], () => isAttemptOnGroupCompleted(nextEvent.questionGroupId));
+    console.log(attemptCompleted);
+
+    const navigate = useNavigate();
+
+    const current = new Date();
+    const inProgress = (nextEvent.eventStartDate && nextEvent.eventEndDate) ?
+     (current >= Moment(nextEvent.eventStartDate).toDate() && current < Moment(nextEvent.eventEndDate).toDate()) : false;
+
+    return (
+        <Card>
+        <CardHeader><h4>{inProgress ? 'Event now in progress: ' : 'Your next upcoming event: '} <b>{nextEvent.questionGroupName}</b></h4></CardHeader>
+        <CardBody>
+            <CardText>
+                {inProgress ? 
+                attemptCompleted ?
+                <h4><i>You have completed this event</i></h4>
+                :
+                attemptCompleted === false ?
+                <React.Fragment>
+                    <Button block color='primary' outline onClick={() => navigate(`/quiz`)}><h3>Click here to Continue Event</h3></Button>
+                    <br/>
+                </React.Fragment>
+                :
+                <React.Fragment>
+                    <Button block color='primary' outline onClick={() => beginEventMutation.mutate(nextEvent.questionGroupId)}><h3>Click here to Begin Event</h3></Button>
+                    <br/>
+                </React.Fragment>
+                : <br />}
+                <Alert color={inProgress ? 'success' : 'info'}>
+                    <h4><i>Event Start Date: <b>{`${Moment(nextEvent.eventStartDate).format('MMMM D, YYYY hh:mm A')}`}</b></i></h4>
+                    <h4><i>Event End Date: <b>{`${Moment(nextEvent.eventEndDate).format('MMMM D, YYYY hh:mm A')}`}</b></i></h4>
+                </Alert>
+                <Alert color='secondary'>
+                    <h5>{nextEvent.questionGroupDescription}</h5>
+                </Alert>
+            </CardText>
+        </CardBody>
+    </Card>
+
     )
 }
 

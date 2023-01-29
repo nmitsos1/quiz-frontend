@@ -53,6 +53,12 @@ interface GroupPdfData {
   password: string
 }
 
+export enum GroupType {
+  EVENT_PACKAGE = 'EventPackage',
+  QUESTION_PACKAGE = 'QuestionPackage',
+  QUESTION_SET = 'QuestionSet'
+}
+
 export const getMyGroups = async () => {
   return await axios.get<Array<Group>>('/api/user/groups')
   .then(response => response.data);

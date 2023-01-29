@@ -2,7 +2,7 @@ import axios from "axios";
 import { Group, UpdateSchoolGroupsParams } from "../practice/questionGroups/GroupModel";
 
 export const getMyEvents = async () => {
-  return await axios.get<Array<Group>>(`/api/user/events`)
+  return await axios.get<Array<Group>>(`/api/user/my-events`)
   .then(response => response.data);
 }
 

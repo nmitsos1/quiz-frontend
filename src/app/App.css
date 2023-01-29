@@ -61,6 +61,6 @@
   margin-left: 30px;
 }
 
-input[type] {
+input[type="datetime-local"] {
   max-width: 300px;
 }

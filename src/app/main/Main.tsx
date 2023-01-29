@@ -12,6 +12,7 @@ import Attempts from "./quiz/attempt/Attempts";
 import QuestionsPage from "./questions/QuestionsPage";
 import GroupsPage from "./groups/GroupsPage";
 import Events from "./events/Events";
+import Store from "./store/Store";
 
 function Main() {
 
@@ -19,6 +20,7 @@ function Main() {
 
     const routeArray = school?.role === ROLE.ADMIN ? [
         { path: "/", element: <Home /> },
+        { path: "/store", element: <Store /> },
         { path: "/practice", element: <Practice /> },
         { path: "/events", element: <Events /> },
         { path: "/quiz", element: <Quiz /> },

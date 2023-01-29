@@ -2,9 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Badge, Collapse, Nav, Navbar, NavbarBrand, NavbarText, NavbarToggler, NavItem, NavLink } from 'reactstrap';
-import { isLastAttemptInProgress } from './quiz/attempt/AttemptModel';
+import { getAttemptTypeInProgress } from './quiz/attempt/AttemptModel';
 import { getMySchool, ROLE } from './schools/SchoolModel';
 import firebase from 'firebase/compat/app';
+import { GroupType } from './practice/questionGroups/GroupModel';
 
 function TopBar() {
 
@@ -14,7 +15,10 @@ function TopBar() {
   const toggle = () => setIsOpen(!isOpen);
 
   const {data: school} = useQuery(['my-school'], getMySchool);
-  const {data: isAttemptInProgress} = useQuery(['attempt-in-progress'], isLastAttemptInProgress);
+  const {data: attemptTypeInProgress} = useQuery(['attempt-in-progress'], getAttemptTypeInProgress);
+
+  const inProgress = attemptTypeInProgress !== '';
+  const isEvent = attemptTypeInProgress === GroupType.EVENT_PACKAGE;
 
   return (
     <Navbar color='dark' dark expand="md" container="fluid">
@@ -24,6 +28,9 @@ function TopBar() {
       <NavbarToggler onClick={toggle}/>
       <Collapse isOpen={isOpen} navbar>
         <Nav className="me-auto" navbar>
+          <NavItem>
+            <NavLink tag={Link} to="/store">Store</NavLink>
+          </NavItem>
           <NavItem>
             <NavLink tag={Link} to="/practice">Practice</NavLink>
           </NavItem>
@@ -47,9 +54,11 @@ function TopBar() {
           </React.Fragment>
           : <React.Fragment />
           }
-          {(isAttemptInProgress && !location.pathname.includes('quiz')) ?
+          {(inProgress && !location.pathname.includes('quiz')) ?
           <NavItem>
-            <NavLink tag={Link} to="/quiz"><Badge color='primary'>Attempt in Progress - Click Here</Badge></NavLink>
+            <NavLink tag={Link} to="/quiz"><Badge color={isEvent ? 'warning' : 'primary'}>
+              {isEvent ? 'Event' : 'Attempt'} in Progress - Click Here to Continue
+            </Badge></NavLink>
           </NavItem>
         : <React.Fragment />}
         </Nav>

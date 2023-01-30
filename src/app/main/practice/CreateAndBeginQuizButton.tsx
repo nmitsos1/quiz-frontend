@@ -9,14 +9,14 @@ import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Modal, Mo
 import { beginAttempt, getRuleSetDescriptions, killAttempt, RuleSet } from '../quiz/attempt/AttemptModel';
 import { startNextQuestion } from '../quiz/QuestionAttemptModel';
 import { TopicCount } from './topics/TopicModel';
-import { addGroup, addSet, GroupRequest } from './questionGroups/GroupModel';
+import { addGroup, addSet, GroupInput } from './questionGroups/GroupModel';
 import _ from 'lodash';
 
 interface CreateAndBeginQuizButtonProps {
     topicCounts?: Array<TopicCount>,
     groupIds?: Array<number>,
     groupId?: number,
-    adminGroupRequest?: GroupRequest
+    adminGroupRequest?: GroupInput
 }
 function CreateAndBeginQuizButton({topicCounts, groupIds, groupId, adminGroupRequest}: CreateAndBeginQuizButtonProps) {
 

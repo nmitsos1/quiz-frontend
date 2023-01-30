@@ -8,11 +8,11 @@ import { faX } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import TopicCountForm from "./TopicCountForm";
 import CreateAndBeginQuizButton from "../CreateAndBeginQuizButton";
-import { GroupRequest } from "../questionGroups/GroupModel";
+import { GroupInput } from "../questionGroups/GroupModel";
 
 interface SamplingFormProps {
   groupIds: Array<number>,
-  adminGroupRequest?: GroupRequest
+  adminGroupRequest?: GroupInput
 }
 function SamplingForm({groupIds, adminGroupRequest}: SamplingFormProps) {
 

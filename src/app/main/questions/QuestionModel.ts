@@ -19,7 +19,7 @@ export interface Answer {
     answerText: string
 }
 
-export interface QuestionRequest {
+export interface QuestionInput {
     questionId?: number,
     type: string,
     topic: string,
@@ -44,13 +44,13 @@ export const getCorrectAnswerByQuestionId = async (id: number) => {
     .then(response => response.data);
 }
 
-export const addQuestion = async (questionRequest: QuestionRequest) => {
-    return await axios.post<Question>(`/api/admin/questions`, questionRequest)
+export const addQuestion = async (questionInput: QuestionInput) => {
+    return await axios.post<Question>(`/api/admin/questions`, questionInput)
     .then(response => response.data);
 }
 
-export const updateQuestionById = async (questionRequest: QuestionRequest) => {
-    return await axios.put<Question>(`/api/admin/questions/${questionRequest.questionId}`, questionRequest)
+export const updateQuestionById = async (questionInput: QuestionInput) => {
+    return await axios.put<Question>(`/api/admin/questions/${questionInput.questionId}`, questionInput)
     .then(response => response.data);
 }
 

@@ -15,12 +15,12 @@ export interface Group {
   questionInstances?: Array<QuestionInstance>
 }
 
-export interface SetRequest {
+export interface SetInput {
   topicCounts: Array<TopicCount>,
   groupIds: Array<number>
 }
 
-export interface GroupRequest {
+export interface GroupInput {
   name: string,
   description: string,
   isPackage: boolean,
@@ -79,12 +79,12 @@ export const getAllGroups = async (name: string, page: number, count: number) =>
   .then(response => response.data);
 }
 
-export const addSet = async (set: SetRequest) => {
+export const addSet = async (set: SetInput) => {
   return await axios.post<Group>('/api/user/groups', set)
   .then(response => response.data);
 }
 
-export const addGroup = async (group: GroupRequest) => {
+export const addGroup = async (group: GroupInput) => {
   return await axios.post<Group>('/api/admin/groups', group)
   .then(response => response.data);
 }

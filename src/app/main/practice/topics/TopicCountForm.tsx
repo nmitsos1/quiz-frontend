@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button, Input } from "reactstrap";
 import { TopicCount, getAvailableQuestionCount, getMyAvailableQuestionCount } from './TopicModel'
 import { AxiosError } from "axios";
-import { GroupRequest } from "../questionGroups/GroupModel";
+import { GroupInput } from "../questionGroups/GroupModel";
 
 interface TopicCountFormProps {
   topic: string,
@@ -11,7 +11,7 @@ interface TopicCountFormProps {
   groupIds: Array<number>,
   topicCounts: Array<TopicCount>,
   setTopicCounts: Function,
-  adminGroupRequest?: GroupRequest
+  adminGroupRequest?: GroupInput
 }
 function TopicCountForm({topic, setTopic, groupIds, topicCounts, setTopicCounts, adminGroupRequest}: TopicCountFormProps) {
 

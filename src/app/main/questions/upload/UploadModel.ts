@@ -1,4 +1,4 @@
-import { GroupRequest } from './../../practice/questionGroups/GroupModel';
+import { GroupInput } from './../../practice/questionGroups/GroupModel';
 import axios from "axios";
 
 
@@ -28,12 +28,12 @@ export const uploadShortAnswerCsv = async (file: File) => {
 
 export interface GroupUpload {
     file: File,
-    group: GroupRequest
+    group: GroupInput
 }
 export const uploadGroupMultipleChoiceCsv = async ({file, group}: GroupUpload) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('groupRequest', new Blob([JSON.stringify(group)], {
+    formData.append('groupInput', new Blob([JSON.stringify(group)], {
         type: 'application/json'
     }))
     return await axios.post(`/api/admin/upload/group/mc`, formData, {
@@ -45,7 +45,7 @@ export const uploadGroupMultipleChoiceCsv = async ({file, group}: GroupUpload) =
 export const uploadGroupShortAnswerCsv = async ({file, group}: GroupUpload) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('groupRequest', new Blob([JSON.stringify(group)], {
+    formData.append('groupInput', new Blob([JSON.stringify(group)], {
         type: 'application/json'
     }))
     return await axios.post(`/api/admin/upload/group/sa`, formData, {

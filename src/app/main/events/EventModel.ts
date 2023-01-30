@@ -6,6 +6,11 @@ export const getMyEvents = async () => {
   .then(response => response.data);
 }
 
+export const getEvents = async () => {
+  return await axios.get<Array<Group>>(`/api/user/events`)
+  .then(response => response.data);
+}
+
 export const getEventsBySchoolId = async (schoolId: number) => {
   return await axios.get<Array<Group>>(`/api/admin/events/schools/${schoolId}`)
   .then(response => response.data);

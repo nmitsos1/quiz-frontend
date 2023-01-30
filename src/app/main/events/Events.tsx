@@ -51,7 +51,7 @@ function Events() {
         mutationKey: ['terminate-attempt']
       });
     
-    const { isLoading, isError, data: groups, error } = useQuery(['my-groups'], getMyEvents);
+    const { isLoading, isError, data: groups, error } = useQuery(['my-events'], getMyEvents);
 
     if (isLoading) {
         return <h4>Loading Your Events...</h4>
@@ -114,7 +114,6 @@ interface NextEventProps {
 function NextEvent({nextEvent, beginEventMutation}: NextEventProps) {
 
     const {data: attemptCompleted} = useQuery(['attempt-completed', nextEvent.questionGroupId], () => isAttemptOnGroupCompleted(nextEvent.questionGroupId));
-    console.log(attemptCompleted);
 
     const navigate = useNavigate();
 

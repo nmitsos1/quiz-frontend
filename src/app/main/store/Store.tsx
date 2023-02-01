@@ -5,10 +5,10 @@ import { Button, Card, CardHeader, CardText } from "reactstrap";
 import { getEvents } from "../events/EventModel";
 import Moment from 'moment';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheckCircle, faInfoCircle, faTrophy } from "@fortawesome/free-solid-svg-icons";
+import { faCheckCircle, faInfoCircle, faTrophy, faX } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { Group } from "../practice/questionGroups/GroupModel";
-import { isMyRequestFulfilled, requestEvent } from "./RequestModel";
+import { deleteMyEventRequest, isMyRequestFulfilled, requestEvent } from "./RequestModel";
 
 function Store() {
 
@@ -66,6 +66,13 @@ function EventCard({group}: EventCardProps) {
         mutationKey: ['request-event']
     });
 
+    const deleteMyEventRequestMutation = useMutation(deleteMyEventRequest, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['event-request', group.questionGroupId]);
+        },
+        mutationKey: ['delete-request']
+    });
+
     return (
         <Card style={{marginRight: '120px'}}>
             <CardHeader>
@@ -77,9 +84,12 @@ function EventCard({group}: EventCardProps) {
                     </Button>
                     :
                     isRequestFulfilled === false ?
-                    <Button color="dark" outline size='sm'>
-                        Your request is being processed <FontAwesomeIcon icon={faInfoCircle as IconProp} size='sm'/>
-                    </Button>
+                    <React.Fragment>
+                        <FontAwesomeIcon icon={faInfoCircle as IconProp} size='sm'/> Your request is being processed{' '}
+                        <Button color="dark" outline size='sm'>
+                            Cancel Request <FontAwesomeIcon onClick={() => deleteMyEventRequestMutation.mutate(group.questionGroupId)} icon={faX as IconProp}/>
+                        </Button>
+                    </React.Fragment>
                     :
                     <Button onClick={() => requestEventMutation.mutate(group.questionGroupId)} color="primary" outline size='sm'>
                         Send Request to Join <FontAwesomeIcon icon={faTrophy as IconProp} size='sm'/>

@@ -10,5 +10,5 @@ export const requestEvent = async (id: number) => {
 }
 
 export const deleteMyEventRequest = async (id: number) => {
-    return await axios.post(`/api/user/requests/events/${id}`);
+    return await axios.delete(`/api/user/requests/events/${id}`);
 }

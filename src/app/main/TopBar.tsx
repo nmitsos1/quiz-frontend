@@ -43,6 +43,9 @@ function TopBar() {
           {school?.role === ROLE.ADMIN ?
           <React.Fragment >
             <NavItem>
+              <NavLink><b>|</b></NavLink>
+            </NavItem>
+            <NavItem>
               <NavLink tag={Link} to="/schools">Schools</NavLink>
             </NavItem>
             <NavItem>
@@ -50,6 +53,9 @@ function TopBar() {
             </NavItem>
             <NavItem>
               <NavLink tag={Link} to="/groups">Groups</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink tag={Link} to="/requests">Requests</NavLink>
             </NavItem>
           </React.Fragment>
           : <React.Fragment />

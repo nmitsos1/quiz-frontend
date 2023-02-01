@@ -13,6 +13,7 @@ import QuestionsPage from "./questions/QuestionsPage";
 import GroupsPage from "./groups/GroupsPage";
 import Events from "./events/Events";
 import Store from "./store/Store";
+import Requests from "./store/Requests";
 
 function Main() {
 
@@ -28,7 +29,8 @@ function Main() {
         { path: "/attempts", element: <Attempts /> },
         { path: "/schools", element: <SchoolPage /> },
         { path: "/questions", element: <QuestionsPage /> },
-        { path: "/groups", element: <GroupsPage /> }
+        { path: "/groups", element: <QuestionsPage /> },
+        { path: "/requests", element: <Requests /> }
     ]
     : [
         { path: "/", element: <Home /> },

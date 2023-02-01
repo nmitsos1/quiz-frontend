@@ -1,13 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React, { useState } from "react";
 import { Button, Card, CardHeader, CardText } from "reactstrap";
 import { getEvents } from "../events/EventModel";
 import Moment from 'moment';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrophy } from "@fortawesome/free-solid-svg-icons";
+import { faCheckCircle, faInfoCircle, faTrophy } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { Group } from "../practice/questionGroups/GroupModel";
+import { isMyRequestFulfilled, requestEvent } from "./RequestModel";
 
 function Store() {
 
@@ -54,14 +55,36 @@ interface EventCardProps {
 }
 function EventCard({group}: EventCardProps) {
 
+    const queryClient = useQueryClient();
+
+    const { data: isRequestFulfilled } = useQuery(['event-request', group.questionGroupId], () => isMyRequestFulfilled(group.questionGroupId));
+
+    const requestEventMutation = useMutation(requestEvent, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['event-request', group.questionGroupId]);
+        },
+        mutationKey: ['request-event']
+    });
+
     return (
         <Card style={{marginRight: '120px'}}>
             <CardHeader>
                 <big><b>{group.questionGroupName}</b></big>
                 <div className='card-buttons'>
-                    <Button onClick={(e) => {e.stopPropagation();}} color="primary" outline size='sm'>
+                    {isRequestFulfilled ?
+                    <Button color="success" outline size='sm'>
+                        Request Accepted <FontAwesomeIcon icon={faCheckCircle as IconProp} size='sm'/>
+                    </Button>
+                    :
+                    isRequestFulfilled === false ?
+                    <Button color="dark" outline size='sm'>
+                        Your request is being processed <FontAwesomeIcon icon={faInfoCircle as IconProp} size='sm'/>
+                    </Button>
+                    :
+                    <Button onClick={() => requestEventMutation.mutate(group.questionGroupId)} color="primary" outline size='sm'>
                         Send Request to Join <FontAwesomeIcon icon={faTrophy as IconProp} size='sm'/>
                     </Button>
+                    }
                 </div>
             </CardHeader>
             <br/><br/>

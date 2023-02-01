@@ -71,8 +71,12 @@ export default function Pagination<Type>({page, setPage, setCount, isLoading}: P
                 </Dropdown>
             </div>{' '}
             <label>
+                {page.totalElements === 0 ?
+                <i>No records to display</i>
+                :
                 <i>Showing records <b>{(page.pageable.pageNumber * page.pageable.pageSize) + 1} - {(page.pageable.pageNumber * page.pageable.pageSize) + page.numberOfElements}</b>
                 {' '}out of <b>{page.totalElements} total</b></i>
+            }
             </label>
         </div>
     );

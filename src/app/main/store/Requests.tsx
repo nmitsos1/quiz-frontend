@@ -6,7 +6,7 @@ import Moment from 'moment';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCancel, faCheckToSlot } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { deleteEventRequest, EventRequest, fulfillRequest, getEventRequests } from "./RequestModel";
+import { deleteEventRequest, EventRequest, fulfillRequest, getEventRequests } from "./EventRequestModel";
 import Pagination, { Page } from "../Pagination";
 
 function Requests() {

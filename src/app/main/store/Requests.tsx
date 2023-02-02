@@ -8,6 +8,8 @@ import { faCancel, faCheckToSlot } from "@fortawesome/free-solid-svg-icons";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { deleteEventRequest, EventRequest, fulfillRequest, getEventRequests } from "./EventRequestModel";
 import Pagination, { Page } from "../Pagination";
+import { getQuestionRequests, QuestionRequest } from "./QuestionRequestModel";
+import QuestionRequestCard from "./QuestionRequestCard";
 
 function Requests() {
 
@@ -27,7 +29,7 @@ function Requests() {
             {isEventRequestTab ?
                 <EventRequests />
                 :
-                <div>Question Requests Pending...</div>
+                <QuestionRequests />
             }
         </div>
     );
@@ -62,7 +64,7 @@ function EventRequests() {
 
     return (
         <div>
-            <h4>Upcoming Events</h4>
+            <h4>Event Requests</h4>
             <Pagination page={pageData} setPage={setPage} setCount={setCount}/>
             {eventRequests.map(request => {
                 return (
@@ -112,6 +114,46 @@ function EventRequestCard({request}: EventRequestCardProps) {
                 <div><big><i>Requested on <b>{`${Moment(request.createdAt).format('MMMM D, YYYY hh:mm A')}`}</b></i></big></div>
             </CardText>
         </Card>
+    )
+}
+
+function QuestionRequests() {
+    const [page, setPage] = useState(1);
+    const [count, setCount] = useState(5);
+    const { isLoading, isError, data: questionRequestPage, error } = useQuery(['question-requests', page, count], () => getQuestionRequests(page, count));
+
+    const [pageData, setPageData] = useState<Page<QuestionRequest>>();
+
+    useEffect(() => {
+        if (questionRequestPage)
+            setPageData(questionRequestPage);
+    },[questionRequestPage]);
+
+    if (!pageData) {
+        return <h4>Loading Question Requests...</h4>
+    }
+
+    if (isError) {
+        let err = error as AxiosError
+        return <h4>There was a problem loading Question Requests. {err.message} - {err.response?.statusText}</h4>
+    }
+
+    const questionRequests = pageData.content;
+
+    if (questionRequests.length === 0) {
+        return <h4>No Question Requests to display.</h4>
+    }
+
+    return (
+        <div>
+            <h4>Question Requests</h4>
+            <Pagination page={pageData} setPage={setPage} setCount={setCount}/>
+            {questionRequests.map(request => {
+                return (
+                    <QuestionRequestCard request={request}/>
+                )
+            })}
+        </div>
     )
 }
 

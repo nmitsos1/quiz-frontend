@@ -29,7 +29,7 @@ function Main() {
         { path: "/attempts", element: <Attempts /> },
         { path: "/schools", element: <SchoolPage /> },
         { path: "/questions", element: <QuestionsPage /> },
-        { path: "/groups", element: <QuestionsPage /> },
+        { path: "/groups", element: <GroupsPage /> },
         { path: "/requests", element: <Requests /> }
     ]
     : [

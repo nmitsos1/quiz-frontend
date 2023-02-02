@@ -32,7 +32,7 @@ function RequestQuestionPackageModal() {
     const [numberOfQuestions, setNumberOfQuestions] = useState<number>();
     const [isPristine, setIsPristine] = useState<boolean>(true);
     const [isClean, setIsClean] = useState<boolean>(true);
-    const [description, setDescription] = useState<string>();
+    const [description, setDescription] = useState<string>('');
 
     const { data: group } = useQuery(['question-request'], getMyQuestionRequest);
 

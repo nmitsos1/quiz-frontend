@@ -1,5 +1,5 @@
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faBan, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { faBan, faCheckCircle, faCheckToSlot, faCircleArrowRight, faCircleXmark, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -7,7 +7,7 @@ import { isUndefined } from "lodash";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, CardBody, CardText, Col, Input, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
-import { Answer, QuestionType } from "../questions/QuestionModel";
+import { QuestionType } from "../questions/QuestionModel";
 import { letters } from "../Shared";
 import { getMyAttempt, killAttempt, RuleSet } from "./attempt/AttemptModel";
 import { answerCurrentQuestion, getCurrentQuestion, startNextQuestion } from "./QuestionAttemptModel";
@@ -83,7 +83,7 @@ function Quiz() {
             <h3>
                 Question #{isUndefined(questionNumber) ? '?' : (questionNumber + 1)}
                 {(score && score > 0) || (score === 0 && endTime) ? ` - You scored ${score} point${score === 1 ? '' : 's'}`: ''}
-                <Button className="float-right-class" color="danger" outline onClick={toggle}>Terminate Quiz</Button>
+                <Button className="float-right-class" color="danger" outline onClick={toggle}>Terminate Quiz <FontAwesomeIcon icon={faBan as IconProp}/></Button>
             </h3>
             <br /><br />
             <Row>
@@ -123,7 +123,9 @@ function Quiz() {
                     (isWrong || isRight) ?
                     <Card key={index} className="answer-card" color={isWrong ? 'danger' : 'success'} inverse>
                         <CardBody>
-                            <CardText><h5>{letters[index]}{answer.answerText}</h5></CardText>
+                            <CardText>
+                                <h5>{letters[index]}{answer.answerText} <FontAwesomeIcon icon={(isWrong ? faCircleXmark : faCheckCircle) as IconProp}/></h5>
+                            </CardText>
                         </CardBody>
                     </Card>
                     :
@@ -146,21 +148,22 @@ function Quiz() {
             })
             }
             <hr />
-            <Button block size="lg" disabled={!selectedAnswer || isAnswered} color='primary'
-            onClick={handleSubmit}>
-                Submit Answer
-            </Button>
-            {isAnswered ?
-            <React.Fragment>
-                <br />
-                <Button block outline size="lg" color='primary'
-                onClick={() => startNextQuestionMutation.mutate()}>
-                    Continue
-                </Button>
-            </React.Fragment>
-            :
-            <React.Fragment />
-            }
+            <div className="quiz-buttons">
+                <Button size="lg" disabled={!selectedAnswer || isAnswered} color='primary'
+                onClick={handleSubmit}>
+                    Submit Answer <FontAwesomeIcon icon={faCheckToSlot as IconProp}/>
+                </Button>{' '}
+                {isAnswered ?
+                <React.Fragment>
+                    <Button outline size="lg" color='primary'
+                    onClick={() => startNextQuestionMutation.mutate()}>
+                        Continue <FontAwesomeIcon icon={faCircleArrowRight as IconProp}/>
+                    </Button>
+                </React.Fragment>
+                :
+                <React.Fragment />
+                }
+            </div>
             <Modal isOpen={modal} toggle={toggle}>
                 <ModalHeader toggle={toggle}>Terminate Quiz</ModalHeader>
                 <ModalBody>

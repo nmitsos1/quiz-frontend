@@ -38,7 +38,7 @@ function Requests() {
 function EventRequests() {
     const [page, setPage] = useState(1);
     const [count, setCount] = useState(5);
-    const { isLoading, isError, data: eventRequestPage, error } = useQuery(['event-requests', page, count], () => getEventRequests(page, count));
+    const { isError, data: eventRequestPage, error } = useQuery(['event-requests', page, count], () => getEventRequests(page, count));
 
     const [pageData, setPageData] = useState<Page<EventRequest>>();
 
@@ -123,7 +123,7 @@ function EventRequestCard({request}: EventRequestCardProps) {
 function QuestionRequests() {
     const [page, setPage] = useState(1);
     const [count, setCount] = useState(5);
-    const { isLoading, isError, data: questionRequestPage, error } = useQuery(['question-requests', page, count], () => getQuestionRequests(page, count));
+    const { isError, data: questionRequestPage, error } = useQuery(['question-requests', page, count], () => getQuestionRequests(page, count));
 
     const [pageData, setPageData] = useState<Page<QuestionRequest>>();
 

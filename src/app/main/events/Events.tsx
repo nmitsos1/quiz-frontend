@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Alert, Button, Card, CardBody, CardHeader, CardText, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { getMyEvents } from './EventModel';
 import Moment from 'moment';
-import { Attempt, beginAttempt, beginEvent, isAttemptOnGroupCompleted, killAttempt } from '../quiz/attempt/AttemptModel';
+import { Attempt, beginEvent, isAttemptOnGroupCompleted, killAttempt } from '../quiz/attempt/AttemptModel';
 import { startNextQuestion } from '../quiz/QuestionAttemptModel';
 import { useNavigate } from 'react-router-dom';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
@@ -77,7 +77,7 @@ function Events() {
             {groups.length > 1 ?
             groups.map((group, index) => {
                 if (index === 0)
-                    return;
+                    return <React.Fragment />;
                 return (
                     <Card className='request-card'>
                         <CardHeader><h5><b>{group.questionGroupName}</b></h5></CardHeader>

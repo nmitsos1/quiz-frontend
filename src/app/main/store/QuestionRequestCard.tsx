@@ -9,6 +9,7 @@ import Moment from 'moment';
 import { AxiosError } from "axios";
 import { getAllGroups, Group } from "../practice/questionGroups/GroupModel";
 import { Page } from "../Pagination";
+import { getAvailableQuestionCount } from "../practice/topics/TopicModel";
 
 export interface QuestionRequestCardProps {
     request: QuestionRequest
@@ -83,9 +84,9 @@ function ResolveQuestionRequestModal({request}: QuestionRequestCardProps) {
                     </ModalFooter>
                 </React.Fragment>
                 : fulfillOption === FulfillOptions.CREATE ?
-                <QuestionRequestCreateForm requestId={request.questionRequestId} setFulfillOption={setFulfillOption} toggle={toggle}/>
+                <QuestionRequestCreateForm request={request} setFulfillOption={setFulfillOption} toggle={toggle}/>
                 : fulfillOption === FulfillOptions.REUSE ?
-                <QuestionRequestReuseForm requestId={request.questionRequestId} setFulfillOption={setFulfillOption} toggle={toggle}/>
+                <QuestionRequestReuseForm request={request} setFulfillOption={setFulfillOption} toggle={toggle}/>
                 : <React.Fragment />
             }
             </Modal>
@@ -94,16 +95,82 @@ function ResolveQuestionRequestModal({request}: QuestionRequestCardProps) {
 }
 
 interface QuestionRequestSubFormProps {
-    requestId: number,
+    request: QuestionRequest,
     setFulfillOption: Function,
     toggle: Function
 }
-function QuestionRequestReuseForm({requestId, setFulfillOption, toggle}: QuestionRequestSubFormProps) {
+function QuestionRequestCreateForm({request, setFulfillOption, toggle}: QuestionRequestSubFormProps) {
+    const queryClient = useQueryClient();
+
+    const [name, setName] = useState<string>();
+    const [description, setDescription] = useState<string>();
+
+    const { isLoading, isError, data: anyCount, error } = useQuery(['topic-count', request.state, request.isPristine, request.isClean],
+          () => getAvailableQuestionCount('Any', request.state, request.isPristine, request.isClean));
+
+    const createGroupAndFulfillRequestMutation = useMutation(createGroupAndFulfillRequest, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['question-requests']);
+            toggle();
+        },
+        mutationKey: ['request-fulfill']
+    })
+
+    if (isLoading) {
+        return <h4>Loading Create Form Data...</h4>
+    }
+
+    if (isError) {
+        let err = error as AxiosError
+        return <h4>There was a problem loading Create Form Data. {err.message} - {err.response?.statusText}</h4>
+    }
+    
+    return (
+        <React.Fragment>
+        {anyCount && (anyCount >= request.numberOfQuestions) ?
+            <React.Fragment>
+            <ModalBody>
+                <label><span className="asterisk">*</span> = Required Field</label><br/>
+                <label htmlFor="title"><b>Group Name</b><span className="asterisk">*</span></label>
+                <Input maxLength={60} type="text" name="title" required onChange={(event) => setName(event.target.value)}/>
+                <label htmlFor="content"><b>Group Description</b><span className="asterisk">*</span></label>
+                <Input maxLength={500} type="textarea" rows="5" name="content" required onChange={(event) => setDescription(event.target.value)}/>
+            </ModalBody>
+            <ModalFooter>
+                <Button color="primary" disabled={!name || !description}
+                onClick={() => createGroupAndFulfillRequestMutation.mutate({questionRequestId: request.questionRequestId, name: name || '', description: description || ''})}>
+                    Create and Assign Group <FontAwesomeIcon icon={faPersonCircleQuestion as IconProp}/>
+                </Button>
+                <Button outline color="secondary" onClick={() => setFulfillOption(FulfillOptions.NONE)}>Go Back <FontAwesomeIcon icon={faChevronLeft as IconProp}/></Button>
+            </ModalFooter>
+        </React.Fragment>
+        :
+        <React.Fragment>
+            <ModalBody>
+                <CardText>
+                    <h5>Not enough questions available</h5>
+                    <label>
+                        {`${request.numberOfQuestions}${' '}
+                        ${request.isPristine ? 'pristine' : request.isClean ? 'clean' : 'unclean'} question${request.numberOfQuestions > 1 ? 's' : ''}`}
+                        {' '}were requested, but only {anyCount} are available.
+                    </label>
+                </CardText>
+            </ModalBody>
+            <ModalFooter>
+                <Button outline color="secondary" onClick={() => setFulfillOption(FulfillOptions.NONE)}>Go Back <FontAwesomeIcon icon={faChevronLeft as IconProp}/></Button>
+            </ModalFooter>
+        </React.Fragment>
+        }
+        </React.Fragment>
+    )
+}
+
+function QuestionRequestReuseForm({request, setFulfillOption, toggle}: QuestionRequestSubFormProps) {
     const queryClient = useQueryClient();
 
     const [name, setName] = useState<string>('')
 
-    const { isLoading, isError, data: groupsPage, error } = useQuery(['groups', name], () => getAllGroups(name, 1, 5));
+    const { isError, data: groupsPage, error } = useQuery(['groups', name], () => getAllGroups(name, 1, 5));
 
     const [pageData, setPageData] = useState<Page<Group>>();
     const [group, setGroup] = useState<Group>();
@@ -162,42 +229,8 @@ function QuestionRequestReuseForm({requestId, setFulfillOption, toggle}: Questio
                 <label htmlFor="content"><b>{group ? `Selected Group: ${group.questionGroupName}` : 'No Group Selected'}</b></label>
             </ModalBody>
             <ModalFooter>
-                <Button color="primary" disabled={!group} onClick={() => fulfillRequestWithExistingGroupMutation.mutate({questionRequestId: requestId, questionGroupId: group?.questionGroupId || 0})}>
+                <Button color="primary" disabled={!group} onClick={() => fulfillRequestWithExistingGroupMutation.mutate({questionRequestId: request.questionRequestId, questionGroupId: group?.questionGroupId || 0})}>
                     Assign Selected Group <FontAwesomeIcon icon={faPersonCircleQuestion as IconProp}/>
-                </Button>
-                <Button outline color="secondary" onClick={() => setFulfillOption(FulfillOptions.NONE)}>Go Back <FontAwesomeIcon icon={faChevronLeft as IconProp}/></Button>
-            </ModalFooter>
-        </React.Fragment>
-    )
-}
-
-function QuestionRequestCreateForm({requestId, setFulfillOption, toggle}: QuestionRequestSubFormProps) {
-    const queryClient = useQueryClient();
-
-    const [name, setName] = useState<string>();
-    const [description, setDescription] = useState<string>();
-
-    const createGroupAndFulfillRequestMutation = useMutation(createGroupAndFulfillRequest, {
-        onSuccess: () => {
-            queryClient.invalidateQueries(['question-requests']);
-            toggle();
-        },
-        mutationKey: ['request-fulfill']
-    })
-
-    return (
-        <React.Fragment>
-            <ModalBody>
-                <label><span className="asterisk">*</span> = Required Field</label><br/>
-                <label htmlFor="title"><b>Group Name</b><span className="asterisk">*</span></label>
-                <Input maxLength={60} type="text" name="title" required onChange={(event) => setName(event.target.value)}/>
-                <label htmlFor="content"><b>Group Description</b><span className="asterisk">*</span></label>
-                <Input maxLength={500} type="textarea" rows="5" name="content" required onChange={(event) => setDescription(event.target.value)}/>
-            </ModalBody>
-            <ModalFooter>
-                <Button color="primary" disabled={!name || !description}
-                onClick={() => createGroupAndFulfillRequestMutation.mutate({questionRequestId: requestId, name: name || '', description: description || ''})}>
-                    Create and Assign Group <FontAwesomeIcon icon={faPersonCircleQuestion as IconProp}/>
                 </Button>
                 <Button outline color="secondary" onClick={() => setFulfillOption(FulfillOptions.NONE)}>Go Back <FontAwesomeIcon icon={faChevronLeft as IconProp}/></Button>
             </ModalFooter>

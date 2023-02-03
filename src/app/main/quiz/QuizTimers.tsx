@@ -1,7 +1,9 @@
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { faStopwatch } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { UseMutationResult } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { Badge } from "reactstrap";
-import { Answer } from "../questions/QuestionModel";
 
 interface QuizTimerProps {
     startTime: Date,
@@ -19,6 +21,7 @@ export function DefaultTimer({startTime, endTime}: QuizTimerProps) {
         } else {
             return () => clearInterval(undefined);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [endTime]);
 
     const seconds = Math.floor(time/1000);
@@ -26,7 +29,7 @@ export function DefaultTimer({startTime, endTime}: QuizTimerProps) {
     return (
         <h3>
             <Badge color={seconds < 7 ? 'success' : seconds < 15 ? 'dark' : seconds < 30 ? 'warning' : 'danger'}>
-                {seconds}
+                {seconds} <FontAwesomeIcon icon={faStopwatch as IconProp}/>
             </Badge>
         </h3>
     );
@@ -44,6 +47,7 @@ export function RelayTimer({startTime, endTime, answerCurrentQuestionMutation}: 
         } else {
             return () => clearInterval(undefined);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [endTime]);
 
     useEffect(() => {
@@ -51,12 +55,13 @@ export function RelayTimer({startTime, endTime, answerCurrentQuestionMutation}: 
             answerCurrentQuestionMutation.mutate('!!Out of time!!');
             return () => clearInterval(undefined);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [seconds])
 
     return (
         <h3>
             <Badge color={seconds > 0 ? 'success' : 'danger'}>
-                {seconds}
+                {seconds} <FontAwesomeIcon icon={faStopwatch as IconProp}/>
             </Badge>
         </h3>
     );

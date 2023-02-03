@@ -1,5 +1,5 @@
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faFileCircleExclamation, faCheckToSlot, faPersonCircleQuestion, faBan } from "@fortawesome/free-solid-svg-icons";
+import { faFileCircleExclamation, faCheckToSlot, faPersonCircleQuestion, faBan, faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
@@ -16,16 +16,23 @@ export interface QuestionRequestCardProps {
 function QuestionRequestCard({request}: QuestionRequestCardProps) {
 
     return (
-        <Card style={{marginRight: '120px'}}>
+        <Card className='request-card'>
             <CardHeader>
-                <big><b>{request.school.schoolName} - request for {`${request.numberOfQuestions} question${request.numberOfQuestions > 1 ? 's' : ''}`}</b></big>
+                <big><b>
+                    {request.school.schoolName} - {request.state} - request for {`${request.numberOfQuestions}${' '}
+                    ${request.isPristine ? 'pristine' : request.isClean ? 'clean' : 'unclean'} question${request.numberOfQuestions > 1 ? 's' : ''}`}
+                </b></big>
                 <div className='card-buttons'>
                     <ResolveQuestionRequestModal request={request}/>
                 </div>
             </CardHeader>
             <br/><br/>
-            <CardText style={{margin: '15px'}}>
-                <div><big><i>Requested on <b>{`${Moment(request.createdAt).format('MMMM D, YYYY hh:mm A')}`}</b></i></big></div>
+            <CardText>
+                <div className='request-text'>
+                    <div>{request.school.address1 ? request.school.address1 : 'No Address Listed'}</div>
+                    <div>{request.description}</div>
+                    <div><i>Requested on <b>{`${Moment(request.createdAt).format('MMMM D, YYYY hh:mm A')}`}</b></i></div>
+                </div>
             </CardText>
         </Card>
     )
@@ -132,7 +139,7 @@ function QuestionRequestReuseForm({requestId, setFulfillOption, toggle}: Questio
                     <h4>No Existing Groups to display.</h4>
                 </ModalBody>
                 <ModalFooter>
-                    <Button outline color="secondary" onClick={() => setFulfillOption(FulfillOptions.NONE)}>Go Back <FontAwesomeIcon icon={faBan as IconProp}/></Button>
+                    <Button outline color="secondary" onClick={() => setFulfillOption(FulfillOptions.NONE)}>Go Back <FontAwesomeIcon icon={faChevronLeft as IconProp}/></Button>
                 </ModalFooter>
             </React.Fragment>
         )
@@ -158,7 +165,7 @@ function QuestionRequestReuseForm({requestId, setFulfillOption, toggle}: Questio
                 <Button color="primary" disabled={!group} onClick={() => fulfillRequestWithExistingGroupMutation.mutate({questionRequestId: requestId, questionGroupId: group?.questionGroupId || 0})}>
                     Assign Selected Group <FontAwesomeIcon icon={faPersonCircleQuestion as IconProp}/>
                 </Button>
-                <Button outline color="secondary" onClick={() => setFulfillOption(FulfillOptions.NONE)}>Go Back <FontAwesomeIcon icon={faBan as IconProp}/></Button>
+                <Button outline color="secondary" onClick={() => setFulfillOption(FulfillOptions.NONE)}>Go Back <FontAwesomeIcon icon={faChevronLeft as IconProp}/></Button>
             </ModalFooter>
         </React.Fragment>
     )
@@ -188,10 +195,11 @@ function QuestionRequestCreateForm({requestId, setFulfillOption, toggle}: Questi
                 <Input maxLength={500} type="textarea" rows="5" name="content" required onChange={(event) => setDescription(event.target.value)}/>
             </ModalBody>
             <ModalFooter>
-                <Button color="primary" onClick={() => createGroupAndFulfillRequestMutation.mutate({questionRequestId: requestId, name: name || '', description: description || ''})}>
+                <Button color="primary" disabled={!name || !description}
+                onClick={() => createGroupAndFulfillRequestMutation.mutate({questionRequestId: requestId, name: name || '', description: description || ''})}>
                     Create and Assign Group <FontAwesomeIcon icon={faPersonCircleQuestion as IconProp}/>
                 </Button>
-                <Button outline color="secondary" onClick={() => setFulfillOption(FulfillOptions.NONE)}>Go Back <FontAwesomeIcon icon={faBan as IconProp}/></Button>
+                <Button outline color="secondary" onClick={() => setFulfillOption(FulfillOptions.NONE)}>Go Back <FontAwesomeIcon icon={faChevronLeft as IconProp}/></Button>
             </ModalFooter>
         </React.Fragment>
     )

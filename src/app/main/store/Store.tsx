@@ -175,7 +175,7 @@ function EventCard({group}: EventCardProps) {
     });
 
     return (
-        <Card style={{marginRight: '120px'}}>
+        <Card className='request-card'>
             <CardHeader>
                 <big><b>{group.questionGroupName}</b></big>
                 <div className='card-buttons'>
@@ -199,9 +199,11 @@ function EventCard({group}: EventCardProps) {
                 </div>
             </CardHeader>
             <br/><br/>
-            <CardText style={{margin: '15px'}}>
-                <div><big><i>Event Start Date: <b>{`${Moment(group.eventStartDate).format('MMMM D, YYYY hh:mm A')}`}</b></i></big></div>
-                <div><big><i>Event End Date: <b>{`${Moment(group.eventEndDate).format('MMMM D, YYYY hh:mm A')}`}</b></i></big></div>
+            <CardText>
+                <div className='request-text'>
+                    <div><big><i>Event Start Date: <b>{`${Moment(group.eventStartDate).format('MMMM D, YYYY hh:mm A')}`}</b></i></big></div>
+                    <div><big><i>Event End Date: <b>{`${Moment(group.eventEndDate).format('MMMM D, YYYY hh:mm A')}`}</b></i></big></div>
+                </div>
             </CardText>
         </Card>
     )

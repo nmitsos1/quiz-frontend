@@ -79,13 +79,15 @@ function Events() {
                 if (index === 0)
                     return;
                 return (
-                    <Card style={{marginRight: '120px'}}>
+                    <Card className='request-card'>
                         <CardHeader><h5><b>{group.questionGroupName}</b></h5></CardHeader>
                         <br/><br/>
-                        <CardText style={{margin: '15px'}}>
-                            <h5><i>Event Start Date: <b>{`${Moment(group.eventStartDate).format('MMMM D, YYYY hh:mm A')}`}</b></i></h5>
-                            <h5><i>Event End Date: <b>{`${Moment(group.eventEndDate).format('MMMM D, YYYY hh:mm A')}`}</b></i></h5>
-                            <h5>{group.questionGroupDescription}</h5>
+                        <CardText>
+                            <div className='request-text'>
+                                <h5><i>Event Start Date: <b>{`${Moment(group.eventStartDate).format('MMMM D, YYYY hh:mm A')}`}</b></i></h5>
+                                <h5><i>Event End Date: <b>{`${Moment(group.eventEndDate).format('MMMM D, YYYY hh:mm A')}`}</b></i></h5>
+                                <h5>{group.questionGroupDescription}</h5>
+                            </div>
                         </CardText>
                     </Card>
                 )

@@ -97,9 +97,9 @@ function EventRequestCard({request}: EventRequestCardProps) {
     });
 
     return (
-        <Card style={{marginRight: '120px'}}>
+        <Card className='request-card'>
             <CardHeader>
-                <big><b>{request.school.schoolName} - request to attend {request.eventPackage.questionGroupName}</b></big>
+                <big><b>{request.school.schoolName} - {request.school.state} - request to attend {request.eventPackage.questionGroupName}</b></big>
                 <div className='card-buttons'>
                     <Button onClick={() => fulfillRequestMutation.mutate(request.eventRequestId)} color="success" outline size='sm'>
                         Approve Request <FontAwesomeIcon icon={faCheckToSlot as IconProp} size='sm'/>
@@ -110,8 +110,11 @@ function EventRequestCard({request}: EventRequestCardProps) {
                 </div>
             </CardHeader>
             <br/><br/>
-            <CardText style={{margin: '15px'}}>
-                <div><big><i>Requested on <b>{`${Moment(request.createdAt).format('MMMM D, YYYY hh:mm A')}`}</b></i></big></div>
+            <CardText>
+                <div className='request-text'>
+                    <div>{request.school.address1 ? request.school.address1 : 'No Address Listed'}</div>
+                    <div><i>Requested on <b>{`${Moment(request.createdAt).format('MMMM D, YYYY hh:mm A')}`}</b></i></div>
+                </div>
             </CardText>
         </Card>
     )

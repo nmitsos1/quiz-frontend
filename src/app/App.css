@@ -64,3 +64,11 @@
 input[type="datetime-local"] {
   max-width: 300px;
 }
+
+.request-card {
+  margin-right: 120px;
+}
+
+.request-text {
+  margin: 15px;
+}

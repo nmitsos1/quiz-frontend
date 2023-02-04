@@ -27,7 +27,7 @@ function QuestionCard({questionId, topic, text, isSelected, setSelectedId, group
   
     return (
       <Card outline color='dark' className='announcement-card'
-      onClick={() => setSelectedId(questionId)}>
+      onClick={() => setSelectedId(isSelected ? undefined : questionId)}>
         <CardHeader>
           <CardTitle>
             <div><b>{topic}</b> - {text}</div>

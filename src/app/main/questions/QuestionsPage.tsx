@@ -84,6 +84,13 @@ function AddQuestionModal() {
     const [answer4, setAnswer4] = useState<Answer>({answerId: -4, answerText: ''});
     const [correctAnswer, setCorrectAnswer] = useState(isMc ? 0 : 1);
 
+    useEffect(() => {
+      if (isMc)
+        setCorrectAnswer(0);
+      else
+        setCorrectAnswer(1)
+    }, [isMc])
+
     const addQuestionMutation = useMutation(addQuestion, {
         onSuccess: () => {
           queryClient.invalidateQueries(['question'])

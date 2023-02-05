@@ -14,6 +14,11 @@ export interface Attempt {
     ruleSet: RuleSet
 }
 
+export interface EventPlacement {
+    numberOfParticipants: number,
+    myPlacement: number
+}
+
 export enum RuleSet {
     DEFAULT = 'Default',
     RELAY = 'Relay',
@@ -44,6 +49,16 @@ export const getMyAttempt = async () => {
 
 export const getMyAttempts = async () => {
     return await axios.get<Array<Attempt>>(`/api/user/attempts`)
+    .then(response => response.data);
+}
+
+export const getMyRecentEventAttempts = async () => {
+    return await axios.get<Array<Attempt>>(`/api/user/attempts/recent-events`)
+    .then(response => response.data);
+}
+
+export const getMyEventPlacement = async (attemptId: number) => {
+    return await axios.get<EventPlacement>(`/api/user/attempts/${attemptId}/placement`)
     .then(response => response.data);
 }
 

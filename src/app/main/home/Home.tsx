@@ -4,10 +4,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button, Col, Input, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import { getMySchool, School, updateMySchool } from "../schools/SchoolModel";
 import { StateDropdown } from "../Shared";
 import Announcements from "./announcements/Announcements";
+import MyEvents from "./my-events/MyEvents";
 
 function Home() {
 
@@ -19,7 +21,9 @@ function Home() {
                 <Col>
                     <Announcements />
                 </Col>
-                <Col></Col>
+                <Col>
+                    <MyEvents />
+                </Col>
             </Row>
             {school ? <UpdateMySchoolInfoPrompt school={school} /> : <React.Fragment />}
         </div>

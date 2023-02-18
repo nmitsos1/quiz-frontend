@@ -60,7 +60,7 @@ export const deleteQuestionById = async (id: number) => {
 }
 
 export enum QuestionType {
-    MULTIPLE_CHOICE = 'V',
-    SHORT_ANSWER = 'S',
-    PYRAMID = 'P'
+    MULTIPLE_CHOICE = 'v',
+    SHORT_ANSWER = 's',
+    PYRAMID = 'p'
 }

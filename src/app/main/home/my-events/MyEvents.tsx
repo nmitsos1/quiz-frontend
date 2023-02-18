@@ -33,7 +33,7 @@ function MyEvents() {
           :
           eventAttempts?.map(attempt => {
           return (
-            <MyEventAttemptCard attempt={attempt}/>
+            <MyEventAttemptCard attempt={attempt} key={attempt.attemptId}/>
           );
         })}
       </div>
@@ -65,19 +65,17 @@ function MyEventAttemptCard({attempt}: MyEventAttemptCardProps) {
     <Card key={attempt.attemptId} onClick={() => navigate(`/attempt/${attempt.attemptId}`)} color='dark' outline>
       <CardHeader><h5><b>{attempt.questionGroup.questionGroupName}</b></h5></CardHeader>
       <CardBody>
-          <CardText>
-            <h4>
-              {!eventPlacement ? 
-              <Badge color='dark'>Event is still in progress <FontAwesomeIcon icon={faHourglassHalf as IconProp}/></Badge>
-              :
-              <Badge color={eventPlacement.myPlacement < 6 ? 'success' : 'primary'}>
-                {eventPlacement.myPlacement}{getSuffix(eventPlacement.myPlacement)} out of {eventPlacement.numberOfParticipants} participants
-                {eventPlacement.myPlacement === 1 ? '! Congratulations! ' : ''}{eventPlacement.myPlacement === 1 ? <FontAwesomeIcon icon={faTrophy as IconProp}/> : ''}
-              </Badge>
-              }
-            </h4>
-            <label>Your Score - {attempt.currentScore} points</label>
-          </CardText>
+          <h4>
+            {!eventPlacement ? 
+            <Badge color='dark'>Event is still in progress <FontAwesomeIcon icon={faHourglassHalf as IconProp}/></Badge>
+            :
+            <Badge color={eventPlacement.myPlacement < 6 ? 'success' : 'primary'}>
+              {eventPlacement.myPlacement}{getSuffix(eventPlacement.myPlacement)} out of {eventPlacement.numberOfParticipants} participants
+              {eventPlacement.myPlacement === 1 ? '! Congratulations! ' : ''}{eventPlacement.myPlacement === 1 ? <FontAwesomeIcon icon={faTrophy as IconProp}/> : ''}
+            </Badge>
+            }
+          </h4>
+          <label>Your Score - {attempt.currentScore} points</label>
       </CardBody>
       <CardFooter><small><i>Started on {Moment(attempt.groupStartTime).format('MMMM D, YYYY hh:mm A')}
       {`, finished on ${Moment(attempt.endTime).format('MMMM D, YYYY hh:mm A')}`}</i></small></CardFooter>

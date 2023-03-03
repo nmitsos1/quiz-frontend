@@ -11,7 +11,7 @@ import { QuestionType } from "../questions/QuestionModel";
 import { letters } from "../Shared";
 import { getMyAttempt, killAttempt, RuleSet } from "./attempt/AttemptModel";
 import { answerCurrentQuestion, getCurrentQuestion, startNextQuestion } from "./QuestionAttemptModel";
-import { DefaultTimer, RelayTimer } from "./QuizTimers";
+import { ClassicTimer, OfficialTimer, RelayTimer } from "./QuizTimers";
 
 function Quiz() {
 
@@ -49,6 +49,7 @@ function Quiz() {
     const answerCurrentQuestionMutation = useMutation(answerCurrentQuestion, {
         onSuccess: () => {
             queryClient.invalidateQueries(['question-attempt']);
+            queryClient.invalidateQueries(['attempt']);
         }
     });
 
@@ -94,8 +95,11 @@ function Quiz() {
                 {startTime ? 
                 <div className="float-right-class">
                     {
-                        attempt.ruleSet === RuleSet.DEFAULT ?
-                        <DefaultTimer key={startTime.toString()} startTime={startTime} endTime={endTime} />
+                        attempt.ruleSet === RuleSet.OFFICIAL ?
+                        <OfficialTimer key={startTime.toString()} startTime={startTime} timeRemaining={attempt.timeRemaining} answerCurrentQuestionMutation={answerCurrentQuestionMutation} endTime={endTime}/>
+                        :
+                        attempt.ruleSet === RuleSet.CLASSIC ?
+                        <ClassicTimer key={startTime.toString()} startTime={startTime} endTime={endTime} />
                         :
                         attempt.ruleSet === RuleSet.RELAY ?
                         <RelayTimer key={startTime.toString()} startTime={startTime} endTime={endTime} answerCurrentQuestionMutation={answerCurrentQuestionMutation}/>

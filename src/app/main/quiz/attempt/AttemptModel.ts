@@ -11,7 +11,8 @@ export interface Attempt {
     endTime: Date,
     questionInstanceAttempts: Array<QuestionInstanceAttempt>,
     questionGroup: Group,
-    ruleSet: RuleSet
+    ruleSet: RuleSet,
+    timeRemaining: number
 }
 
 export interface EventPlacement {
@@ -20,7 +21,8 @@ export interface EventPlacement {
 }
 
 export enum RuleSet {
-    DEFAULT = 'Default',
+    OFFICIAL = 'Official',
+    CLASSIC = 'Classic',
     RELAY = 'Relay',
     UNTIMED = 'Untimed'
 }
@@ -31,9 +33,11 @@ export function getRuleSetDescriptions(ruleSet: RuleSet) {
             return '10 seconds to answer each question. You only get one guess, scoring is all or nothing.'
         case RuleSet.UNTIMED:
             return 'You may take as long as you like to submit a single answer for each question.'
-        case RuleSet.DEFAULT:
+        case RuleSet.CLASSIC:
+            return 'An older mode of competitive play. More points for faster answers, with an opportunity to guess again if you get it wrong for fewer points.'
+        case RuleSet.OFFICIAL:
         default:
-            return 'The default mode used in official events. More points for faster answers, with an opportunity to guess again if you get it wrong for fewer points.'
+            return 'The default mode used in official events. You must complete the quiz in the alotted time, but each individual question is untimed.'
     }
 }
 
@@ -79,10 +83,11 @@ export const isAttemptOnGroupCompleted = async (id: number) => {
 
 export interface beginAttemptParams {
     groupId: number,
-    ruleSet: RuleSet
+    ruleSet: RuleSet,
+    allottedTime?: number
 }
 export const beginAttempt = async (params: beginAttemptParams) => {
-    return await axios.post<Attempt>(`/api/user/attempts/groups/${params.groupId}/${params.ruleSet}`)
+    return await axios.post<Attempt>(`/api/user/attempts/groups/${params.groupId}/${params.ruleSet}${params.allottedTime ? `?time=${params.allottedTime}` : ''}`)
     .then(response => response.data);
 }
 

@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { beginAttempt, getRuleSetDescriptions, killAttempt, RuleSet } from '../quiz/attempt/AttemptModel';
 import { startNextQuestion } from '../quiz/QuestionAttemptModel';
 import { TopicCount } from './topics/TopicModel';
@@ -30,12 +30,13 @@ function CreateAndBeginQuizButton({topicCounts, groupIds, groupId, adminGroupReq
     const toggleDropdown = () => setIsOpen(!isOpen);
   
     const [isWorking, setIsWorking] = useState(false);
-    const [ruleSet, setRuleSet] = useState<RuleSet>(RuleSet.DEFAULT);
+    const [ruleSet, setRuleSet] = useState<RuleSet>(RuleSet.OFFICIAL);
+    const [allottedTime, setAllottedTime] = useState<number>();
 
     const addSetMutation = useMutation(addSet, {
       onSuccess: (data) => {
         queryClient.invalidateQueries(['my-groups']);
-        beginAttemptMutation.mutate({groupId: data.questionGroupId, ruleSet: ruleSet});
+        beginAttemptMutation.mutate({groupId: data.questionGroupId, ruleSet: ruleSet, allottedTime: allottedTime});
       }
     });
   
@@ -83,7 +84,7 @@ function CreateAndBeginQuizButton({topicCounts, groupIds, groupId, adminGroupReq
       if (groupIds && topicCounts) {
         addSetMutation.mutate({ topicCounts: topicCounts, groupIds: groupIds});
       } else if (groupId) {
-        beginAttemptMutation.mutate({groupId: groupId, ruleSet: ruleSet});
+        beginAttemptMutation.mutate({groupId: groupId, ruleSet: ruleSet, allottedTime: allottedTime});
       } else {
         e.preventDefault();
       }
@@ -122,6 +123,13 @@ function CreateAndBeginQuizButton({topicCounts, groupIds, groupId, adminGroupReq
               </DropdownMenu>
             </Dropdown>
             <label>{getRuleSetDescriptions(ruleSet)}</label>
+            {ruleSet === RuleSet.OFFICIAL ?
+            <React.Fragment>
+              <label><b>Enter an time limit in minutes</b></label>
+              <Input type='number' onChange={(event) => setAllottedTime(parseInt(event.target.value))} />
+            </React.Fragment>
+            : <React.Fragment />
+            }
             <hr/>          
           </React.Fragment>
           }
@@ -131,7 +139,7 @@ function CreateAndBeginQuizButton({topicCounts, groupIds, groupId, adminGroupReq
                 Create {adminGroupRequest.isPackage ? 'Package' : 'Official Event'}
             </Button>
             :
-            <Button color="primary" disabled={isWorking}
+            <Button color="primary" disabled={isWorking || (ruleSet === RuleSet.OFFICIAL && !allottedTime)}
             onClick={handleSubmit}>
                 {groupIds ? 'Create Set and ' : ''}Begin Quiz
             </Button>

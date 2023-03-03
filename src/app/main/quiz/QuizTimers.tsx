@@ -10,7 +10,7 @@ interface QuizTimerProps {
     endTime?: Date,
     answerCurrentQuestionMutation?: UseMutationResult<Boolean, unknown, String, unknown>
 }
-export function DefaultTimer({startTime, endTime}: QuizTimerProps) {
+export function ClassicTimer({startTime, endTime}: QuizTimerProps) {
 
     const [time, setTime] = useState((endTime ? new Date(endTime).getTime() : Date.now()) - new Date(startTime).getTime());
     
@@ -62,6 +62,48 @@ export function RelayTimer({startTime, endTime, answerCurrentQuestionMutation}: 
         <h3>
             <Badge color={seconds > 0 ? 'success' : 'danger'}>
                 {seconds} <FontAwesomeIcon icon={faStopwatch as IconProp}/>
+            </Badge>
+        </h3>
+    );
+}
+
+interface OfficialTimerProps {
+    startTime: Date,
+    endTime?: Date,
+    timeRemaining: number,
+    answerCurrentQuestionMutation: UseMutationResult<Boolean, unknown, String, unknown>
+}
+export function OfficialTimer({startTime, endTime, timeRemaining, answerCurrentQuestionMutation}: OfficialTimerProps) {
+
+    const [time, setTime] = useState(Math.max(timeRemaining - ((endTime ? new Date(endTime).getTime() : Date.now()) - new Date(startTime).getTime()), 0));
+
+    useEffect(() => {
+        if (!endTime) {
+            const intervalTimer = setInterval(() => setTime(Math.max(timeRemaining - ((endTime ? new Date(endTime).getTime() : Date.now()) - new Date(startTime).getTime()), 0)), 100);
+            return () => clearInterval(intervalTimer);
+        } else {
+            return () => clearInterval(undefined);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [endTime]);
+
+    const seconds = Math.ceil(time/1000);
+    const clockHours = Math.floor(seconds/3600).toLocaleString(undefined, { minimumIntegerDigits: 2 });
+    const clockMinutes = Math.floor((seconds % 3600)/60).toLocaleString(undefined, { minimumIntegerDigits: 2 });
+    const clockSeconds = Math.floor((seconds % 60)).toLocaleString(undefined, { minimumIntegerDigits: 2 });
+
+    useEffect(() => {
+        if (seconds <= 0) {
+            answerCurrentQuestionMutation.mutate('!!Out of time!!');
+            return () => clearInterval(undefined);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [seconds])
+
+    return (
+        <h3>
+            <Badge color={endTime ? 'secondary' : seconds > 600 ? 'dark' : seconds > 120 ? 'warning' : 'danger'}>
+                {`${endTime ? 'PAUSED ' : ''}`}{`${clockHours}:${clockMinutes}:${clockSeconds}`} <FontAwesomeIcon icon={faStopwatch as IconProp}/>
             </Badge>
         </h3>
     );

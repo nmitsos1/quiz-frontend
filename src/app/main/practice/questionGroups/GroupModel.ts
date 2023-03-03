@@ -26,6 +26,7 @@ export interface GroupInput {
   isPackage: boolean,
   startDate?: Date,
   endDate?: Date,
+  allottedTime?: number,
   isPristine: boolean,
   isClean: boolean,
   state: string,

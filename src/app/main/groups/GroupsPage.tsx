@@ -77,6 +77,7 @@ function CreateQuestionGroup() {
   const [isPackage, setIsPackage] = useState(true);
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
+  const [allottedTime, setAllottedTime] = useState<number>();
 
   const [isPristine, setIsPristine] = useState(true);
   const [isClean, setIsClean] = useState(true);
@@ -142,6 +143,7 @@ function CreateQuestionGroup() {
           isPackage: isPackage,
           startDate: startDate,
           endDate: endDate,
+          allottedTime: allottedTime,
           isPristine: isPristine,
           isClean: isClean,
           state: state
@@ -179,53 +181,55 @@ function CreateQuestionGroup() {
         </ButtonGroup>
         {isPackage ? 
         <div>
-        <label>Pristine Question Group?</label><br/>
-        <ButtonGroup>
-            <Button color='primary' onClick={() => setIsPristine(true)} 
-            active={isPristine} outline={!isPristine}>
-            Pristine
-            </Button>
-            <Button color='primary' onClick={() => setIsPristine(false)} 
-            active={!isPristine} outline={isPristine}>
-            Not Pristine
-            </Button>
-        </ButtonGroup>
-        {isPristine ? 
-        isSample ?
-        <div>
-          <label>Pristine in what state?</label>
-          <StateDropdown selectedState={state} setSelectedState={setState} includesAll={true}/>
-        </div> : <React.Fragment />
-        : 
-        <div>
-          <label>Clean Question Group? (Used for external events/non practice set packages)</label><br/>
+          <label>Pristine Question Group?</label><br/>
           <ButtonGroup>
-              <Button color='primary' onClick={() => setIsClean(true)} 
-              active={isClean} outline={!isClean}>
-              Clean
+              <Button color='primary' onClick={() => setIsPristine(true)} 
+              active={isPristine} outline={!isPristine}>
+              Pristine
               </Button>
-              <Button color='primary' onClick={() => setIsClean(false)} 
-              active={!isClean} outline={isClean}>
-              Not Clean
+              <Button color='primary' onClick={() => setIsPristine(false)} 
+              active={!isPristine} outline={isPristine}>
+              Not Pristine
               </Button>
           </ButtonGroup>
-          {!isPristine && isSample ? 
+          {isPristine ? 
+          isSample ?
           <div>
-            <label>{isClean ? 'Clean' : 'Unclean'} in what state?</label>
-            <StateDropdown selectedState={state} setSelectedState={setState} />
-          </div>
-          : <React.Fragment /> }
-        </div>}
-      </div> :
+            <label>Pristine in what state?</label>
+            <StateDropdown selectedState={state} setSelectedState={setState} includesAll={true}/>
+          </div> : <React.Fragment />
+          : 
+          <div>
+            <label>Clean Question Group? (Used for external events/non practice set packages)</label><br/>
+            <ButtonGroup>
+                <Button color='primary' onClick={() => setIsClean(true)} 
+                active={isClean} outline={!isClean}>
+                Clean
+                </Button>
+                <Button color='primary' onClick={() => setIsClean(false)} 
+                active={!isClean} outline={isClean}>
+                Not Clean
+                </Button>
+            </ButtonGroup>
+            {!isPristine && isSample ? 
+            <div>
+              <label>{isClean ? 'Clean' : 'Unclean'} in what state?</label>
+              <StateDropdown selectedState={state} setSelectedState={setState} />
+            </div>
+            : <React.Fragment /> }
+          </div>}
+        </div> :
         <div>
           <label>Start Date (Local Timezone)<span className='asterisk'>*</span></label>
           <Input type='datetime-local' onChange={(event) => setStartDate(new Date(event.target.value))} />
           <label>End Date (Local Timezone)<span className='asterisk'>*</span></label>
           <Input type='datetime-local' onChange={(event) => setEndDate(new Date(event.target.value))} />
+          <label>Alotted Time (minutes)<span className='asterisk'>*</span></label>
+          <Input type='number' onChange={(event) => setAllottedTime(parseInt(event.target.value))} />
           <label>Official Events will always use pristine questions that have never been seen in any state</label>
         </div>}
       </div>
-      {name && description && (isPackage || (startDate && endDate))
+      {name && description && (isPackage || (startDate && endDate && allottedTime))
       ?
       <div>
         <div>
@@ -249,6 +253,7 @@ function CreateQuestionGroup() {
           isPackage: isPackage,
           startDate: startDate,
           endDate: endDate,
+          allottedTime: allottedTime,
           isPristine: isPristine,
           isClean: isClean,
           state: state

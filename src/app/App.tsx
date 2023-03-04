@@ -85,9 +85,7 @@ function App() {
   /** Global queryClient callbacks for queries and mutations. Used for message handling here */
   const queryClient = new QueryClient({
     mutationCache: new MutationCache({
-      onError: async (error, variables, context, mutation) => {
-        const key = mutation.options.mutationKey
-        
+      onError: async (error) => {        
         let err = error as AxiosError;
         let errMessage = '';
         if (err.request.responseType === 'blob') {
@@ -117,7 +115,7 @@ function App() {
           const action = `${key?.toString().split('-')[0]}${key?.toString().split('-')[0] === 'add' ? 'ed' : 'd'}`
           const record = `${key?.toString().split('-')[1]}`
           setAlertColor('success');
-          setAlertMessage(`You have successfully ${action} a${['a', 'e', 'i', 'o', 'u'].indexOf(record[0]) !== -1 ? 'n' : ''} ${record}
+          setAlertMessage(`You have successfully ${key}${' '}
             AT ${Moment(new Date()).format('MMMM D, YYYY hh:mm:ss A')}`);
           setCurrentDate(new Date())
         }

@@ -112,7 +112,7 @@ function CreateQuestionGroup() {
         queryClient.invalidateQueries(['groups'])
         queryClient.invalidateQueries(['questions']);
     },
-    mutationKey: ['upload-file']
+    mutationKey: ['uploaded a multiple choice question file']
   });
 
   const uploadSaFileMutation = useMutation(uploadGroupShortAnswerCsv, {
@@ -121,7 +121,7 @@ function CreateQuestionGroup() {
           queryClient.invalidateQueries(['groups'])
           queryClient.invalidateQueries(['questions']);
       },
-      mutationKey: ['upload-file']
+      mutationKey: ['uploaded a short answer question file']
   });
 
   const fileSetter = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -44,7 +44,7 @@ function DownloadPdfModal({group, isAdminPage}: GroupModalProps) {
       onError: () => {
         closeDownloadModal();
       },
-      mutationKey: ['download-group']
+      mutationKey: ['downloaded a question group pdf']
     });
   
     const downloadGroupAnswersMutation = useMutation(isAdminPage ? downloadGroupAnswersPdf : downloadMyGroupAnswersPdf, {
@@ -52,7 +52,7 @@ function DownloadPdfModal({group, isAdminPage}: GroupModalProps) {
         fileDownload(data, `${group.questionGroupName} - Answers.pdf`);
         closeDownloadModal();
       },
-      mutationKey: ['download-group']
+      mutationKey: ['downloaded a question group pdf']
     });
   
     useEffect(() => {

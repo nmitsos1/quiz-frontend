@@ -97,7 +97,7 @@ function AddQuestionModal() {
           queryClient.invalidateQueries(['question-answer'])
           queryClient.invalidateQueries(['questions'])
         },
-        mutationKey: ['add-question']
+        mutationKey: ['added a question']
     });
 
     const handleSubmit = () => {

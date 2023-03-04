@@ -48,7 +48,7 @@ function Events() {
             toggle();
             queryClient.invalidateQueries(['attempt-in-progress']);
         },
-        mutationKey: ['terminate-attempt']
+        mutationKey: ['terminated an attempt in progress']
       });
     
     const { isLoading, isError, data: groups, error } = useQuery(['my-events'], getMyEvents);

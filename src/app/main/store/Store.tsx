@@ -40,14 +40,14 @@ function RequestQuestionPackageModal() {
         onSuccess: () => {
             queryClient.invalidateQueries(['question-request']);
         },
-        mutationKey: ['request-submit']
+        mutationKey: ['submitted a request']
     })
 
     const deleteMyQuestionRequestMutation = useMutation(deleteMyQuestionRequest, {
         onSuccess: () => {
             queryClient.invalidateQueries(['question-request']);
         },
-        mutationKey: ['delete-request']
+        mutationKey: ['deleted a request']
     })
 
     const handleSubmit = () => {
@@ -164,14 +164,14 @@ function EventCard({group}: EventCardProps) {
         onSuccess: () => {
             queryClient.invalidateQueries(['event-request', group.questionGroupId]);
         },
-        mutationKey: ['request-event']
+        mutationKey: ['requested to join an event']
     });
 
     const deleteMyEventRequestMutation = useMutation(deleteMyEventRequest, {
         onSuccess: () => {
             queryClient.invalidateQueries(['event-request', group.questionGroupId]);
         },
-        mutationKey: ['delete-request']
+        mutationKey: ['deleted a request to join an event']
     });
 
     return (

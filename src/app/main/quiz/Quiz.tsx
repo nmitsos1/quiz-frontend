@@ -58,7 +58,7 @@ function Quiz() {
             toggle();
             navigate(`/attempt/${questionAttempt?.attempt}`);
         },
-        mutationKey: ['terminate-attempt']
+        mutationKey: ['terminated an attempt in progress']
     })
 
     const handleSubmit = () => {

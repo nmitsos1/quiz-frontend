@@ -48,7 +48,7 @@ function UpdateAnnouncementModal({announcementId: id, title, content}: Announcem
     onSuccess: () => {
       queryClient.invalidateQueries(['announcements'])
     },
-    mutationKey: ['update-announcement']
+    mutationKey: ['updated an announcement']
   });
 
   const handleSubmit = () => {
@@ -91,7 +91,7 @@ function DeleteAnnouncementModal({announcementId: id}: Announcement) {
     onSuccess: () => {
       queryClient.invalidateQueries(['announcements'])
     },
-    mutationKey: ['delete-announcement']
+    mutationKey: ['delete an announcement']
   });
 
   const handleSubmit = () => {

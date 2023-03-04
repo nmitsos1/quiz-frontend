@@ -103,7 +103,7 @@ function UpdateQuestionModal({question, correctAnswer}: QuestionModalProps) {
           queryClient.invalidateQueries(['question-answer', question.questionId])
           queryClient.invalidateQueries(['questions'])
         },
-        mutationKey: ['update-question']
+        mutationKey: ['updated a question']
     });
 
     const handleSubmit = () => {
@@ -194,7 +194,7 @@ function DeleteQuestionModal({id}: IdProps) {
         onSuccess: () => {
         queryClient.invalidateQueries(['questions'])
         },
-        mutationKey: ['delete-question']
+        mutationKey: ['deleted a question']
     });
 
     const handleSubmit = () => {

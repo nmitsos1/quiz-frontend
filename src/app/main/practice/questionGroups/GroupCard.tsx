@@ -79,7 +79,7 @@ export function UpdateSetModal({group, isButtonHidden, isAdminPage}: GroupModalP
       queryClient.invalidateQueries(['groups'])
       queryClient.invalidateQueries(['attempt'])
     },
-    mutationKey: ['update-group']
+    mutationKey: ['updated a group']
   });
 
   const handleSubmit = () => {
@@ -127,7 +127,7 @@ function DeleteSetModal({group, setSelectedIds, isAdminPage}: GroupModalProps) {
       queryClient.invalidateQueries(['my-groups'])
       queryClient.invalidateQueries(['groups'])
     },
-    mutationKey: ['delete-group']
+    mutationKey: ['delete a group']
   });
 
   const handleSubmit = () => {

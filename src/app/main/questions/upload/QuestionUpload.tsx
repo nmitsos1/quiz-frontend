@@ -23,7 +23,7 @@ function QuestionsUpload() {
             queryClient.invalidateQueries(['questions']);
             toggle();
         },
-        mutationKey: ['upload-file']
+        mutationKey: ['uploaded a multiple choice question file']
     });
 
     const uploadSaFileMutation = useMutation(uploadShortAnswerCsv, {
@@ -32,7 +32,7 @@ function QuestionsUpload() {
             queryClient.invalidateQueries(['questions']);
             toggle();
         },
-        mutationKey: ['upload-file']
+        mutationKey: ['uploaded a short answer question file']
     });
 
     const fileSetter = (event: React.ChangeEvent<HTMLInputElement>) => {

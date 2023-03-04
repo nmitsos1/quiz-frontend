@@ -86,14 +86,14 @@ function EventRequestCard({request}: EventRequestCardProps) {
         onSuccess: () => {
             queryClient.invalidateQueries(['event-requests']);
         },
-        mutationKey: ['accept-request']
+        mutationKey: ['accepted a request to join an event']
     });
 
     const declineRequestMutation = useMutation(deleteEventRequest, {
         onSuccess: () => {
             queryClient.invalidateQueries(['event-requests']);
         },
-        mutationKey: ['decline-request']
+        mutationKey: ['declined a request to join an event']
     });
 
     return (

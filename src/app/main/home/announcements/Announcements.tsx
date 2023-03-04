@@ -55,7 +55,7 @@ function AddAnnouncementModal() {
     onSuccess: () => {
       queryClient.invalidateQueries(['announcements'])
     },
-    mutationKey: ['add-announcement']
+    mutationKey: ['added an announcement']
   });
 
   const handleSubmit = () => {

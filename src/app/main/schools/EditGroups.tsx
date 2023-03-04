@@ -111,7 +111,7 @@ function EditSchoolGroupsForm({id, groups, schoolGroups, name, isForEvents}: Edi
             queryClient.invalidateQueries(['school-groups'])
             queryClient.invalidateQueries(['school-events'])
         },
-        mutationKey: ['update-school']
+        mutationKey: ['updated a school']
     });
 
     const handleSubmit = () => {
@@ -201,7 +201,7 @@ function BulkAddGroups({selectedIds, groups, isForEvents}: BulkAddGroupsProps) {
             queryClient.invalidateQueries(['school-groups'])
             queryClient.invalidateQueries(['school-events'])
         },
-        mutationKey: ['update-school']
+        mutationKey: ['updated a school']
     });
 
     const handleSubmit = () => {

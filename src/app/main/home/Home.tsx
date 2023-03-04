@@ -53,7 +53,7 @@ function UpdateMySchoolInfoPrompt({school}: UpdateMySchoolInfoPromptProps) {
         onSuccess: () => {
           queryClient.invalidateQueries(['schools'])
         },
-        mutationKey: ['update-school']
+        mutationKey: ['updated a school']
       });
     
     const handleSubmit = () => {

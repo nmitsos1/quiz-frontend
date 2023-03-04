@@ -52,7 +52,7 @@ function ResolveQuestionRequestModal({request}: QuestionRequestCardProps) {
             queryClient.invalidateQueries(['question-requests']);
             toggle();
         },
-        mutationKey: ['fulfill-request']
+        mutationKey: ['fulfilled a request']
     })
 
     return (
@@ -113,7 +113,7 @@ function QuestionRequestCreateForm({request, setFulfillOption, toggle}: Question
             queryClient.invalidateQueries(['question-requests']);
             toggle();
         },
-        mutationKey: ['request-fulfill']
+        mutationKey: ['created and assigned a group']
     })
 
     if (isLoading) {
@@ -180,7 +180,7 @@ function QuestionRequestReuseForm({request, setFulfillOption, toggle}: QuestionR
             queryClient.invalidateQueries(['question-requests']);
             toggle();
         },
-        mutationKey: ['request-fulfill']
+        mutationKey: ['fulfilled a request with an existing group']
     })
 
     useEffect(() => {

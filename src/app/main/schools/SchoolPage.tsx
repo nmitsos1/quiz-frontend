@@ -146,7 +146,7 @@ function AddSchoolModal() {
       onError: () => {
         setIsSuccessful(false);
       },
-      mutationKey: ['add-school']
+      mutationKey: ['added a school']
     });
   
     const handleSubmit = () => {

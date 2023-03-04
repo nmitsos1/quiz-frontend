@@ -45,7 +45,7 @@ function CreateAndBeginQuizButton({topicCounts, groupIds, groupId, adminGroupReq
         queryClient.invalidateQueries(['groups']);
         queryClient.invalidateQueries(['topics']);
       },
-      mutationKey: ['create-group']
+      mutationKey: ['created a group']
     });
 
     const beginAttemptMutation = useMutation(beginAttempt, {
@@ -76,7 +76,7 @@ function CreateAndBeginQuizButton({topicCounts, groupIds, groupId, adminGroupReq
           toggle();
           queryClient.invalidateQueries(['attempt-in-progress']);
       },
-      mutationKey: ['terminate-attempt']
+      mutationKey: ['terminated an attempt in progress']
     });
 
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

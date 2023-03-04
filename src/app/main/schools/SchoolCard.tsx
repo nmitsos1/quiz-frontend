@@ -100,7 +100,7 @@ function UpdateSchoolModal({school}: SchoolModalProps) {
     onError: () => {
       setIsSuccessful(false);
     },
-    mutationKey: ['update-school']
+    mutationKey: ['updated a school']
   });
 
   const handleSubmit = () => {
@@ -196,7 +196,7 @@ function DeleteSchoolModal({school, setSelectedIds}: SchoolModalProps) {
     onSuccess: () => {
       queryClient.invalidateQueries(['schools'])
     },
-    mutationKey: ['delete-school']
+    mutationKey: ['deleted a school']
   });
 
   const handleSubmit = () => {

@@ -109,7 +109,6 @@ function EventRequestCard({request}: EventRequestCardProps) {
                     </Button>
                 </div>
             </CardHeader>
-            <br/><br/>
             <CardText>
                 <div className='request-text'>
                     <div>{request.school.address1 ? request.school.address1 : 'No Address Listed'}</div>

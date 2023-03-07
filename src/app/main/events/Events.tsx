@@ -81,7 +81,6 @@ function Events() {
                 return (
                     <Card className='request-card'>
                         <CardHeader><h5><b>{group.questionGroupName}</b></h5></CardHeader>
-                        <br/><br/>
                         <CardText>
                             <div className='request-text'>
                                 <h5><i>Event Start Date: <b>{`${Moment(group.eventStartDate).format('MMMM D, YYYY hh:mm A')}`}</b></i></h5>

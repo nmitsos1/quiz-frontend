@@ -27,7 +27,6 @@ function QuestionRequestCard({request}: QuestionRequestCardProps) {
                     <ResolveQuestionRequestModal request={request}/>
                 </div>
             </CardHeader>
-            <br/><br/>
             <CardText>
                 <div className='request-text'>
                     <div>{request.school.address1 ? request.school.address1 : 'No Address Listed'}</div>

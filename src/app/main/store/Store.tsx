@@ -198,7 +198,6 @@ function EventCard({group}: EventCardProps) {
                     }
                 </div>
             </CardHeader>
-            <br/><br/>
             <CardText>
                 <div className='request-text'>
                     <div><big><i>Event Start Date: <b>{`${Moment(group.eventStartDate).format('MMMM D, YYYY hh:mm A')}`}</b></i></big></div>

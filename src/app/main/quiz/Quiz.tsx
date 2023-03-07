@@ -78,13 +78,17 @@ function Quiz() {
     }
 
     let isAnswered = !!((score && score > 0) || (score === 0 && endTime));
+    let isCompetitive = attempt.isCompetitive;
 
     return (
         <div className="quiz-page">
             <h3>
                 Question #{isUndefined(questionNumber) ? '?' : (questionNumber + 1)}
                 {(score && score > 0) || (score === 0 && endTime) ? ` - You scored ${score} point${score === 1 ? '' : 's'}`: ''}
+                {isCompetitive ? <React.Fragment />
+                :
                 <Button className="float-right-class" color="danger" outline onClick={toggle}>Terminate Quiz <FontAwesomeIcon icon={faBan as IconProp}/></Button>
+                }
             </h3>
             <br /><br />
             <Row>

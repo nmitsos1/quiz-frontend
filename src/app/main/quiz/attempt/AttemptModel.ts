@@ -12,6 +12,7 @@ export interface Attempt {
     questionInstanceAttempts: Array<QuestionInstanceAttempt>,
     questionGroup: Group,
     ruleSet: RuleSet,
+    isCompetitive: boolean,
     timeRemaining: number
 }
 

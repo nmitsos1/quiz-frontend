@@ -34,8 +34,11 @@ function Main() {
     ]
     : [
         { path: "/", element: <Home /> },
+        { path: "/store", element: <Store /> },
+        { path: "/events", element: <Events /> },
         { path: "/practice", element: <Practice /> },
         { path: "/quiz", element: <Quiz /> },
+        { path: "/attempts", element: <Attempts /> },
         { path: "/attempt/:attemptId", element: <Attempt /> },
     ];
 
